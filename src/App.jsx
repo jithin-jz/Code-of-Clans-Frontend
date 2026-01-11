@@ -1,17 +1,20 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import useAuthStore from './stores/useAuthStore';
-import Login from './components/Login';
-import Profile from './components/Profile';
-import ProtectedRoute from './components/ProtectedRoute';
+
+// Pages
+// Pages
+import Login from './pages/auth/Login';
+import Profile from './pages/Profile';
 import Home from './pages/Home';
 import OAuthCallback from './pages/OAuthCallback';
-import UserHome from './pages/UserHome';
+import AdminDashboard from './pages/admin/Dashboard';
 
-// Admin pages
-import AdminDashboard from './admin/Dashboard';
+// Route Guards
+import { ProtectedRoute, PublicOnlyRoute, AdminRoute } from './routes';
 
-import Loader from './components/Loader';
+// Components
+import Loader from './components/common/Loader';
 
 // Auth initializer component
 const AuthInitializer = ({ children }) => {
@@ -36,7 +39,7 @@ const AppContent = () => {
                 <main>
                     <Routes>
                         {/* Public Landing (Game Map) - Visible to all */}
-                        <Route path="/" element={<UserHome />} />
+                        <Route path="/" element={<Home />} />
 
                         {/* Authentication - Public Only */}
                         <Route path="/login" element={
@@ -50,31 +53,23 @@ const AppContent = () => {
                         <Route path="/home" element={<Navigate to="/" replace />} />
                         
                         {/* OAuth Callbacks */}
-                        <Route 
-                            path="/auth/github/callback" 
-                            element={<OAuthCallback provider="github" />} 
-                        />
-                        <Route 
-                            path="/auth/google/callback" 
-                            element={<OAuthCallback provider="google" />} 
-                        />
-                        <Route 
-                            path="/auth/discord/callback" 
-                            element={<OAuthCallback provider="discord" />} 
-                        />
+                        <Route path="/auth/github/callback" element={<OAuthCallback provider="github" />} />
+                        <Route path="/auth/google/callback" element={<OAuthCallback provider="google" />} />
+                        <Route path="/auth/discord/callback" element={<OAuthCallback provider="discord" />} />
                         
-                        {/* Admin Dashboard - requires staff/superuser (checked in component) */}
-                        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+                        {/* Admin Dashboard - Admin Only */}
+                        <Route path="/admin/dashboard" element={
+                            <AdminRoute>
+                                <AdminDashboard />
+                            </AdminRoute>
+                        } />
                         
                         {/* Protected Routes */}
-                        <Route 
-                            path="/profile" 
-                            element={
-                                <ProtectedRoute>
-                                    <Profile />
-                                </ProtectedRoute>
-                            } 
-                        />
+                        <Route path="/profile" element={
+                            <ProtectedRoute>
+                                <Profile />
+                            </ProtectedRoute>
+                        } />
                         
                         {/* Fallback */}
                         <Route path="*" element={<Navigate to="/" replace />} />
@@ -91,21 +86,6 @@ const App = () => {
             <AppContent />
         </Router>
     );
-};
-
-// Helper component to redirect authenticated users
-// Helper component to redirect authenticated users based on role
-const PublicOnlyRoute = ({ children }) => {
-    const { isAuthenticated, user } = useAuthStore();
-    
-    if (isAuthenticated) {
-        if (user?.is_staff || user?.is_superuser) {
-            return <Navigate to="/admin/dashboard" replace />;
-        }
-        return <Navigate to="/" replace />;
-    }
-    
-    return children;
 };
 
 export default App;

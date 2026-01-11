@@ -191,6 +191,82 @@ const useAuthStore = create((set, get) => ({
             error: null 
         });
     },
+
+    // Profile Management Actions
+    setUser: (user) => set({ user }),
+
+    updateProfile: async (data) => {
+        set({ loading: true });
+        try {
+            const token = Cookies.get('access_token');
+            // Using fetch directly here since authAPI doesn't have these methods yet
+            const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+            const response = await fetch(`${baseUrl}/auth/user/update/`, {
+                method: 'PATCH',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (!response.ok) throw new Error('Failed to update profile');
+
+            const updatedUser = await response.json();
+            set({ user: updatedUser, loading: false });
+            return updatedUser;
+        } catch (error) {
+            set({ error: error.message, loading: false });
+            throw error;
+        }
+    },
+
+    updateProfileImage: async (type, file) => {
+        set({ loading: true });
+        try {
+            const token = Cookies.get('access_token');
+            const formData = new FormData();
+            formData.append(type, file);
+
+            const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+            const response = await fetch(`${baseUrl}/auth/user/update/`, {
+                method: 'PATCH',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                body: formData
+            });
+
+            if (!response.ok) throw new Error(`Failed to upload ${type}`);
+
+            const updatedUser = await response.json();
+            set({ user: updatedUser, loading: false });
+            return updatedUser;
+        } catch (error) {
+            set({ error: error.message, loading: false });
+            throw error;
+        }
+    },
+
+    followUser: async (username) => {
+        try {
+            const token = Cookies.get('access_token');
+            const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+            const response = await fetch(`${baseUrl}/auth/users/${username}/follow/`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) throw new Error('Failed to follow user');
+
+            return await response.json();
+        } catch (error) {
+            console.error('Follow action failed:', error);
+            throw error;
+        }
+    }
 }));
 
 export default useAuthStore;
