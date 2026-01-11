@@ -21,6 +21,7 @@ const useAuthStore = create((set, get) => ({
     user: null,
     isAuthenticated: false,
     loading: true,
+    isInitialized: false, // Tracks if initial auth check is complete
     error: null,
     oauthPopup: null,
 
@@ -32,7 +33,7 @@ const useAuthStore = create((set, get) => ({
     checkAuth: async () => {
         const token = Cookies.get('access_token');
         if (!token) {
-            set({ user: null, isAuthenticated: false, loading: false });
+            set({ user: null, isAuthenticated: false, loading: false, isInitialized: true });
             return;
         }
         
@@ -42,7 +43,8 @@ const useAuthStore = create((set, get) => ({
                 user: response.data, 
                 isAuthenticated: true, 
                 loading: false, 
-                error: null 
+                error: null,
+                isInitialized: true
             });
         } catch {
             Cookies.remove('access_token');
@@ -50,7 +52,8 @@ const useAuthStore = create((set, get) => ({
             set({ 
                 user: null, 
                 isAuthenticated: false, 
-                loading: false 
+                loading: false,
+                isInitialized: true
             });
         }
     },
@@ -196,7 +199,7 @@ const useAuthStore = create((set, get) => ({
     setUser: (user) => set({ user }),
 
     updateProfile: async (data) => {
-        set({ loading: true });
+        // No global loading set
         try {
             const token = Cookies.get('access_token');
             // Using fetch directly here since authAPI doesn't have these methods yet
@@ -213,16 +216,16 @@ const useAuthStore = create((set, get) => ({
             if (!response.ok) throw new Error('Failed to update profile');
 
             const updatedUser = await response.json();
-            set({ user: updatedUser, loading: false });
+            set({ user: updatedUser });
             return updatedUser;
         } catch (error) {
-            set({ error: error.message, loading: false });
+            set({ error: error.message });
             throw error;
         }
     },
 
     updateProfileImage: async (type, file) => {
-        set({ loading: true });
+        // No global loading set
         try {
             const token = Cookies.get('access_token');
             const formData = new FormData();
@@ -240,10 +243,10 @@ const useAuthStore = create((set, get) => ({
             if (!response.ok) throw new Error(`Failed to upload ${type}`);
 
             const updatedUser = await response.json();
-            set({ user: updatedUser, loading: false });
+            set({ user: updatedUser });
             return updatedUser;
         } catch (error) {
-            set({ error: error.message, loading: false });
+            set({ error: error.message });
             throw error;
         }
     },

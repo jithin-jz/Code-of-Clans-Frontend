@@ -24,6 +24,11 @@ const Profile = () => {
         bio: '',
     });
 
+    // Local Loading States
+    const [uploadingAvatar, setUploadingAvatar] = useState(false);
+    const [uploadingBanner, setUploadingBanner] = useState(false);
+    const [savingProfile, setSavingProfile] = useState(false);
+
     // File refs
     const avatarInputRef = useRef(null);
     const bannerInputRef = useRef(null);
@@ -63,6 +68,9 @@ const Profile = () => {
         const file = event.target.files[0];
         if (!file) return;
 
+        if (type === 'avatar') setUploadingAvatar(true);
+        if (type === 'banner') setUploadingBanner(true);
+
         try {
             const updatedUser = await updateProfileImage(type, file);
             if (isOwnProfile) {
@@ -70,16 +78,22 @@ const Profile = () => {
             }
         } catch (error) {
             console.error(`Failed to upload ${type}`, error);
+        } finally {
+            if (type === 'avatar') setUploadingAvatar(false);
+            if (type === 'banner') setUploadingBanner(false);
         }
     };
 
     const handleSaveProfile = async () => {
+        setSavingProfile(true);
         try {
             const updatedUser = await updateProfile(editForm);
             setProfileUser(updatedUser);
             setIsEditing(false);
         } catch (error) {
             console.error("Failed to update profile", error);
+        } finally {
+            setSavingProfile(false);
         }
     };
 
@@ -103,18 +117,24 @@ const Profile = () => {
         navigate('/login');
     };
 
-    if (loading || !profileUser) {
-        return (
-            <div className="min-h-screen bg-black flex items-center justify-center">
-                <Loader />
-            </div>
-        );
+    // For initial load of other user's profile, show full loader
+    // For own profile, we start with data so no full loader needed usually.
+    if (loading && !profileUser) {
+        return <Loader isLoading={true} />;
     }
+
+    if (!profileUser) return null;
 
     return (
         <div className="min-h-screen bg-[#0a0a0a] text-white font-sans overflow-x-hidden">
+            
             {/* Banner Section */}
             <div className="relative h-64 md:h-80 w-full group overflow-hidden">
+                {uploadingBanner && (
+                    <div className="absolute inset-0 z-30 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+                        <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-white"></div>
+                    </div>
+                )}
                 {profileUser.profile?.banner_url ? (
                     <>
                          <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#0a0a0a] z-10" />
@@ -173,6 +193,11 @@ const Profile = () => {
                          {/* Avatar */}
                         <div className="relative group mb-4">
                             <div className="w-40 h-40 rounded-3xl border-4 border-[#0a0a0a] overflow-hidden bg-[#242424] shadow-2xl relative">
+                                {uploadingAvatar && (
+                                    <div className="absolute inset-0 z-30 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+                                        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-white"></div>
+                                    </div>
+                                )}
                                 {profileUser.profile?.avatar_url ? (
                                     <img src={profileUser.profile.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
                                 ) : (
@@ -183,7 +208,7 @@ const Profile = () => {
                             </div>
                             
                             {/* Edit Avatar Overlay */}
-                             {isOwnProfile && (
+                             {isOwnProfile && !uploadingAvatar && (
                                 <div 
                                     onClick={() => avatarInputRef.current.click()}
                                     className="absolute inset-0 rounded-3xl bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 cursor-pointer transition-all border-4 border-[#0a0a0a]"
@@ -282,9 +307,17 @@ const Profile = () => {
                                     <div className="flex justify-end pt-2">
                                         <button 
                                             onClick={handleSaveProfile}
-                                            className="bg-green-600 hover:bg-green-500 text-white px-8 py-3 rounded-xl font-bold text-sm shadow-lg shadow-green-900/20"
+                                            disabled={savingProfile}
+                                            className="bg-green-600 hover:bg-green-500 text-white px-8 py-3 rounded-xl font-bold text-sm shadow-lg shadow-green-900/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                                         >
-                                            Save Changes
+                                            {savingProfile ? (
+                                                <>
+                                                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+                                                    Saving...
+                                                </>
+                                            ) : (
+                                                'Save Changes'
+                                            )}
                                         </button>
                                     </div>
                                 </div>

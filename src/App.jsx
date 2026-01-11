@@ -18,7 +18,7 @@ import Loader from './components/common/Loader';
 
 // Auth initializer component
 const AuthInitializer = ({ children }) => {
-    const { loading, checkAuth } = useAuthStore();
+    const { isInitialized, checkAuth } = useAuthStore();
 
     useEffect(() => {
         checkAuth();
@@ -26,8 +26,8 @@ const AuthInitializer = ({ children }) => {
 
     return (
         <>
-            <Loader isLoading={loading} />
-            {!loading && children}
+            <Loader isLoading={!isInitialized} />
+            {isInitialized && children}
         </>
     );
 };

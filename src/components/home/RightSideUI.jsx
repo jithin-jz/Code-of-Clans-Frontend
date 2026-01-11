@@ -2,10 +2,10 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 
-import { Star, Settings, Volume2, Music, User, LogOut, Calendar, Trophy } from 'lucide-react';
+import { Star, Settings, Volume2, VolumeX, Music, User, LogOut, Calendar, Trophy } from 'lucide-react';
 import { Button3D } from '../common';
 
-const RightSideUI = ({ user, handleLogout, settingsOpen, setSettingsOpen }) => {
+const RightSideUI = ({ user, handleLogout, settingsOpen, setSettingsOpen, isBgmMuted, isSfxMuted, toggleBgm, toggleSfx }) => {
     return (
         <div className="fixed right-4 top-4 z-30 flex flex-col gap-4 items-end">
             {/* XP Bar */}
@@ -33,8 +33,32 @@ const RightSideUI = ({ user, handleLogout, settingsOpen, setSettingsOpen }) => {
                             style={{ background: 'linear-gradient(180deg, #5c4a3a 0%, #3d3228 100%)', border: '3px solid #8B7355', boxShadow: '0 8px 24px rgba(0,0,0,0.5)' }}
                             initial={{ opacity: 0, scale: 0.9, x: 10 }} animate={{ opacity: 1, scale: 1, x: 0 }} exit={{ opacity: 0, scale: 0.9, x: 10 }}
                         >
-                            <button className="w-full px-4 py-3 text-white text-sm hover:bg-white/10 flex items-center gap-3"><Volume2 size={18} /> Sound</button>
-                            <button className="w-full px-4 py-3 text-white text-sm hover:bg-white/10 flex items-center gap-3"><Music size={18} /> Music</button>
+                            {/* Audio Controls Grid */}
+                            <div className="grid grid-cols-2 gap-2 p-2">
+                                <button 
+                                    onClick={(e) => { e.stopPropagation(); toggleSfx(); }}
+                                    className={`flex flex-col items-center justify-center gap-1 p-3 rounded-xl transition-all border ${
+                                        isSfxMuted 
+                                            ? 'bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20' 
+                                            : 'bg-green-500/10 border-green-500/30 text-green-400 hover:bg-green-500/20'
+                                    }`}
+                                >
+                                    {isSfxMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
+                                    <span className="text-[10px] font-bold uppercase tracking-wider">SFX</span>
+                                </button>
+                                
+                                <button 
+                                    onClick={(e) => { e.stopPropagation(); toggleBgm(); }}
+                                    className={`flex flex-col items-center justify-center gap-1 p-3 rounded-xl transition-all border ${
+                                        isBgmMuted 
+                                            ? 'bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20' 
+                                            : 'bg-green-500/10 border-green-500/30 text-green-400 hover:bg-green-500/20'
+                                    }`}
+                                >
+                                    {isBgmMuted ? <VolumeX size={20} /> : <Music size={20} />}
+                                    <span className="text-[10px] font-bold uppercase tracking-wider">Music</span>
+                                </button>
+                            </div>
                             {user ? (
                                 <>
                                     <Link to="/profile" className="w-full px-4 py-3 text-white text-sm hover:bg-white/10 flex items-center gap-3"><User size={18} /> Profile</Link>

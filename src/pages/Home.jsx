@@ -15,9 +15,14 @@ import LevelMap from '../components/home/LevelMap';
 // Data
 import { levels, pathPositions, decorations, snowflakePositions } from '../constants/levelData.jsx';
 
+// Hooks
+import { useAudio } from '../hooks/useAudio';
+
 const Home = () => {
     const navigate = useNavigate();
     const { user, logout } = useAuthStore();
+    const { isBgmMuted, isSfxMuted, toggleBgm, toggleSfx, playClick } = useAudio(); // Audio Hook
+    
     const [selectedLevel, setSelectedLevel] = useState(null);
     const [isChatOpen, setChatOpen] = useState(false);
     const [settingsOpen, setSettingsOpen] = useState(false);
@@ -46,6 +51,7 @@ const Home = () => {
     };
 
     const handleLevelClick = (level) => {
+        playClick(); // SFX
         if (!user) {
             navigate('/login');
             return;
@@ -58,30 +64,44 @@ const Home = () => {
     return (
         <div className="h-screen relative select-none overflow-hidden" style={{ backgroundColor: '#3d8a24' }}>
             <Loader isLoading={isLoading} />
-
+            
             {/* Vignette Overlay */}
             <div className="absolute inset-0 pointer-events-none" 
                 style={{ background: 'radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.5) 100%)' }} 
             />
 
-            <ProfilePanel user={user} />
+            <div onClick={playClick}>
+                <ProfilePanel user={user} />
+            </div>
             
-            <ChatDrawer 
-                isChatOpen={isChatOpen} 
-                setChatOpen={setChatOpen} 
-                user={user} 
-            />
+            <div onClick={playClick}>
+                <ChatDrawer 
+                    isChatOpen={isChatOpen} 
+                    setChatOpen={setChatOpen} 
+                    user={user} 
+                />
+            </div>
             
-            <ShopButton />
+            <div onClick={playClick}>
+                <ShopButton />
+            </div>
             
-            <RightSideUI 
-                user={user} 
-                handleLogout={handleLogout} 
-                settingsOpen={settingsOpen} 
-                setSettingsOpen={setSettingsOpen} 
-            />
+            <div onClick={playClick}>
+                <RightSideUI 
+                    user={user} 
+                    handleLogout={handleLogout} 
+                    settingsOpen={settingsOpen} 
+                    setSettingsOpen={setSettingsOpen}
+                    isBgmMuted={isBgmMuted}
+                    isSfxMuted={isSfxMuted}
+                    toggleBgm={toggleBgm}
+                    toggleSfx={toggleSfx}
+                />
+            </div>
             
-            <PlayButton />
+            <div onClick={playClick}>
+                <PlayButton />
+            </div>
             
             <LevelMap 
                 scrollRef={scrollRef}
