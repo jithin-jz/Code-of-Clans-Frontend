@@ -1,9 +1,21 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Lock, MessageSquare, ChevronLeft } from 'lucide-react';
 
 const ChatDrawer = ({ isChatOpen, setChatOpen, user }) => {
+    const inputRef = useRef(null);
+
+    // Auto-focus input when chat opens
+    useEffect(() => {
+        if (isChatOpen && user && inputRef.current) {
+            // Small timeout to ensure animation/rendering is ready
+            setTimeout(() => {
+                inputRef.current.focus();
+            }, 100);
+        }
+    }, [isChatOpen, user]);
+
     return (
         <motion.div 
             className="fixed top-0 left-0 h-full z-50 pointer-events-none"
@@ -38,8 +50,13 @@ const ChatDrawer = ({ isChatOpen, setChatOpen, user }) => {
                 </div>
                 <div className="p-3 bg-[#2a2a2a] border-t border-[#444]">
                     <div className="flex gap-2">
-                        <input type="text" placeholder={user ? "Type a message..." : "Login to chat..."} disabled={!user}
-                            className="flex-1 bg-[#1a1a1a] border border-[#444] rounded px-3 py-2 text-white text-sm focus:outline-none focus:border-yellow-500 disabled:opacity-50" />
+                        <input 
+                            ref={inputRef}
+                            type="text" 
+                            placeholder={user ? "Type a message..." : "Login to chat..."} 
+                            disabled={!user}
+                            className="flex-1 bg-[#1a1a1a] border border-[#444] rounded px-3 py-2 text-white text-sm focus:outline-none focus:border-yellow-500 disabled:opacity-50" 
+                        />
                         <button disabled={!user} className="bg-green-600 hover:bg-green-500 text-white px-3 py-2 rounded font-bold border-b-4 border-green-800 active:border-b-0 active:translate-y-1 disabled:opacity-50">Send</button>
                     </div>
                 </div>
