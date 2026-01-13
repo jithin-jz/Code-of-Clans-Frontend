@@ -1,5 +1,4 @@
 import axios from 'axios';
-import Cookies from 'js-cookie';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 
@@ -13,7 +12,7 @@ const api = axios.create({
 
 // Add auth token to requests
 api.interceptors.request.use((config) => {
-    const token = Cookies.get('access_token');
+    const token = localStorage.getItem('access_token');
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
     }
@@ -30,22 +29,22 @@ api.interceptors.response.use(
             originalRequest._retry = true;
             
             try {
-                const refreshToken = Cookies.get('refresh_token');
+                const refreshToken = localStorage.getItem('refresh_token');
                 if (refreshToken) {
                     const response = await axios.post(`${API_BASE_URL}/auth/refresh/`, {
                         refresh_token: refreshToken,
                     });
                     
                     const { access_token } = response.data;
-                    Cookies.set('access_token', access_token, { expires: 1 });
+                    localStorage.setItem('access_token', access_token);
                     
                     originalRequest.headers.Authorization = `Bearer ${access_token}`;
                     return api(originalRequest);
                 }
             } catch {
                 // Refresh failed, clear tokens
-                Cookies.remove('access_token');
-                Cookies.remove('refresh_token');
+                localStorage.removeItem('access_token');
+                localStorage.removeItem('refresh_token');
                 window.location.href = '/login';
             }
         }
@@ -66,12 +65,13 @@ export const authAPI = {
     googleCallback: (code) => api.post('/auth/google/callback/', { code }),
     discordCallback: (code) => api.post('/auth/discord/callback/', { code }),
     
-
-    
     // User endpoints
     getCurrentUser: () => api.get('/auth/user/'),
     logout: () => api.post('/auth/logout/'),
     refreshToken: (refresh_token) => api.post('/auth/refresh/', { refresh_token }),
+    
+    // Add missing profile methods to match store usage if needed, or keep using fetch in store
+    updateProfile: (data) => api.patch('/auth/user/update/', data),
 };
 
 export default api;

@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import Cookies from 'js-cookie';
 import { authAPI } from '../services/api';
 
 // Helper function to open OAuth in a popup window
@@ -31,7 +30,7 @@ const useAuthStore = create((set, get) => ({
     clearError: () => set({ error: null }),
 
     checkAuth: async () => {
-        const token = Cookies.get('access_token');
+        const token = localStorage.getItem('access_token');
         if (!token) {
             set({ user: null, isAuthenticated: false, loading: false, isInitialized: true });
             return;
@@ -47,8 +46,8 @@ const useAuthStore = create((set, get) => ({
                 isInitialized: true
             });
         } catch {
-            Cookies.remove('access_token');
-            Cookies.remove('refresh_token');
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('refresh_token');
             set({ 
                 user: null, 
                 isAuthenticated: false, 
@@ -145,8 +144,8 @@ const useAuthStore = create((set, get) => ({
             }
             
             const { access_token, refresh_token, user } = response.data;
-            Cookies.set('access_token', access_token, { expires: 1 });
-            Cookies.set('refresh_token', refresh_token, { expires: 7 });
+            localStorage.setItem('access_token', access_token);
+            localStorage.setItem('refresh_token', refresh_token);
             
             set({ 
                 user, 
@@ -185,8 +184,8 @@ const useAuthStore = create((set, get) => ({
         } catch {
             // Continue with logout even if API fails
         }
-        Cookies.remove('access_token');
-        Cookies.remove('refresh_token');
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
         set({ 
             user: null, 
             isAuthenticated: false, 
@@ -201,7 +200,7 @@ const useAuthStore = create((set, get) => ({
     updateProfile: async (data) => {
         // No global loading set
         try {
-            const token = Cookies.get('access_token');
+            const token = localStorage.getItem('access_token');
             // Using fetch directly here since authAPI doesn't have these methods yet
             const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
             const response = await fetch(`${baseUrl}/auth/user/update/`, {
@@ -227,7 +226,7 @@ const useAuthStore = create((set, get) => ({
     updateProfileImage: async (type, file) => {
         // No global loading set
         try {
-            const token = Cookies.get('access_token');
+            const token = localStorage.getItem('access_token');
             const formData = new FormData();
             formData.append(type, file);
 
@@ -253,7 +252,7 @@ const useAuthStore = create((set, get) => ({
 
     followUser: async (username) => {
         try {
-            const token = Cookies.get('access_token');
+            const token = localStorage.getItem('access_token');
             const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
             const response = await fetch(`${baseUrl}/auth/users/${username}/follow/`, {
                 method: 'POST',
