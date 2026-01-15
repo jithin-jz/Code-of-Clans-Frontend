@@ -1,15 +1,15 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { Play } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { notify } from '../services/notification';
 
 const PlayButton = ({ user }) => {
     return (
         <motion.div 
-            className="fixed right-6 bottom-6 z-30" 
-            initial={{ y: 100, opacity: 0 }} 
-            animate={{ y: 0, opacity: 1 }} 
-            transition={{ type: 'spring', damping: 20, delay: 0.3 }}
+            className="fixed right-6 bottom-6 z-30"
+            initial={{ y: 100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ type: 'spring', damping: 20, stiffness: 100, delay: 0.1 }}
         >
             <button 
                 onClick={() => notify.loading("Searching for opponents...", { duration: 2000 })}

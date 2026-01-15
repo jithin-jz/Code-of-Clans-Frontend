@@ -1,18 +1,18 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { ShoppingBag } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { notify } from '../services/notification';
 
 const ShopButton = () => {
     return (
         <motion.div 
-            className="fixed left-6 bottom-6 z-30" 
-            initial={{ y: 100, opacity: 0 }} 
-            animate={{ y: 0, opacity: 1 }} 
-            transition={{ type: 'spring', damping: 20, delay: 0.3 }}
+            className="fixed left-6 bottom-6 z-30"
+            initial={{ y: 100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ type: 'spring', damping: 20, stiffness: 100 }}
         >
             <button 
-                onClick={() => notify.custom((t) => (
+                onClick={() => notify.custom(() => (
                     <div className="bg-[#121212] border-2 border-orange-500 rounded-xl p-4 flex items-center gap-3 shadow-2xl">
                         <ShoppingBag className="text-orange-500" size={24} />
                         <div>

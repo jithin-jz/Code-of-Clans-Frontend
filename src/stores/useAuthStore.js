@@ -260,6 +260,18 @@ const useAuthStore = create((set, get) => ({
       throw error;
     }
   },
+
+  setUserXP: (xp) => set((state) => ({
+    user: state.user ? {
+      ...state.user,
+      profile: {
+        ...state.user.profile,
+        xp
+      }
+    } : null
+  })),
 }));
 
+export { useAuthStore };
 export default useAuthStore;
+

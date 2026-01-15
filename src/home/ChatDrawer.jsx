@@ -1,11 +1,13 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { motion as Motion, AnimatePresence } from 'framer-motion';
 import { Lock, MessageSquare, ChevronLeft, Send, Smile, X } from 'lucide-react';
 import EmojiPicker from 'emoji-picker-react';
 import { notify } from '../services/notification';
+import { Button } from '../components/ui/button';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const ChatDrawer = ({ isChatOpen, setChatOpen, user }) => {
+    // ... refs and state ...
     const inputRef = useRef(null);
     const socketRef = useRef(null);
     const messagesEndRef = useRef(null);
@@ -15,6 +17,8 @@ const ChatDrawer = ({ isChatOpen, setChatOpen, user }) => {
     const [inputMessage, setInputMessage] = useState("");
     const [showPicker, setShowPicker] = useState(false);
     const [onlineCount, setOnlineCount] = useState(0);
+
+    // ... (rest of the hooks remain the same) ...
 
     // Auto-focus input when chat opens
     useEffect(() => {
@@ -50,8 +54,6 @@ const ChatDrawer = ({ isChatOpen, setChatOpen, user }) => {
 
         const token = localStorage.getItem("access_token");
         if (!token) return;
-
-        const MIN_LOADING_TIME = 0; // ms
 
         // Construct WS URL from API URL
         const apiUrl = import.meta.env.VITE_API_URL;
@@ -111,12 +113,11 @@ const ChatDrawer = ({ isChatOpen, setChatOpen, user }) => {
     };
 
     return (
-        <Motion.div 
-            className="fixed top-0 left-0 h-full z-40 pointer-events-none"
-            initial={{ x: '-100%' }}
-            animate={{ x: isChatOpen ? 0 : '-100%' }}
-            transition={{ type: 'spring', damping: 25, stiffness: 120 }}
-            style={{ width: '360px' }} 
+        <motion.div 
+            className="fixed top-0 left-0 h-full z-40 w-[360px]"
+            initial={{ x: "-100%" }}
+            animate={{ x: isChatOpen ? 0 : "-100%" }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
         >
             <div className="w-full h-full bg-[#0a0a0a]/95 backdrop-blur-3xl border-r border-white/10 flex flex-col pointer-events-auto shadow-2xl relative">
                 
@@ -199,37 +200,33 @@ const ChatDrawer = ({ isChatOpen, setChatOpen, user }) => {
                 {/* Input Area */}
                 <div className="p-4 bg-[#121212]/50 border-t border-white/5 backdrop-blur-md relative">
                     {/* Emoji Picker */}
-                    <AnimatePresence>
-                        {showPicker && (
-                            <Motion.div 
-                                ref={pickerRef}
-                                initial={{ opacity: 0, y: 20, scale: 0.95 }}
-                                animate={{ opacity: 1, y: 0, scale: 1 }}
-                                exit={{ opacity: 0, y: 20, scale: 0.95 }}
-                                className="absolute bottom-full left-0 w-full p-4 mb-2 z-50"
-                            >
-                                <div className="bg-[#1a1a1a] rounded-xl border border-white/10 shadow-2xl overflow-hidden h-[400px] flex">
-                                    <EmojiPicker 
-                                        onEmojiClick={handleEmojiClick}
-                                        theme="dark"
-                                        width="100%"
-                                        height="100%"
-                                        lazyLoadEmojis={true}
-                                        previewConfig={{ showPreview: false }}
-                                    />
-                                </div>
-                            </Motion.div>
-                        )}
-                    </AnimatePresence>
+                    {showPicker && (
+                        <div 
+                            ref={pickerRef}
+                            className="absolute bottom-full left-0 w-full p-4 mb-2 z-50 animate-in fade-in zoom-in-95 duration-200"
+                        >
+                            <div className="bg-[#1a1a1a] rounded-xl border border-white/10 shadow-2xl overflow-hidden h-[400px] flex">
+                                <EmojiPicker 
+                                    onEmojiClick={handleEmojiClick}
+                                    theme="dark"
+                                    width="100%"
+                                    height="100%"
+                                    lazyLoadEmojis={true}
+                                    previewConfig={{ showPreview: false }}
+                                />
+                            </div>
+                        </div>
+                    )}
 
                     <div className="flex gap-3">
-                        <button 
+                        <Button 
+                            variant="ghost"
                             onClick={() => setShowPicker(!showPicker)}
                             disabled={!user}
-                            className={`p-3 rounded-xl transition-all ${showPicker ? 'bg-[#FFD700] text-black' : 'bg-black/40 text-gray-400 hover:text-[#FFD700] hover:bg-black/60'} disabled:opacity-50 border border-white/10`}
+                            className={`p-3 rounded-xl transition-all ${showPicker ? 'bg-[#FFD700] text-black' : 'bg-black/40 text-gray-400 hover:text-[#FFD700] hover:bg-black/60'} disabled:opacity-50 border border-white/10 h-auto w-auto`}
                         >
                             {showPicker ? <X size={20} /> : <Smile size={20} />}
-                        </button>
+                        </Button>
                         
                         <input 
                             ref={inputRef}
@@ -241,23 +238,20 @@ const ChatDrawer = ({ isChatOpen, setChatOpen, user }) => {
                             onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
                             className="flex-1 bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[#FFD700]/50 focus:bg-black/60 transition-all disabled:opacity-50 placeholder-gray-600" 
                         />
-                        <button 
+                        <Button 
                             disabled={!user} 
                             onClick={() => sendMessage()}
-                            className="bg-[#FFD700] hover:bg-[#FDB931] text-black p-3 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 active:scale-95 shadow-lg shadow-yellow-900/20"
+                            className="bg-[#FFD700] hover:bg-[#FDB931] text-black p-3 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 active:scale-95 shadow-lg shadow-yellow-900/20 h-auto w-auto"
                         >
                             <Send size={18} />
-                        </button>
+                        </Button>
                     </div>
                 </div>
 
                 {/* Toggle Button */}
-                <Motion.button
+                <Button
                     onClick={() => setChatOpen(!isChatOpen)}
-                    className="absolute top-1/2 -right-12 -mt-10 w-12 h-20 bg-[#0a0a0a] border-y border-r border-[#FFD700]/30 rounded-r-2xl flex items-center justify-center shadow-2xl pointer-events-auto hover:bg-[#151515] hover:border-[#FFD700] transition-all group z-50"
-                    whileHover={{ x: 4, scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    initial={{ x: 0 }}
+                    className="absolute top-1/2 -right-12 -mt-10 w-12 h-20 bg-[#0a0a0a] border-y border-r border-[#FFD700]/30 rounded-r-2xl flex items-center justify-center shadow-2xl pointer-events-auto hover:bg-[#151515] hover:border-[#FFD700] transition-all group z-50 rounded-l-none"
                     style={{ filter: "drop-shadow(0 0 10px rgba(255, 215, 0, 0.2))" }}
                 >
                     {isChatOpen ? (
@@ -265,9 +259,9 @@ const ChatDrawer = ({ isChatOpen, setChatOpen, user }) => {
                     ) : (
                         <MessageSquare className="text-[#FFD700] drop-shadow-md" size={24} strokeWidth={3} />
                     )}
-                </Motion.button>
+                </Button>
             </div>
-        </Motion.div>
+        </motion.div>
     );
 };
 

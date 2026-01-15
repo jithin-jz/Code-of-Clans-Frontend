@@ -3,13 +3,15 @@ import { useNavigate, useParams, Link } from 'react-router-dom';
 import useAuthStore from '../stores/useAuthStore';
 import { notify } from '../services/notification';
 import { 
-    Users, Camera, Trophy, MapPin, Calendar, Edit3, Shield, Star, Sword, Crown, Home, LogOut, Sparkles, X, UserMinus, UserPlus
+    Users, Camera, Trophy, MapPin, Calendar, Edit3, Shield, Star, Sword, Crown, Home, LogOut, Sparkles, X, UserMinus, UserPlus, ChevronRight
 } from 'lucide-react';
-import { AnimatePresence, motion } from 'framer-motion';
 import { authAPI } from '../services/api';
 import Loader from '../common/Loader';
 import ReferralSection from './ReferralSection';
 import { generateLevels } from '../constants/levelData';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../components/ui/dialog';
+import { Button } from '../components/ui/button';
+import { cn } from '../lib/utils';
 
 const Profile = () => {
     const navigate = useNavigate();
@@ -35,8 +37,7 @@ const Profile = () => {
     const avatarInputRef = useRef(null);
     const bannerInputRef = useRef(null);
     
-    const [showFollowers, setShowFollowers] = useState(false);
-    const [showFollowing, setShowFollowing] = useState(false);
+    const [listType, setListType] = useState(null); // 'followers' or 'following' or null
     const [userList, setUserList] = useState([]);
     const [listLoading, setListLoading] = useState(false);
 
@@ -63,8 +64,7 @@ const Profile = () => {
            const apiCall = type === 'followers' ? getFollowers : getFollowing;
            const response = await apiCall(profileUser.username);
            setUserList(response.data);
-           if (type === 'followers') setShowFollowers(true);
-           else setShowFollowing(true);
+           setListType(type);
        } catch (err) {
            console.error(err);
        } finally {
@@ -180,13 +180,13 @@ const Profile = () => {
                             className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-1000" 
                         />
                     ) : (
-                        <div className="w-full h-full bg-linear-to-br from-indigo-900 via-purple-900 to-black relative">
+                        <div className="w-full h-full bg-gradient-to-br from-indigo-900 via-purple-900 to-black relative">
                              <div className="absolute inset-0 opacity-30" 
                                   style={{ backgroundImage: 'url("https://www.transparenttextures.com/patterns/cubes.png")' }}></div>
                         </div>
                     )}
                     {/* Gradient Overlay for Text Readability */}
-                    <div className="absolute inset-0 bg-linear-to-t from-[#050505] via-[#050505]/60 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/60 to-transparent" />
                 </div>
 
                 {/* Navigation Buttons */}
@@ -239,7 +239,7 @@ const Profile = () => {
                             
                             {/* Avatar */}
                             <div className="relative -mt-20 mb-6 flex justify-center">
-                                <div className="w-40 h-40 rounded-full border-4 border-[#050505] p-1 bg-linear-to-br from-[#FFD700] via-orange-500 to-purple-600 shadow-xl relative group">
+                                <div className="w-40 h-40 rounded-full border-4 border-[#050505] p-1 bg-gradient-to-br from-[#FFD700] via-orange-500 to-purple-600 shadow-xl relative group">
                                     <div className="w-full h-full rounded-full overflow-hidden bg-[#242424] relative">
                                         {uploadingAvatar && (
                                             <div className="absolute inset-0 z-30 flex items-center justify-center bg-black/60 backdrop-blur-sm">
@@ -252,7 +252,7 @@ const Profile = () => {
                                         {profileUser.profile?.avatar_url ? (
                                             <img src={profileUser.profile.avatar_url} alt="Avatar" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                                         ) : (
-                                            <div className="w-full h-full flex items-center justify-center bg-linear-to-br from-zinc-800 to-black">
+                                            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-zinc-800 to-black">
                                                 <Users size={64} className="text-zinc-600" />
                                             </div>
                                         )}
@@ -270,7 +270,7 @@ const Profile = () => {
                                     
                                     {/* Level Badge */}
                                     <div className="absolute bottom-0 right-0 bg-[#050505] p-1 rounded-full">
-                                        <div className="bg-linear-to-tr from-[#FFD700] to-orange-400 w-10 h-10 rounded-full flex items-center justify-center font-black text-black text-sm shadow-lg border border-white/10">
+                                        <div className="bg-gradient-to-tr from-[#FFD700] to-orange-400 w-10 h-10 rounded-full flex items-center justify-center font-black text-black text-sm shadow-lg border border-white/10">
                                             {Math.floor((profileUser.profile?.xp || 0) / 1000) + 1}
                                         </div>
                                     </div>
@@ -406,10 +406,6 @@ const Profile = () => {
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                 {[
                                     { label: 'Total XP', value: profileUser.profile?.xp || 0, icon: Star, color: 'text-[#FFD700]' },
-                                    // { label: 'Wins', value: '1,204', icon: Trophy, color: 'text-orange-400' }, 
-                                    // Removed Wins/League as requested "unwanted things" if they are just placeholders
-                                    // But maybe keep one more?
-                                    // Let's keep it minimal as requested.
                                 ].map((stat, i) => (
                                     <div key={i} className="bg-[#121212] border border-white/5 p-6 rounded-2xl flex items-center gap-4">
                                         <div className={`p-3 rounded-xl bg-white/5 ${stat.color}`}>
@@ -480,75 +476,55 @@ const Profile = () => {
                                 </div>
                             </div>
                         )}
-                        
                     </div>
                 </div>
 
-                {/* User List Modal */}
-                <AnimatePresence>
-                    {(showFollowers || showFollowing) && (
-                        <motion.div 
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-                            onClick={() => { setShowFollowers(false); setShowFollowing(false); }}
-                        >
-                            <motion.div 
-                                initial={{ scale: 0.9, y: 20 }}
-                                animate={{ scale: 1, y: 0 }}
-                                exit={{ scale: 0.9, y: 20 }}
-                                className="bg-[#121212] border border-white/10 w-full max-w-md rounded-2xl overflow-hidden shadow-2xl"
-                                onClick={e => e.stopPropagation()}
-                            >
-                                <div className="p-4 border-b border-white/10 flex items-center justify-between bg-[#1a1a1a]">
-                                    <h3 className="text-white font-bold text-lg">
-                                        {showFollowers ? 'Followers' : 'Following'}
-                                    </h3>
-                                    <button onClick={() => { setShowFollowers(false); setShowFollowing(false); }} className="text-gray-400 hover:text-white">
-                                        <X size={20} />
-                                    </button>
+                {/* User List Modal using Shadcn Dialog */}
+                <Dialog open={!!listType} onOpenChange={(open) => !open && setListType(null)}>
+                    <DialogContent className="bg-[#121212] border border-white/10 w-full max-w-md rounded-2xl overflow-hidden shadow-2xl p-0">
+                        <DialogHeader className="p-4 border-b border-white/10 bg-[#1a1a1a]">
+                            <DialogTitle className="text-white font-bold text-lg">
+                                {listType === 'followers' ? 'Followers' : 'Following'}
+                            </DialogTitle>
+                        </DialogHeader>
+                        
+                        <div className="max-h-[60vh] overflow-y-auto p-2 scrollbar-thin scrollbar-thumb-white/10">
+                            {listLoading ? (
+                                <div className="p-8 flex justify-center"><Loader isLoading={true} /></div>
+                            ) : userList.length === 0 ? (
+                                <div className="p-8 text-center text-gray-500">
+                                    No users found.
                                 </div>
-                                
-                                <div className="max-h-[60vh] overflow-y-auto p-2 scrollbar-thin scrollbar-thumb-white/10">
-                                    {listLoading ? (
-                                        <div className="p-8 flex justify-center"><Loader isLoading={true} /></div>
-                                    ) : userList.length === 0 ? (
-                                        <div className="p-8 text-center text-gray-500">
-                                            No users found.
-                                        </div>
-                                    ) : (
-                                        <div className="space-y-1">
-                                            {userList.map(user => (
-                                                <div key={user.username} className="flex items-center justify-between p-3 hover:bg-white/5 rounded-xl transition-colors group">
-                                                    <Link to={`/profile/${user.username}`} onClick={() => { setShowFollowers(false); setShowFollowing(false); }} className="flex items-center gap-3">
-                                                        <div className="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center overflow-hidden border border-white/5">
-                                                            {user.avatar_url ? (
-                                                                <img src={user.avatar_url} alt={user.username} className="w-full h-full object-cover" />
-                                                            ) : (
-                                                                <span className="text-zinc-500 font-bold">{user.username.charAt(0).toUpperCase()}</span>
-                                                            )}
-                                                        </div>
-                                                        <div>
-                                                            <div className="text-white font-bold text-sm">{user.first_name || user.username}</div>
-                                                            <div className="text-gray-500 text-xs">@{user.username}</div>
-                                                        </div>
-                                                    </Link>
-                                                    
-                                                    {currentUser && currentUser.username !== user.username && (
-                                                       <Link to={`/profile/${user.username}`} onClick={() => { setShowFollowers(false); setShowFollowing(false); }} className="px-3 py-1.5 bg-white/5 hover:bg-white/10 rounded-lg text-xs font-bold text-[#FFD700] transition-colors">
-                                                           View
-                                                       </Link>
+                            ) : (
+                                <div className="space-y-1">
+                                    {userList.map(user => (
+                                        <div key={user.username} className="flex items-center justify-between p-3 hover:bg-white/5 rounded-xl transition-colors group">
+                                            <Link to={`/profile/${user.username}`} onClick={() => setListType(null)} className="flex items-center gap-3">
+                                                <div className="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center overflow-hidden border border-white/5">
+                                                    {user.avatar_url ? (
+                                                        <img src={user.avatar_url} alt={user.username} className="w-full h-full object-cover" />
+                                                    ) : (
+                                                        <span className="text-zinc-500 font-bold">{user.username.charAt(0).toUpperCase()}</span>
                                                     )}
                                                 </div>
-                                            ))}
+                                                <div>
+                                                    <div className="text-white font-bold text-sm">{user.first_name || user.username}</div>
+                                                    <div className="text-gray-500 text-xs">@{user.username}</div>
+                                                </div>
+                                            </Link>
+                                            
+                                            {currentUser && currentUser.username !== user.username && (
+                                               <Link to={`/profile/${user.username}`} onClick={() => setListType(null)} className="px-3 py-1.5 bg-white/5 hover:bg-white/10 rounded-lg text-xs font-bold text-[#FFD700] transition-colors">
+                                                   View
+                                               </Link>
+                                            )}
                                         </div>
-                                    )}
+                                    ))}
                                 </div>
-                            </motion.div>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
+                            )}
+                        </div>
+                    </DialogContent>
+                </Dialog>
             </div>
         </div>
     );

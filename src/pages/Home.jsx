@@ -12,6 +12,7 @@ import ShopButton from '../home/ShopButton';
 import RightSideUI from '../home/RightSideUI';
 import PlayButton from '../home/PlayButton';
 import LevelMap from '../home/LevelMap';
+import CheckInReward from '../home/CheckInReward';
 
 // Data
 import { generateLevels } from '../constants/levelData.jsx';
@@ -28,6 +29,7 @@ const Home = () => {
     const [selectedLevel, setSelectedLevel] = useState(null);
     const [isChatOpen, setChatOpen] = useState(false);
     const [settingsOpen, setSettingsOpen] = useState(false);
+    const [checkInOpen, setCheckInOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
 
     // Initialize Levels
@@ -107,8 +109,15 @@ const Home = () => {
                 handleLogout={handleLogout} 
                 settingsOpen={settingsOpen} 
                 setSettingsOpen={setSettingsOpen}
+                checkInOpen={checkInOpen}
+                setCheckInOpen={setCheckInOpen}
             />
             <PlayButton user={user} />
+            
+            <CheckInReward 
+                isOpen={checkInOpen} 
+                onClose={() => setCheckInOpen(false)}
+            />
             
             {!isLoading && (
                 <LevelMap 

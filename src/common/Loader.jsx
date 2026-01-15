@@ -7,10 +7,9 @@ const Loader = ({ isLoading }) => {
             {isLoading && (
                 <motion.div 
                     className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/90 backdrop-blur-sm"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
+                    initial={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    transition={{ duration: 0.3 }}
+                    transition={{ duration: 0.5 }}
                 >
                     <div className="flex flex-col items-center gap-4">
                         {/* Elegant Simple Spinner */}
@@ -19,13 +18,11 @@ const Loader = ({ isLoading }) => {
                             <div className="absolute inset-0 border-4 border-t-[#FFD700] rounded-full animate-spin"></div>
                         </div>
                         
-                        <motion.p 
-                            className="text-[#FFD700] text-sm font-bold tracking-[0.2em] uppercase opacity-80"
-                            animate={{ opacity: [0.4, 1, 0.4] }}
-                            transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                        <p 
+                            className="text-[#FFD700] text-sm font-bold tracking-[0.2em] uppercase opacity-80 animate-pulse"
                         >
                             Loading
-                        </motion.p>
+                        </p>
                     </div>
                 </motion.div>
             )}

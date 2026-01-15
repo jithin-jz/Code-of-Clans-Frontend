@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { Star, Lock, MapPin } from 'lucide-react';
 
+
 // 3D Level Button
 const LevelButton = ({ level, isCurrentLevel, onClick }) => {
     const baseStyle = level.unlocked ? {
