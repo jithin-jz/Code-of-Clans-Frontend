@@ -139,6 +139,7 @@ const CheckInReward = ({ isOpen, onClose }) => {
                             isClaimable && "bg-primary hover:bg-primary text-black border-none",
                             !isCompleted && !isClaimable && "text-gray-500 border-white/10"
                           )}
+
                         >
                           {DAILY_REWARDS[day]} XP
                         </Badge>
