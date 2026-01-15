@@ -100,7 +100,7 @@ const AdminDashboard = () => {
 
                     <div className="mt-8 pt-8 border-t border-gray-700">
                         <a 
-                            href={import.meta.env.VITE_ADMIN_URL || 'http://localhost:8000/admin/'} 
+                            href={import.meta.env.VITE_ADMIN_URL} 
                             target="_blank" 
                             rel="noopener noreferrer"
                             className="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-white hover:bg-gray-700/50 rounded-xl transition-all"

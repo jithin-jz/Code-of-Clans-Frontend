@@ -50,8 +50,15 @@ const ChatDrawer = ({ isChatOpen, setChatOpen, user }) => {
         const token = localStorage.getItem("access_token");
         if (!token) return;
 
+        const MIN_LOADING_TIME = 0; // ms
+
+        // Construct WS URL from API URL
+        const apiUrl = import.meta.env.VITE_API_URL;
+        const wsProtocol = apiUrl.startsWith('https') ? 'wss' : 'ws';
+        const wsHost = apiUrl.replace(/^https?:\/\//, '');
+        
         const ws = new WebSocket(
-            `ws://127.0.0.1:8000/ws/chat/?token=${token}`
+            `${wsProtocol}://${wsHost}/ws/chat/?token=${token}`
         );
 
         socketRef.current = ws;
