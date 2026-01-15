@@ -5,7 +5,7 @@ import useAuthStore from './stores/useAuthStore';
 // Pages
 
 import Login from './auth/Login';
-import Profile from './profile/Profile'; // Make sure this path is correct
+import Profile from './profile/Profile';
 import Home from './pages/Home';
 import OAuthCallback from './pages/OAuthCallback';
 import AdminDashboard from './admin/Dashboard';
