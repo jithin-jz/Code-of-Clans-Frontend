@@ -18,10 +18,10 @@ const NotFound = () => {
 
             <div className="relative z-10 text-center p-8 max-w-2xl">
                 <div className="mb-8 relative inline-block">
-                    <h1 className="text-9xl font-black text-transparent bg-clip-text bg-gradient-to-b from-[#FFD700] to-[#b8860b] drop-shadow-2xl">
+                    <h1 className="text-9xl font-black text-transparent bg-clip-text bg-linear-to-b from-[#FFD700] to-[#b8860b] drop-shadow-2xl">
                         404
                     </h1>
-                    <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-full h-1 bg-gradient-to-r from-transparent via-[#FFD700] to-transparent opacity-50"></div>
+                    <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-full h-1 bg-linear-to-r from-transparent via-[#FFD700] to-transparent opacity-50"></div>
                 </div>
 
                 <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
@@ -35,7 +35,7 @@ const NotFound = () => {
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                     <Link 
                         to="/home"
-                        className="px-8 py-4 bg-gradient-to-r from-[#FFD700] to-[#b8860b] hover:from-[#ffe033] hover:to-[#daa520] text-black font-black uppercase tracking-wider rounded-xl transition-all transform hover:scale-105 hover:shadow-[0_0_20px_rgba(255,215,0,0.4)] flex items-center gap-3"
+                        className="px-8 py-4 bg-linear-to-r from-[#FFD700] to-[#b8860b] hover:from-[#ffe033] hover:to-[#daa520] text-black font-black uppercase tracking-wider rounded-xl transition-all transform hover:scale-105 hover:shadow-[0_0_20px_rgba(255,215,0,0.4)] flex items-center gap-3"
                     >
                         <Home size={20} />
                         Return to Base
