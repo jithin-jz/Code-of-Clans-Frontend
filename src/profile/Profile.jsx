@@ -1,14 +1,14 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, Link } from 'react-router-dom';
 import useAuthStore from '../stores/useAuthStore';
+import { notify } from '../services/notification';
 import { 
     Users, Camera, Trophy, MapPin, Calendar, Edit3, Shield, Star, Sword, Crown, Home, LogOut, Sparkles, X, UserMinus, UserPlus
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { AnimatePresence, motion } from 'framer-motion';
 import { authAPI } from '../services/api';
 import Loader from '../common/Loader';
-import ReferralSection from '../profile/ReferralSection';
+import ReferralSection from './ReferralSection';
 import { generateLevels } from '../constants/levelData';
 
 const Profile = () => {
@@ -54,7 +54,7 @@ const Profile = () => {
         } finally {
             setLoading(false);
         }
-    }, [navigate]);
+    }, [navigate, getUserProfile]);
 
     const fetchUserList = async (type) => { 
        setListLoading(true);
@@ -146,7 +146,7 @@ const Profile = () => {
                 await deleteAccount();
                 navigate('/login');
             } catch (err) {
-                alert(err.message);
+                notify.error(err.message);
             }
         }
     };

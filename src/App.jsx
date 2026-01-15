@@ -5,7 +5,7 @@ import useAuthStore from './stores/useAuthStore';
 // Pages
 
 import Login from './auth/Login';
-import Profile from './pages/Profile';
+import Profile from './profile';
 import Home from './pages/Home';
 import OAuthCallback from './pages/OAuthCallback';
 import AdminDashboard from './admin/Dashboard';
@@ -34,9 +34,12 @@ const AuthInitializer = ({ children }) => {
     );
 };
 
+import { NotificationContainer } from './services/notification';
+
 const AppContent = () => {
     return (
         <AuthInitializer>
+            <NotificationContainer />
             <div className="min-h-screen">
                 <main>
                     <Routes>

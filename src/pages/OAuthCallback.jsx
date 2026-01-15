@@ -62,13 +62,24 @@ const OAuthCallback = ({ provider }) => {
                         window.opener.postMessage({ 
                             type: 'oauth-success', 
                             provider 
-                        }, '*'); // Use '*' to allow port mismatches in dev
+                        }, '*');
                         window.close();
                     } else {
                         // Get fresh user data from store and redirect based on role
                         const currentUser = useAuthStore.getState().user;
                         const redirectPath = getRedirectPath(currentUser);
                         navigate(redirectPath, { replace: true });
+                    }
+                } else {
+                    // Handle failure (e.g. Blocked User)
+                    const storeError = useAuthStore.getState().error;
+                    if (isPopupWindow) {
+                        window.opener.postMessage({ 
+                            type: 'oauth-error', 
+                            provider, 
+                            error: storeError 
+                        }, '*');
+                        window.close();
                     }
                 }
             } catch (err) {

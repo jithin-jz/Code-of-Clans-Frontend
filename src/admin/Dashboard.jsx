@@ -2,13 +2,25 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import useAuthStore from '../stores/useAuthStore';
 
+import { authAPI } from '../services/api';
 import Loader from '../common/Loader';
+import { notify } from '../services/notification';
 
 const AdminDashboard = () => {
     const navigate = useNavigate();
     const { user, isAuthenticated, logout, checkAuth } = useAuthStore();
     const [loading, setLoading] = useState(true);
-    const [activeTab, setActiveTab] = useState('overview');
+    const [activeTab, setActiveTab] = useState('users'); // Default to users for now
+    
+    const [stats, setStats] = useState([
+        { label: 'Total Users', value: '0', icon: '👥', change: 'Calculating...', color: 'bg-blue-500' },
+        { label: 'Active Sessions', value: '0', icon: '⚡', change: 'Online now', color: 'bg-green-500' },
+        { label: 'OAuth Logins', value: '0', icon: '🔐', change: 'Last 24 hours', color: 'bg-purple-500' },
+        { label: 'Total Gems', value: '0', icon: '💎', change: 'In circulation', color: 'bg-pink-500' },
+    ]);
+    
+    const [userList, setUserList] = useState([]);
+    const [tableLoading, setTableLoading] = useState(false);
 
     useEffect(() => {
         const verifyAdmin = async () => {
@@ -24,9 +36,43 @@ const AdminDashboard = () => {
                 navigate('/login');
             } else if (!user?.is_staff && !user?.is_superuser) {
                 navigate('/home');
+            } else {
+                fetchUsers();
             }
         }
     }, [loading, isAuthenticated, user, navigate]);
+
+    const fetchUsers = async () => {
+        setTableLoading(true);
+        try {
+            const response = await authAPI.getUsers();
+            setUserList(response.data);
+            
+            // Update simple stats
+            setStats(prev => prev.map(stat => {
+                if (stat.label === 'Total Users') return { ...stat, value: response.data.length, change: 'Updated just now' };
+                return stat;
+            }));
+            
+        } catch (error) {
+            console.error("Failed to fetch users", error);
+        } finally {
+            setTableLoading(false);
+        }
+    };
+
+    const handleBlockToggle = async (username) => {
+        if (!window.confirm(`Are you sure you want to toggle block status for ${username}?`)) return;
+        
+        try {
+            await authAPI.toggleBlockUser(username);
+            notify.success(`User status updated for ${username}`);
+            // Refresh list
+            fetchUsers();
+        } catch (error) {
+            notify.error(error.response?.data?.error || "Failed to toggle block status");
+        }
+    };
 
     const handleLogout = async () => {
         await logout();
@@ -41,20 +87,6 @@ const AdminDashboard = () => {
         return null;
     }
 
-    const stats = [
-        { label: 'Total Users', value: '6', icon: '👥', change: '+2 this week', color: 'bg-blue-500' },
-        { label: 'Active Sessions', value: '3', icon: '⚡', change: 'Online now', color: 'bg-green-500' },
-        { label: 'OAuth Logins', value: '12', icon: '🔐', change: 'Last 24 hours', color: 'bg-purple-500' },
-        { label: 'Total Gems', value: '3,000', icon: '💎', change: 'In circulation', color: 'bg-pink-500' },
-    ];
-
-    const recentUsers = [
-        { username: 'exkiraaa', email: 'exkiraaa@gmail.com', provider: 'Google', status: 'Staff', time: 'Just now' },
-        { username: 'jithin-jz', email: 'jithin@gmail.com', provider: 'Google', status: 'Active', time: '5 min ago' },
-        { username: 'ex_kira', email: 'ex_kira@github.com', provider: 'GitHub', status: 'Active', time: '1 hour ago' },
-        { username: 'jzdieheart', email: 'jzdieheart@discord.com', provider: 'Discord', status: 'Active', time: '2 hours ago' },
-    ];
-
     const sidebarItems = [
         { id: 'overview', label: 'Overview', icon: '📊' },
         { id: 'users', label: 'Users', icon: '👥' },
@@ -65,11 +97,11 @@ const AdminDashboard = () => {
     return (
         <div className="min-h-screen bg-gray-900 flex">
             {/* Sidebar */}
-            <aside className="w-64 bg-gray-800 border-r border-gray-700 pt-20 fixed h-full">
+            <aside className="w-64 bg-gray-800 border-r border-gray-700 pt-20 fixed h-full z-20">
                 <div className="p-4">
                     <div className="flex items-center gap-3 mb-8 p-3 bg-gray-700/50 rounded-xl">
                         {user?.profile?.avatar_url ? (
-                            <img src={user.profile.avatar_url} alt="" className="w-10 h-10 rounded-lg" />
+                            <img src={user.profile.avatar_url} alt="" className="w-10 h-10 rounded-lg object-cover" />
                         ) : (
                             <div className="w-10 h-10 rounded-lg bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold">
                                 {user?.username?.[0]?.toUpperCase()}
@@ -142,107 +174,100 @@ const AdminDashboard = () => {
                 </div>
 
                 {/* Stats Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                    {stats.map((stat, i) => (
-                        <div key={i} className="bg-gray-800 rounded-2xl p-6 border border-gray-700">
-                            <div className="flex items-start justify-between">
-                                <div>
-                                    <p className="text-gray-400 text-sm font-medium">{stat.label}</p>
-                                    <p className="text-3xl font-bold text-white mt-2">{stat.value}</p>
-                                    <p className="text-gray-500 text-xs mt-2">{stat.change}</p>
-                                </div>
-                                <div className={`w-12 h-12 ${stat.color} rounded-xl flex items-center justify-center text-2xl`}>
-                                    {stat.icon}
+                {activeTab === 'overview' && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                        {stats.map((stat, i) => (
+                            <div key={i} className="bg-gray-800 rounded-2xl p-6 border border-gray-700">
+                                <div className="flex items-start justify-between">
+                                    <div>
+                                        <p className="text-gray-400 text-sm font-medium">{stat.label}</p>
+                                        <p className="text-3xl font-bold text-white mt-2">{stat.value}</p>
+                                        <p className="text-gray-500 text-xs mt-2">{stat.change}</p>
+                                    </div>
+                                    <div className={`w-12 h-12 ${stat.color} rounded-xl flex items-center justify-center text-2xl`}>
+                                        {stat.icon}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    ))}
-                </div>
+                        ))}
+                    </div>
+                )}
 
-                {/* Tables Section */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    {/* Recent Users Table */}
-                    <div className="lg:col-span-2 bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden">
-                        <div className="px-6 py-4 border-b border-gray-700 flex items-center justify-between">
-                            <h2 className="text-lg font-semibold text-white">Recent Users</h2>
-                            <button className="text-blue-400 text-sm hover:text-blue-300">View All →</button>
-                        </div>
-                        <div className="overflow-x-auto">
-                            <table className="w-full">
-                                <thead className="bg-gray-700/50">
-                                    <tr>
-                                        <th className="text-left text-gray-400 text-xs font-medium uppercase tracking-wider px-6 py-3">User</th>
-                                        <th className="text-left text-gray-400 text-xs font-medium uppercase tracking-wider px-6 py-3">Provider</th>
-                                        <th className="text-left text-gray-400 text-xs font-medium uppercase tracking-wider px-6 py-3">Status</th>
-                                        <th className="text-left text-gray-400 text-xs font-medium uppercase tracking-wider px-6 py-3">Last Active</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-gray-700">
-                                    {recentUsers.map((user, i) => (
-                                        <tr key={i} className="hover:bg-gray-700/30 transition-colors">
-                                            <td className="px-6 py-4">
-                                                <div className="flex items-center gap-3">
-                                                    <div className="w-8 h-8 rounded-lg bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-sm font-bold">
-                                                        {user.username[0].toUpperCase()}
-                                                    </div>
-                                                    <div>
-                                                        <p className="text-white font-medium text-sm">{user.username}</p>
-                                                        <p className="text-gray-500 text-xs">{user.email}</p>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <span className={`inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-medium ${
-                                                    user.provider === 'Google' ? 'bg-blue-500/20 text-blue-400' :
-                                                    user.provider === 'GitHub' ? 'bg-gray-600 text-gray-300' :
-                                                    'bg-indigo-500/20 text-indigo-400'
-                                                }`}>
-                                                    {user.provider === 'Google' && '🔵'}
-                                                    {user.provider === 'GitHub' && '🐙'}
-                                                    {user.provider === 'Discord' && '💬'}
-                                                    {user.provider}
-                                                </span>
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <span className={`px-2 py-1 rounded text-xs font-medium ${
-                                                    user.status === 'Staff' ? 'bg-yellow-500/20 text-yellow-400' : 'bg-green-500/20 text-green-400'
-                                                }`}>
-                                                    {user.status}
-                                                </span>
-                                            </td>
-                                            <td className="px-6 py-4 text-gray-400 text-sm">{user.time}</td>
+                {/* Users Table */}
+                {(activeTab === 'users' || activeTab === 'overview') && (
+                    <div className="grid grid-cols-1 gap-6">
+                        <div className="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden">
+                            <div className="px-6 py-4 border-b border-gray-700 flex items-center justify-between">
+                                <h2 className="text-lg font-semibold text-white">All Users</h2>
+                                <button onClick={fetchUsers} className="text-blue-400 text-sm hover:text-blue-300">Refresh</button>
+                            </div>
+                            <div className="overflow-x-auto">
+                                <table className="w-full">
+                                    <thead className="bg-gray-700/50">
+                                        <tr>
+                                            <th className="text-left text-gray-400 text-xs font-medium uppercase tracking-wider px-6 py-3">User</th>
+                                            <th className="text-left text-gray-400 text-xs font-medium uppercase tracking-wider px-6 py-3">Roles</th>
+                                            <th className="text-left text-gray-400 text-xs font-medium uppercase tracking-wider px-6 py-3">Status</th>
+                                            <th className="text-right text-gray-400 text-xs font-medium uppercase tracking-wider px-6 py-3">Actions</th>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody className="divide-y divide-gray-700">
+                                        {tableLoading ? (
+                                            <tr><td colSpan="4" className="text-center py-8 text-gray-500"><Loader isLoading={true}/></td></tr>
+                                        ) : userList.length === 0 ? (
+                                            <tr><td colSpan="4" className="text-center py-8 text-gray-500">No users found.</td></tr>
+                                        ) : (
+                                            userList.map((usr, i) => (
+                                                <tr key={i} className="hover:bg-gray-700/30 transition-colors">
+                                                    <td className="px-6 py-4">
+                                                        <div className="flex items-center gap-3">
+                                                            <div className="w-8 h-8 rounded-lg bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-sm font-bold overflow-hidden">
+                                                                {usr.profile?.avatar_url ? <img src={usr.profile.avatar_url} className="w-full h-full object-cover"/> : usr.username[0].toUpperCase()}
+                                                            </div>
+                                                            <div>
+                                                                <p className="text-white font-medium text-sm">{usr.username}</p>
+                                                                <p className="text-gray-500 text-xs">{usr.email}</p>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        <div className="flex gap-2">
+                                                            {usr.is_superuser && <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-red-500/20 text-red-400 uppercase">Superuser</span>}
+                                                            {usr.is_staff && <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-yellow-500/20 text-yellow-400 uppercase">Staff</span>}
+                                                            {!usr.is_staff && !usr.is_superuser && <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-gray-500/20 text-gray-400 uppercase">User</span>}
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        <span className={`px-2 py-1 rounded text-xs font-medium ${
+                                                            usr.is_active ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
+                                                        }`}>
+                                                            {usr.is_active ? 'Active' : 'Blocked'}
+                                                        </span>
+                                                    </td>
+                                                    <td className="px-6 py-4 text-right">
+                                                        <button 
+                                                            onClick={() => handleBlockToggle(usr.username)}
+                                                            disabled={user.username === usr.username} // Cannot block self
+                                                            className={`text-xs font-bold px-3 py-1.5 rounded-lg transition-colors ${
+                                                                user.username === usr.username 
+                                                                    ? 'opacity-50 cursor-not-allowed bg-gray-700 text-gray-500'
+                                                                    : usr.is_active 
+                                                                        ? 'bg-red-500/10 text-red-400 hover:bg-red-500/20' 
+                                                                        : 'bg-green-500/10 text-green-400 hover:bg-green-500/20'
+                                                            }`}
+                                                        >
+                                                            {usr.is_active ? 'Block' : 'Unblock'}
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
-
-                    {/* Quick Actions */}
-                    <div className="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden">
-                        <div className="px-6 py-4 border-b border-gray-700">
-                            <h2 className="text-lg font-semibold text-white">Quick Actions</h2>
-                        </div>
-                        <div className="p-4 space-y-3">
-                            <button className="w-full flex items-center gap-3 p-4 bg-blue-500/10 border border-blue-500/30 rounded-xl text-blue-400 hover:bg-blue-500/20 transition-all">
-                                <span className="text-xl">➕</span>
-                                <span className="font-medium">Add New User</span>
-                            </button>
-                            <button className="w-full flex items-center gap-3 p-4 bg-purple-500/10 border border-purple-500/30 rounded-xl text-purple-400 hover:bg-purple-500/20 transition-all">
-                                <span className="text-xl">📧</span>
-                                <span className="font-medium">Send Broadcast</span>
-                            </button>
-                            <button className="w-full flex items-center gap-3 p-4 bg-green-500/10 border border-green-500/30 rounded-xl text-green-400 hover:bg-green-500/20 transition-all">
-                                <span className="text-xl">📊</span>
-                                <span className="font-medium">Export Data</span>
-                            </button>
-                            <button className="w-full flex items-center gap-3 p-4 bg-orange-500/10 border border-orange-500/30 rounded-xl text-orange-400 hover:bg-orange-500/20 transition-all">
-                                <span className="text-xl">🔄</span>
-                                <span className="font-medium">Sync Database</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                )}
             </main>
         </div>
     );

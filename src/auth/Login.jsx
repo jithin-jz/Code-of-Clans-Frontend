@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAuthStore from '../stores/useAuthStore';
+import { notify } from '../services/notification';
 
 // SVG Icons for providers
 const GithubIcon = () => (
@@ -47,6 +48,11 @@ const Login = () => {
                 await checkAuth();
             } else if (type === 'oauth-error') {
                 console.error(`OAuth error from ${provider}:`, error);
+                if (error === 'User account is disabled.') {
+                    notify.error("Your account has been blocked by an administrator.", { duration: 5000 });
+                } else {
+                    notify.error(`Login failed: ${error}`);
+                }
             }
         };
         window.addEventListener('message', handleMessage);

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { notify } from './notification';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL + '/api';
 
@@ -25,6 +26,22 @@ api.interceptors.response.use(
     async (error) => {
         const originalRequest = error.config;
         
+        // Check for blocked user
+        if (error.response?.data?.error === 'User account is disabled.' || 
+            error.response?.data?.detail === 'User account is disabled.') {
+            
+            // If in a popup (OAuth), let the caller handle it (to close popup and notify parent)
+            if (window.opener) {
+                return Promise.reject(error);
+            }
+
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('refresh_token');
+            notify.error("Your account has been blocked by an administrator.", { duration: 5000 });
+            window.location.href = '/login';
+            return Promise.reject(error);
+        }
+
         if (error.response?.status === 401 && !originalRequest._retry) {
             originalRequest._retry = true;
             
@@ -83,6 +100,10 @@ export const authAPI = {
     getFollowing: (username) => api.get(`/auth/users/${username}/following/`),
     redeemReferral: (code) => api.post('/auth/user/redeem-referral/', { code }),
     deleteAccount: () => api.delete('/auth/user/delete/'),
+    
+    // Admin endpoints
+    getUsers: () => api.get('/auth/admin/users/'),
+    toggleBlockUser: (username) => api.post(`/auth/admin/users/${username}/toggle-block/`),
 };
 
 export default api;
