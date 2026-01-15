@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Star, Play } from 'lucide-react';
+import { notify } from '../services/notification';
 
 
 const LevelModal = ({ selectedLevel, onClose }) => {
@@ -73,6 +74,7 @@ const LevelModal = ({ selectedLevel, onClose }) => {
                         
                         {/* Play button */}
                         <motion.button 
+                            onClick={() => notify.loading(`Loading Level ${selectedLevel.id}...`, { duration: 3000 })}
                             className="w-full py-4 rounded-xl font-bold text-xl text-white shadow-lg bg-green-600 hover:bg-green-500 border-b-4 border-green-800 active:border-b-0 active:translate-y-1 transition-all flex items-center justify-center gap-2"
                         >
                              <Play size={24} fill="currentColor" className="text-white" />

@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Play } from 'lucide-react';
+import { notify } from '../services/notification';
 
 const PlayButton = ({ user }) => {
     return (
@@ -10,7 +11,10 @@ const PlayButton = ({ user }) => {
             animate={{ y: 0, opacity: 1 }} 
             transition={{ type: 'spring', damping: 20, delay: 0.3 }}
         >
-            <button className="group relative">
+            <button 
+                onClick={() => notify.loading("Searching for opponents...", { duration: 2000 })}
+                className="group relative"
+            >
                 {/* Glow Effect */}
                 <div className="absolute inset-0 bg-[#FFD700] rounded-full blur-xl opacity-20 group-hover:opacity-40 transition-opacity duration-500"></div>
                 

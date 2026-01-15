@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ShoppingBag } from 'lucide-react';
+import { notify } from '../services/notification';
 
 const ShopButton = () => {
     return (
@@ -10,7 +11,18 @@ const ShopButton = () => {
             animate={{ y: 0, opacity: 1 }} 
             transition={{ type: 'spring', damping: 20, delay: 0.3 }}
         >
-            <button className="group relative">
+            <button 
+                onClick={() => notify.custom((t) => (
+                    <div className="bg-[#121212] border-2 border-orange-500 rounded-xl p-4 flex items-center gap-3 shadow-2xl">
+                        <ShoppingBag className="text-orange-500" size={24} />
+                        <div>
+                            <p className="text-white font-bold">Blacksmith is sleeping!</p>
+                            <p className="text-gray-400 text-xs">Shop opens at Level 3.</p>
+                        </div>
+                    </div>
+                ))}
+                className="group relative"
+            >
                 {/* Glow Effect */}
                 <div className="absolute inset-0 bg-orange-500 rounded-full blur-xl opacity-20 group-hover:opacity-40 transition-opacity duration-500"></div>
                 

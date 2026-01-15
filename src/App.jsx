@@ -5,10 +5,11 @@ import useAuthStore from './stores/useAuthStore';
 // Pages
 
 import Login from './auth/Login';
-import Profile from './profile';
+import Profile from './profile/Profile'; // Make sure this path is correct
 import Home from './pages/Home';
 import OAuthCallback from './pages/OAuthCallback';
 import AdminDashboard from './admin/Dashboard';
+import NotFound from './pages/NotFound';
 
 // Route Guards
 import ProtectedRoute from './routes/ProtectedRoute';
@@ -82,7 +83,10 @@ const AppContent = () => {
                         } />
                         
                         {/* Fallback */}
-                        <Route path="*" element={<Navigate to="/" replace />} />
+                        <Route path="/admin" element={<AdminDashboard />} />
+                        
+                        {/* 404 Route */}
+                        <Route path="*" element={<NotFound />} />
                     </Routes>
                 </main>
             </div>

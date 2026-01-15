@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion as Motion, AnimatePresence } from 'framer-motion';
 import { Lock, MessageSquare, ChevronLeft, Send, Smile, X } from 'lucide-react';
 import EmojiPicker from 'emoji-picker-react';
+import { notify } from '../services/notification';
 
 const ChatDrawer = ({ isChatOpen, setChatOpen, user }) => {
     const inputRef = useRef(null);
@@ -63,7 +64,10 @@ const ChatDrawer = ({ isChatOpen, setChatOpen, user }) => {
 
         socketRef.current = ws;
 
-        ws.onopen = () => console.log("Chat connected");
+        ws.onopen = () => {
+            console.log("Chat connected");
+            notify.success("Connected to Global Chat");
+        };
 
         ws.onmessage = (event) => {
             try {
@@ -83,6 +87,7 @@ const ChatDrawer = ({ isChatOpen, setChatOpen, user }) => {
 
         ws.onclose = () => {
             console.log("Chat disconnected");
+            notify.error("Disconnected from Chat");
             socketRef.current = null;
         };
 
