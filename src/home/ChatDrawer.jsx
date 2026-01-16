@@ -52,6 +52,9 @@ const ChatDrawer = ({ isChatOpen, setChatOpen, user }) => {
     useEffect(() => {
         if (!user || !isChatOpen) return;
 
+        // Clear messages to prevent duplication from history replay
+        setMessages([]);
+
         const token = localStorage.getItem("access_token");
         if (!token) return;
 

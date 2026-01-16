@@ -3,7 +3,7 @@ import { useNavigate, useParams, Link } from 'react-router-dom';
 import useAuthStore from '../stores/useAuthStore';
 import { notify } from '../services/notification';
 import { 
-    Users, Camera, Trophy, MapPin, Calendar, Edit3, Shield, Star, Sword, Crown, Home, LogOut, Sparkles, X, UserMinus, UserPlus, ChevronRight, Layout, Gift
+    Users, Camera, Trophy, MapPin, Calendar, Edit3, Shield, Star, Sword, Crown, Home, LogOut, Sparkles, X, UserMinus, UserPlus, ChevronRight, Layout, Gift, Github, Code
 } from 'lucide-react';
 import { authAPI } from '../services/api';
 import Loader from '../common/Loader';
@@ -12,6 +12,7 @@ import { generateLevels } from '../constants/levelData';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '../components/ui/dialog';
 import { Button } from '../components/ui/button';
 import { cn } from '../lib/utils';
+import { GitHubCalendar } from 'react-github-calendar';
 
 const Profile = () => {
     const navigate = useNavigate();
@@ -28,6 +29,8 @@ const Profile = () => {
     const [editForm, setEditForm] = useState({
         username: '',
         bio: '',
+        github_username: '',
+        leetcode_username: '',
     });
 
     const [uploadingAvatar, setUploadingAvatar] = useState(false);
@@ -81,6 +84,8 @@ const Profile = () => {
             setEditForm({
                 username: currentUser?.username || '',
                 bio: currentUser?.profile?.bio || '',
+                github_username: currentUser?.profile?.github_username || '',
+                leetcode_username: currentUser?.profile?.leetcode_username || '',
             });
             setLoading(false);
         } else if (username) {
@@ -167,7 +172,7 @@ const Profile = () => {
             {/* Left Panel - Identity & Actions */}
             <div className="w-full md:w-80 lg:w-96 shrink-0 flex flex-col gap-6 h-full overflow-y-auto no-scrollbar">
                 {/* Identity Card */}
-                <div className="w-full bg-[#121212] border border-white/5 rounded-3xl p-6 relative flex flex-col items-center text-center shadow-2xl overflow-hidden">
+                <div className="w-full h-full bg-[#121212] border border-white/5 rounded-3xl p-6 relative flex flex-col items-center text-center shadow-2xl overflow-hidden">
                     
                     {/* Banner Background */}
                     <div className="absolute inset-0 z-0">
@@ -184,7 +189,7 @@ const Profile = () => {
                     </div>
 
                     {/* Content Container (z-index to sit above banner) */}
-                    <div className="relative z-10 w-full flex flex-col items-center">
+                    <div className="relative z-10 w-full flex flex-col items-center h-full">
                     
                     {/* Navigation (Mobile/Compact) */}
                     <div className="absolute top-[-10px] left-[-10px]">
@@ -249,11 +254,10 @@ const Profile = () => {
                             {profileUser.first_name || profileUser.username}
                             <Shield size={16} className="text-[#FFD700] fill-[#FFD700]/20" />
                         </h1>
-                        <p className="text-indigo-400 font-medium text-sm">@{profileUser.username}</p>
                     </div>
 
                     {/* Follow Stats */}
-                    <div className="grid grid-cols-2 gap-px bg-white/5 rounded-2xl overflow-hidden w-full mb-6 border border-white/5">
+                    <div className="grid grid-cols-2 gap-px bg-white/5 rounded-2xl overflow-hidden w-full mb-6 border border-white/5 shrink-0">
                         <button onClick={() => fetchUserList('followers')} className="p-3 hover:bg-white/5 transition-colors text-center group">
                             <div className="text-lg font-bold text-white group-hover:text-[#FFD700] transition-colors">{profileUser.followers_count || 0}</div>
                             <div className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Followers</div>
@@ -264,48 +268,48 @@ const Profile = () => {
                         </button>
                     </div>
 
-                    {/* Action Button */}
-                    {isOwnProfile ? (
-                        <button 
-                            onClick={() => setIsEditing(!isEditing)}
-                            className={`w-full py-3 rounded-xl font-bold text-sm transition-all shadow-lg flex items-center justify-center gap-2 ${
-                                isEditing 
-                                    ? 'bg-white/5 text-white hover:bg-white/10 border border-white/10' 
-                                    : 'bg-[#FFD700] text-black hover:bg-[#FDB931]'
-                            }`}
-                        >
-                            {isEditing ? <><X size={16}/> Cancel Editing</> : <><Edit3 size={16}/> Edit Profile</>}
-                        </button>
-                    ) : (
-                         <button 
-                            onClick={handleFollowToggle}
-                            className={`w-full py-3 rounded-xl font-bold text-sm transition-all shadow-lg flex items-center justify-center gap-2 ${
-                                profileUser.is_following 
-                                    ? 'bg-zinc-800 text-gray-300 hover:bg-zinc-700'
-                                    : 'bg-indigo-600 text-white hover:bg-indigo-500'
-                            }`}
-                        >
-                            {profileUser.is_following ? 'Unfollow' : 'Follow'}
-                        </button>
+                    {/* Bio (Moved from Overview) */}
+                    {profileUser.profile?.bio && (
+                        <div className="w-full text-center mb-6 px-4 flex-1 overflow-y-auto no-scrollbar flex items-center justify-center">
+                            <p className="text-gray-300 italic text-sm leading-relaxed">
+                                "{profileUser.profile.bio}"
+                            </p>
+                        </div>
                     )}
 
-                    <div className="mt-6 pt-6 border-t border-white/5 w-full flex justify-center">
+                    {/* Action Button */}
+                    <div className="w-full mt-auto">
+                        {isOwnProfile ? (
+                            <button 
+                                onClick={() => setIsEditing(!isEditing)}
+                                className={`w-full py-3 rounded-xl font-bold text-sm transition-all shadow-lg flex items-center justify-center gap-2 ${
+                                    isEditing 
+                                        ? 'bg-white/5 text-white hover:bg-white/10 border border-white/10' 
+                                        : 'bg-[#FFD700] text-black hover:bg-[#FDB931]'
+                                }`}
+                            >
+                                {isEditing ? <><X size={16}/> Cancel Editing</> : <><Edit3 size={16}/> Edit Profile</>}
+                            </button>
+                        ) : (
+                             <button 
+                                onClick={handleFollowToggle}
+                                className={`w-full py-3 rounded-xl font-bold text-sm transition-all shadow-lg flex items-center justify-center gap-2 ${
+                                    profileUser.is_following 
+                                        ? 'bg-zinc-800 text-gray-300 hover:bg-zinc-700'
+                                        : 'bg-indigo-600 text-white hover:bg-indigo-500'
+                                }`}
+                            >
+                                {profileUser.is_following ? 'Unfollow' : 'Follow'}
+                            </button>
+                        )}
+                    </div>
+
+                    <div className="mt-6 pt-6 border-t border-white/5 w-full flex justify-center shrink-0">
                         <div className="text-xs text-gray-600 flex items-center gap-2 font-medium">
                             <Calendar size={12} />
                             Joined {new Date(profileUser.date_joined || Date.now()).toLocaleDateString(undefined, { month: 'short', year: 'numeric' })}
                         </div>
                     </div>
-                    </div>
-                </div>
-
-                {/* Mini Stats Card */}
-                 <div className="bg-[#121212] border border-white/5 rounded-3xl p-5 flex items-center gap-4 shadow-xl">
-                    <div className="p-3 rounded-xl bg-[#FFD700]/10 text-[#FFD700]">
-                        <Star size={20} fill="currentColor" className="fill-[#FFD700]/20" />
-                    </div>
-                    <div>
-                        <div className="text-gray-500 text-[10px] uppercase font-bold tracking-wider">Total XP</div>
-                        <div className="text-xl font-black text-white">{profileUser.profile?.xp?.toLocaleString() || 0}</div>
                     </div>
                 </div>
             </div>
@@ -343,6 +347,34 @@ const Profile = () => {
                                         className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-gray-300 focus:outline-none focus:border-[#FFD700] transition-colors min-h-[160px] resize-none"
                                         placeholder="Tell your story..."
                                     />
+                                </div>
+
+                                {/* Coding Profiles Inputs */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-bold text-indigo-400 uppercase tracking-wider flex items-center gap-2">
+                                            <Github size={14} /> GitHub Username
+                                        </label>
+                                        <input 
+                                            type="text" 
+                                            value={editForm.github_username}
+                                            onChange={(e) => setEditForm({...editForm, github_username: e.target.value})}
+                                            className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#FFD700] transition-colors placeholder-white/20"
+                                            placeholder="username"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-bold text-indigo-400 uppercase tracking-wider flex items-center gap-2">
+                                            <Code size={14} /> LeetCode Username
+                                        </label>
+                                        <input 
+                                            type="text" 
+                                            value={editForm.leetcode_username}
+                                            onChange={(e) => setEditForm({...editForm, leetcode_username: e.target.value})}
+                                            className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#FFD700] transition-colors placeholder-white/20"
+                                            placeholder="username"
+                                        />
+                                    </div>
                                 </div>
 
                                 {/* Banner Upload (Simulated as cover image settings since actual banner is removed/hidden in this layout) */}
@@ -399,7 +431,6 @@ const Profile = () => {
                         <div className="flex items-center gap-1 p-2 border-b border-white/5 bg-black/20">
                             {[
                                 { id: 'overview', label: 'Overview', icon: Layout },
-                                { id: 'tasks', label: 'Tasks', icon: Trophy },
                                 ...(isOwnProfile ? [{ id: 'referral', label: 'Referral', icon: Gift }] : [])
                             ].map(tab => (
                                 <button
@@ -417,77 +448,127 @@ const Profile = () => {
                         </div>
 
                         {/* Tab Content */}
-                        <div className="flex-1 overflow-y-auto p-6 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+                        {/* Tab Content */}
+                        <div className="flex-1 overflow-y-auto p-4 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
                             
                             {activeTab === 'overview' && (
-                                <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-300">
-                                    {/* About Section */}
-                                    <div className="space-y-4">
-                                        <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
-                                            About
-                                        </h3>
-                                        <div className="bg-[#121212] border border-white/5 rounded-3xl p-6">
-                                             <p className="text-gray-300 leading-relaxed whitespace-pre-line text-sm md:text-base">
-                                                {profileUser.profile?.bio || (
-                                                    <span className="italic opacity-30">No bio provided just yet.</span>
-                                                )}
-                                            </p>
-                                        </div>
-                                    </div>
-
+                                <div className="animate-in fade-in slide-in-from-bottom-4 duration-300 space-y-4">
                                     {/* Stats Grid (More detailed) */}
-                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                                         {[
                                             { label: 'Level', value: Math.floor((profileUser.profile?.xp || 0) / 1000) + 1, icon: Crown, color: 'text-purple-400' },
-                                            { label: 'Tasks Done', value: generateLevels().filter(l => l.id <= (Math.floor((profileUser.profile?.xp || 0) / 1000) + 1)).length, icon: Trophy, color: 'text-[#FFD700]' },
+                                            { label: 'Total XP', value: profileUser.profile?.xp?.toLocaleString() || 0, icon: Star, color: 'text-[#FFD700]' },
                                             { label: 'Followers', value: profileUser.followers_count || 0, icon: Users, color: 'text-blue-400' },
                                              { label: 'Following', value: profileUser.following_count || 0, icon: MapPin, color: 'text-green-400' },
                                         ].map((stat, i) => (
-                                            <div key={i} className="bg-[#121212] border border-white/5 p-4 rounded-2xl flex flex-col gap-3 hover:bg-white/5 transition-colors">
+                                            <div key={i} className="bg-[#121212] border border-white/5 p-3 rounded-2xl flex flex-col gap-2 hover:bg-white/5 transition-colors">
                                                 <div className={`p-2 w-fit rounded-lg bg-white/5 ${stat.color}`}>
-                                                    <stat.icon size={18} />
+                                                    <stat.icon size={16} />
                                                 </div>
                                                 <div>
-                                                    <div className="text-2xl font-black text-white">{stat.value}</div>
+                                                    <div className="text-xl font-black text-white">{stat.value}</div>
                                                     <div className="text-gray-500 text-[10px] uppercase font-bold tracking-wider">{stat.label}</div>
                                                 </div>
                                             </div>
                                         ))}
                                     </div>
-                                </div>
-                            )}
 
-                            {activeTab === 'tasks' && (
-                                <div className="animate-in fade-in slide-in-from-bottom-4 duration-300">
-                                    <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">Completed Milestones</h3>
-                                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-                                        {(() => {
-                                            const levels = generateLevels();
-                                            const currentXp = profileUser.profile?.xp || 0;
-                                            const currentLevelId = Math.floor(currentXp / 1000) + 1;
-                                            const completedLevels = levels.filter(l => l.id <= currentLevelId);
-                                            
-                                            if (completedLevels.length === 0) {
-                                                return (
-                                                    <div className="col-span-full py-12 text-center text-gray-500 border border-white/5 rounded-2xl border-dashed">
-                                                        <Trophy size={48} className="mx-auto mb-4 opacity-20" />
-                                                        <p className="font-medium">No tasks completed yet.</p>
+                                    {/* Coding Stats (Moved from Coding Tab) */}
+                                    {(profileUser.profile?.github_username || profileUser.profile?.leetcode_username) && (
+                                        <div className="w-full">
+                                            <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                                                {/* GitHub Calendar */}
+                                                {profileUser.profile?.github_username && (
+                                                    <div className="bg-[#121212] border border-white/5 rounded-3xl p-4 overflow-hidden flex flex-col justify-center">
+                                                        <div className="flex items-center justify-between mb-3">
+                                                            <div className="flex items-center gap-2 text-white font-bold text-sm">
+                                                                <Github size={16} />
+                                                                GitHub Activity
+                                                            </div>
+                                                            <a 
+                                                                href={`https://github.com/${profileUser.profile.github_username}`} 
+                                                                target="_blank" 
+                                                                rel="noopener noreferrer"
+                                                                className="text-xs text-blue-400 hover:underline"
+                                                            >
+                                                                @{profileUser.profile.github_username}
+                                                            </a>
+                                                        </div>
+                                                        <div className="flex justify-center transform scale-100 origin-center overflow-hidden [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none'] [&_*::-webkit-scrollbar]:hidden [&_*]:[scrollbar-width:none]">
+                                                            <GitHubCalendar 
+                                                                username={profileUser.profile.github_username} 
+                                                                colorScheme="dark"
+                                                                fontSize={10}
+                                                                blockSize={5.5}
+                                                                blockMargin={2}
+                                                                theme={{
+                                                                    dark: ['#161b22', '#0e4429', '#006d32', '#26a641', '#39d353'],
+                                                                }}
+                                                            />
+                                                        </div>
                                                     </div>
-                                                );
-                                            }
+                                                )}
 
-                                            return completedLevels.map((level) => (
-                                                <div key={level.id} className="bg-[#121212] border border-white/5 rounded-2xl p-4 flex flex-col items-center gap-3 text-center transition-all hover:border-[#FFD700]/30 hover:-translate-y-1 group">
-                                                    <div className="w-10 h-10 rounded-xl bg-black/50 flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform text-white/80 group-hover:text-[#FFD700]">
-                                                        {level.icon && React.cloneElement(level.icon, { size: 18 })}
+                                                {/* LeetCode Stats Card */}
+                                                {profileUser.profile?.leetcode_username && (
+                                                    <div className="bg-[#121212] border border-white/5 rounded-3xl p-4 flex flex-col relative overflow-hidden h-full justify-center">
+                                                        <div className="flex items-center justify-between mb-3 relative z-10">
+                                                            <div className="flex items-center gap-2 text-white font-bold text-sm">
+                                                                <Code size={16} className="text-orange-500" />
+                                                                LeetCode Stats
+                                                            </div>
+                                                            <a 
+                                                                href={`https://leetcode.com/${profileUser.profile.leetcode_username}`}
+                                                                target="_blank" 
+                                                                rel="noopener noreferrer"
+                                                                className="text-xs text-orange-400 hover:underline"
+                                                            >
+                                                                @{profileUser.profile.leetcode_username}
+                                                            </a>
+                                                        </div>
+
+                                                        <div className="flex items-center justify-center relative z-10">
+                                                            <img 
+                                                                src={`https://leetcard.jacoblin.cool/${profileUser.profile.leetcode_username}?theme=dark&font=Inter`} 
+                                                                alt="LeetCode Stats" 
+                                                                className="w-full h-auto max-h-32 object-contain rounded-lg shadow-lg"
+                                                            />
+                                                        </div>
                                                     </div>
-                                                    <div>
-                                                        <div className="text-[10px] font-bold text-[#FFD700] uppercase tracking-wider mb-0.5">Level {level.id}</div>
-                                                        <div className="text-xs text-gray-400 font-bold truncate max-w-[12ch]">{level.name}</div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Moved Tasks Section */}
+                                    <div>
+                                        <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">Completed Milestones</h3>
+                                        <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 gap-2">
+                                            {(() => {
+                                                const levels = generateLevels();
+                                                const currentXp = profileUser.profile?.xp || 0;
+                                                const currentLevelId = Math.floor(currentXp / 1000) + 1;
+                                                const completedLevels = levels.filter(l => l.id <= currentLevelId);
+                                                
+                                                if (completedLevels.length === 0) {
+                                                    return (
+                                                        <div className="col-span-full py-8 text-center text-gray-500 border border-white/5 rounded-2xl border-dashed">
+                                                            <Trophy size={32} className="mx-auto mb-2 opacity-20" />
+                                                            <p className="font-medium text-xs">No tasks completed yet.</p>
+                                                        </div>
+                                                    );
+                                                }
+
+                                                return completedLevels.map((level) => (
+                                                    <div key={level.id} className="bg-[#121212] border border-white/5 rounded-xl p-2 flex flex-col items-center gap-1.5 text-center transition-all hover:border-[#FFD700]/30 hover:-translate-y-1 group">
+                                                        <div className="w-8 h-8 rounded-lg bg-black/50 flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform text-white/50 group-hover:text-[#FFD700]">
+                                                            {level.icon && React.cloneElement(level.icon, { size: 14 })}
+                                                        </div>
+                                                        <div className="text-[9px] font-bold text-[#FFD700] uppercase tracking-wider">LEVEL {level.id}</div>
                                                     </div>
-                                                </div>
-                                            ));
-                                        })()}
+                                                ));
+                                            })()}
+                                        </div>
                                     </div>
                                 </div>
                             )}
