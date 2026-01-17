@@ -12,15 +12,9 @@ const ShopButton = () => {
             transition={{ type: 'spring', damping: 20, stiffness: 100 }}
         >
             <button 
-                onClick={() => notify.custom(() => (
-                    <div className="bg-[#121212] border-2 border-orange-500 rounded-xl p-4 flex items-center gap-3 shadow-2xl">
-                        <ShoppingBag className="text-orange-500" size={24} />
-                        <div>
-                            <p className="text-white font-bold">Blacksmith is sleeping!</p>
-                            <p className="text-gray-400 text-xs">Shop opens at Level 3.</p>
-                        </div>
-                    </div>
-                ))}
+                onClick={() => notify.info("Blacksmith is sleeping!", {
+                    description: "Shop opens at Level 3."
+                })}
                 className="group relative"
             >
                 {/* Glow Effect */}

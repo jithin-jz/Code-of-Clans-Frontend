@@ -71,45 +71,17 @@ const AdminDashboard = () => {
         const currentUserData = userList.find(u => u.username === username);
         const action = currentUserData?.is_active ? 'ban' : 'unban';
         
-        notify.custom((t) => (
-            <div className={`${t.visible ? 'animate-enter' : 'animate-leave'} bg-[#1a1a1a] border border-[#FFD700]/30 rounded-2xl p-6 shadow-2xl max-w-sm w-full mx-auto backdrop-blur-xl relative overflow-hidden`}
-                style={{
-                    boxShadow: '0 0 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 215, 0, 0.1)'
-                }}
-            >
-                <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-transparent via-[#FFD700] to-transparent opacity-20"></div>
-                
-                <h3 className="text-xl font-black text-white mb-2 flex items-center gap-2">
-                    <AlertTriangle className="text-[#FFD700]" size={24} />
-                    <span>Confirm Command</span>
-                </h3>
-                <p className="text-gray-300 mb-6 text-sm leading-relaxed">
-                    Are you sure you want to <span className={action === 'ban' ? "text-red-400 font-bold uppercase" : "text-emerald-400 font-bold uppercase"}>{action}</span> the inhabitant <span className="text-white font-bold">{username}</span>?
-                </p>
-                
-                <div className="flex gap-3 justify-end">
-                    <button 
-                        onClick={() => notify.dismiss(t.id)}
-                        className="px-4 py-2 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 font-bold transition-all text-xs uppercase tracking-wider"
-                    >
-                        Cancel
-                    </button>
-                    <button 
-                        onClick={() => {
-                            notify.dismiss(t.id);
-                            confirmBlockToggle(username);
-                        }}
-                        className={`px-6 py-2 rounded-xl font-bold transition-all shadow-lg text-xs uppercase tracking-wider active:transform active:scale-95 text-white ${
-                            action === 'ban' 
-                                ? 'bg-red-600 hover:bg-red-500 hover:shadow-red-500/20' 
-                                : 'bg-emerald-600 hover:bg-emerald-500 hover:shadow-emerald-500/20'
-                        }`}
-                    >
-                        Confirm
-                    </button>
-                </div>
-            </div>
-        ), { duration: Infinity });
+        notify.warning("Confirm Action", {
+            description: `Are you sure you want to ${action} the inhabitant ${username}?`,
+            action: {
+                label: 'Confirm',
+                onClick: () => confirmBlockToggle(username),
+            },
+            cancel: {
+                label: 'Cancel',
+                onClick: () => {},
+            },
+        });
     };
 
     const confirmBlockToggle = async (username) => {
@@ -131,8 +103,7 @@ const AdminDashboard = () => {
     if (!user?.is_staff && !user?.is_superuser) return null;
 
     return (
-        <div className="min-h-screen bg-[#050505] font-sans selection:bg-[#FFD700] selection:text-black overflow-hidden flex">
-
+        <div className="min-h-screen bg-[#0a0a0a] font-sans selection:bg-white selection:text-black flex">
             
             <AdminSidebar 
                 user={user} 
@@ -141,36 +112,38 @@ const AdminDashboard = () => {
                 handleLogout={handleLogout} 
             />
 
-            <main className="flex-1 p-8 relative z-10 overflow-y-auto h-screen bg-[#050505]">
+            <main className="flex-1 overflow-y-auto h-screen bg-black">
+                <div className="container mx-auto p-6 max-w-[1600px]">
+                    <div className="flex items-center justify-between mb-8 pt-2">
+                        <div>
+                            <h1 className="text-3xl font-bold text-white tracking-tight">Dashboard</h1>
+                            <p className="text-gray-400 mt-1">Manage users and view system statistics.</p>
+                        </div>
+                    </div>
 
-                <div className="flex items-center justify-between mb-8 bg-[#121212]/50 p-6 rounded-3xl border border-white/5 backdrop-blur-md">
-                    <div>
-                        <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-                            Command Center
-                            <div className="w-2 h-2 rounded-full bg-[#FFD700] animate-pulse"></div>
-                        </h1>
-                        <p className="text-gray-400 text-sm mt-1 font-medium">Overview of your realm's population and resources.</p>
-                    </div>
-                    <div className="flex gap-2">
-                         <div className="bg-[#1a1a1a] border border-white/5 px-4 py-2 rounded-xl text-xs font-mono text-gray-400">
-                             v2.0.1
-                         </div>
-                    </div>
+                    {activeTab === 'overview' && (
+                        <div className="space-y-6">
+                            <StatsGrid stats={stats} />
+                            {/* You could add a chart here in the future */}
+                        </div>
+                    )}
+
+                    {activeTab === 'users' && (
+                        <div className="flex-1">
+                             <UserTable 
+                                userList={userList} 
+                                tableLoading={tableLoading} 
+                                currentUser={user}
+                                handleBlockToggle={handleBlockToggle}
+                                fetchUsers={fetchUsers}
+                            />
+                        </div>
+                    )}
+
+                    {activeTab === 'settings' && (
+                         <div className="text-white">Settings panel coming soon.</div>
+                    )}
                 </div>
-
-                {activeTab === 'overview' && <StatsGrid stats={stats} />}
-
-                {activeTab === 'users' && (
-                    <div className="flex-1 overflow-hidden flex flex-col min-h-0">
-                         <UserTable 
-                            userList={userList} 
-                            tableLoading={tableLoading} 
-                            currentUser={user}
-                            handleBlockToggle={handleBlockToggle}
-                            fetchUsers={fetchUsers}
-                        />
-                    </div>
-                )}
             </main>
         </div>
     );

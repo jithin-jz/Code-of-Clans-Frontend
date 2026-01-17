@@ -1,114 +1,133 @@
 import React from 'react';
-import Loader from '../common/Loader';
-import { Users, RefreshCw, Gavel, Unlock, ExternalLink } from 'lucide-react';
+import { 
+    Table, 
+    TableBody, 
+    TableCell, 
+    TableHead, 
+    TableHeader, 
+    TableRow 
+} from "../components/ui/table";
+import { Button } from "../components/ui/button";
+import { Badge } from "../components/ui/badge";
+import { RefreshCw, Eye, Shield, Ban, CheckCircle, Loader2 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const UserTable = ({ userList, tableLoading, currentUser, handleBlockToggle, fetchUsers }) => {
     return (
-        <div className="bg-[#121212] border border-white/5 rounded-3xl shadow-2xl overflow-hidden flex flex-col h-full">
-            <div className="px-8 py-6 border-b border-white/5 flex items-center justify-between bg-[#1a1a1a]">
-                <h2 className="text-xl font-bold text-white flex items-center gap-3">
-                    <Users className="text-[#ffd700]" size={24} /> 
-                    <span>Realm Inhabitants</span>
-                </h2>
-                <button 
-                    onClick={fetchUsers} 
-                    className="px-4 py-2 bg-white/5 hover:bg-white/10 text-white hover:text-[#ffd700] text-sm font-bold rounded-xl border border-white/5 transition-all flex items-center gap-2 group"
+        <div className="space-y-4">
+            <div className="flex items-center justify-between">
+                <h2 className="text-xl font-semibold text-white tracking-tight">Users</h2>
+                <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={fetchUsers}
+                    disabled={tableLoading}
+                    className="h-8 gap-2 border-white/10 text-gray-400 hover:text-white hover:bg-[#1a1a1a]"
                 >
-                    <RefreshCw size={16} className="group-hover:rotate-180 transition-transform duration-500" />
-                    <span>Refresh</span>
-                </button>
+                    <RefreshCw className={`h-3.5 w-3.5 ${tableLoading ? 'animate-spin' : ''}`} />
+                    <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">Refresh</span>
+                </Button>
             </div>
             
-            <div className="flex-1 overflow-y-auto no-scrollbar">
-                <table className="w-full relative border-separate border-spacing-0">
-                    <thead className="bg-[#151515] sticky top-0 z-10 shadow-sm">
-                        <tr>
-                            <th className="text-left text-gray-500 text-[10px] font-black uppercase tracking-[0.2em] px-8 py-5 border-b border-white/5 bg-[#151515]">Warrior</th>
-                            <th className="text-left text-gray-500 text-[10px] font-black uppercase tracking-[0.2em] px-8 py-5 border-b border-white/5 bg-[#151515]">Rank</th>
-                            <th className="text-left text-gray-500 text-[10px] font-black uppercase tracking-[0.2em] px-8 py-5 border-b border-white/5 bg-[#151515]">Status</th>
-                            <th className="text-right text-gray-500 text-[10px] font-black uppercase tracking-[0.2em] px-8 py-5 border-b border-white/5 bg-[#151515]">Command</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-white/5">
+            <div className="rounded-md border border-white/10 bg-[#0a0a0a]">
+                <Table>
+                    <TableHeader>
+                        <TableRow className="border-white/10 hover:bg-transparent">
+                            <TableHead className="w-[80px] text-gray-400">Avatar</TableHead>
+                            <TableHead className="text-gray-400">Username</TableHead>
+                            <TableHead className="text-gray-400">Role</TableHead>
+                            <TableHead className="text-gray-400">Status</TableHead>
+                            <TableHead className="text-right text-gray-400">Actions</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
                         {tableLoading ? (
-                            <tr><td colSpan="4" className="text-center py-20"><Loader isLoading={true}/></td></tr>
+                            <TableRow>
+                                <TableCell colSpan={5} className="h-24 text-center">
+                                    <div className="flex justify-center">
+                                        <Loader2 className="h-6 w-6 animate-spin text-gray-400"/>
+                                    </div>
+                                </TableCell>
+                            </TableRow>
                         ) : userList.length === 0 ? (
-                            <tr><td colSpan="4" className="text-center py-20 text-gray-500 font-medium">No inhabitants found.</td></tr>
+                            <TableRow>
+                                <TableCell colSpan={5} className="h-24 text-center text-gray-400">
+                                    No users found.
+                                </TableCell>
+                            </TableRow>
                         ) : (
-                            userList.map((usr, i) => (
-                                <tr key={i} className="hover:bg-white/2 transition-colors group">
-                                    <td className="px-8 py-4">
-                                        <div className="flex items-center gap-4">
-                                            <div className="w-12 h-12 rounded-[14px] bg-[#1a1a1a] p-1 border border-white/5 group-hover:border-[#FFD700]/30 transition-colors">
-                                                <div className="w-full h-full rounded-[10px] overflow-hidden flex items-center justify-center bg-[#111] text-[#ffd700] font-bold">
-                                                    {usr.profile?.avatar_url ? (
-                                                        <img src={usr.profile.avatar_url} className="w-full h-full object-cover" alt={usr.username}/>
-                                                    ) : (
-                                                        usr.username[0].toUpperCase()
-                                                    )}
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <p className="text-white font-bold text-sm group-hover:text-[#ffd700] transition-colors">{usr.username}</p>
-                                                <p className="text-gray-600 text-xs font-mono">{usr.email}</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td className="px-8 py-4">
-                                        <div className="flex gap-2">
-                                            {usr.is_superuser && (
-                                                <span className="px-3 py-1.5 rounded-lg text-[10px] font-bold bg-red-500/10 text-red-500 border border-red-500/20 uppercase tracking-wide flex items-center gap-1.5">
-                                                    Leader
-                                                </span>
-                                            )}
-                                            {!usr.is_staff && !usr.is_superuser && (
-                                                <span className="px-3 py-1.5 rounded-lg text-[10px] font-bold bg-gray-500/10 text-gray-500 border border-gray-500/20 uppercase tracking-wide flex items-center gap-1.5">
-                                                    Member
-                                                </span>
+                            userList.map((usr) => (
+                                <TableRow key={usr.username} className="border-white/10 hover:bg-[#1a1a1a]">
+                                    <TableCell>
+                                        <div className="h-9 w-9 rounded-sm overflow-hidden bg-[#1a1a1a] border border-white/10 flex items-center justify-center">
+                                             {usr.profile?.avatar_url ? (
+                                                <img src={usr.profile.avatar_url} alt={usr.username} className="h-full w-full object-cover" />
+                                            ) : (
+                                                <span className="text-xs font-bold text-gray-400">{usr.username[0]?.toUpperCase()}</span>
                                             )}
                                         </div>
-                                    </td>
-                                    <td className="px-8 py-4">
-                                        <span className={`px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wide border ${
-                                            usr.is_active 
-                                                ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' 
-                                                : 'bg-red-500/10 text-red-500 border-red-500/20'
-                                        }`}>
-                                            {usr.is_active ? 'Active' : 'Banned'}
-                                        </span>
-                                    </td>
-                                    <td className="px-8 py-4 text-right">
-                                        <div className="flex items-center justify-end gap-2">
-                                            <a 
-                                                href={`/profile/${usr.username}`} 
-                                                target="_blank" 
-                                                rel="noopener noreferrer"
-                                                className="p-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-gray-400 hover:text-[#FFD700] border border-white/5 transition-all group/view"
-                                                title="View Profile"
+                                    </TableCell>
+                                    <TableCell className="font-medium text-white">
+                                        <div className="flex flex-col">
+                                            <span>{usr.username}</span>
+                                            <span className="text-xs text-gray-500 font-normal">{usr.email}</span>
+                                        </div>
+                                    </TableCell>
+                                    <TableCell>
+                                        <div className="flex items-center gap-2">
+                                            {usr.is_superuser ? (
+                                                <Badge variant="destructive" className="bg-red-900/20 text-red-400 hover:bg-red-900/30 border-red-900/50">Admin</Badge>
+                                            ) : (
+                                                <Badge variant="secondary" className="bg-white/5 text-gray-400 hover:bg-white/10 border-white/10">User</Badge>
+                                            )}
+                                        </div>
+                                    </TableCell>
+                                    <TableCell>
+                                         <Badge 
+                                            variant="outline" 
+                                            className={`
+                                                ${usr.is_active 
+                                                    ? 'border-emerald-500/20 text-emerald-500 bg-emerald-500/10' 
+                                                    : 'border-red-500/20 text-red-500 bg-red-500/10'}
+                                            `}
+                                        >
+                                            {usr.is_active ? 'Active' : 'Blocked'}
+                                        </Badge>
+                                    </TableCell>
+                                    <TableCell className="text-right">
+                                        <div className="flex justify-end gap-2">
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                asChild
+                                                className="h-8 w-8 p-0 text-gray-400 hover:text-white"
                                             >
-                                                <ExternalLink size={14} className="group-hover/view:scale-110 transition-transform"/>
-                                            </a>
-                                            <button 
+                                                <Link to={`/profile/${usr.username}`} target="_blank">
+                                                    <span className="sr-only">View</span>
+                                                    <Eye className="h-4 w-4" />
+                                                </Link>
+                                            </Button>
+                                            
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
                                                 onClick={() => handleBlockToggle(usr.username)}
-                                                disabled={currentUser.username === usr.username} 
-                                                className={`text-xs font-bold px-4 py-2.5 rounded-xl transition-all border flex items-center gap-2 ${
-                                                    currentUser.username === usr.username 
-                                                        ? 'opacity-30 cursor-not-allowed bg-transparent border-white/5 text-gray-600'
-                                                        : usr.is_active 
-                                                            ? 'bg-red-500/10 text-red-500 border-red-500/20 hover:bg-red-500/20 hover:border-red-500/50' 
-                                                            : 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20 hover:bg-emerald-500/20 hover:border-emerald-500/50'
+                                                disabled={currentUser.username === usr.username}
+                                                className={`h-8 px-2 text-xs ${
+                                                    usr.is_active 
+                                                        ? 'text-red-400 hover:text-red-300 hover:bg-red-900/20' 
+                                                        : 'text-emerald-400 hover:text-emerald-300 hover:bg-emerald-900/20'
                                                 }`}
                                             >
-                                                {usr.is_active ? <Gavel size={14}/> : <Unlock size={14}/>}
-                                                <span>{usr.is_active ? 'Ban' : 'Unban'}</span>
-                                            </button>
+                                                {usr.is_active ? 'Block' : 'Unblock'}
+                                            </Button>
                                         </div>
-                                    </td>
-                                </tr>
+                                    </TableCell>
+                                </TableRow>
                             ))
                         )}
-                    </tbody>
-                </table>
+                    </TableBody>
+                </Table>
             </div>
         </div>
     );

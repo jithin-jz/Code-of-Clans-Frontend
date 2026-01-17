@@ -4,6 +4,7 @@ import { Lock, MessageSquare, ChevronLeft, Send, Smile, X } from 'lucide-react';
 import EmojiPicker from 'emoji-picker-react';
 import { notify } from '../services/notification';
 import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const ChatDrawer = ({ isChatOpen, setChatOpen, user }) => {
@@ -231,7 +232,7 @@ const ChatDrawer = ({ isChatOpen, setChatOpen, user }) => {
                             {showPicker ? <X size={20} /> : <Smile size={20} />}
                         </Button>
                         
-                        <input 
+                        <Input 
                             ref={inputRef}
                             type="text" 
                             placeholder={user ? "Type a message..." : "Login to chat..."} 
@@ -239,7 +240,7 @@ const ChatDrawer = ({ isChatOpen, setChatOpen, user }) => {
                             value={inputMessage}
                             onChange={(e) => setInputMessage(e.target.value)}
                             onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
-                            className="flex-1 bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[#FFD700]/50 focus:bg-black/60 transition-all disabled:opacity-50 placeholder-gray-600" 
+                            className="flex-1 bg-black/40 border-white/10 rounded-xl px-4 py-6 text-white text-sm focus-visible:ring-[#FFD700]/50 focus-visible:bg-black/60 transition-all disabled:opacity-50 placeholder-gray-600" 
                         />
                         <Button 
                             disabled={!user} 
