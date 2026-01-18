@@ -1,43 +1,54 @@
-# Code of Clans - Frontend
+# ⚛️ Code of Clans - Frontend
 
-The frontend application for **Code of Clans**, built with React and TailwindCSS. It provides a rich, interactive user interface for gaming profiles.
+The interactive client interface for **Code of Clans**, delivering a premium, gamified user experience. Built with performance and aesthetics in mind.
 
-## 🛠️ Tech Stack
+## ⚡ Technologies
 
--   **React 19**: Modern UI library for building interactive interfaces.
--   **Vite**: Fast build tool and development server.
--   **TailwindCSS v4**: Utility-first CSS framework for styling.
--   **Zustand**: Lightweight state management for handling auth and user data.
--   **Framer Motion**: For smooth animations.
--   **Lucide React**: Icon library.
--   **Axios**: HTTP client for API requests.
+- `React 19`
+- `TypeScript`
+- `Vite 7`
+- `Tailwind CSS 4`
+- `Framer Motion 12`
+- `Zustand`
+- `Radix UI`
+- `Axios`
+- `Lucide React`
+
+## 🚀 Key Features
+
+*   **Dynamic UI** - Glassmorphism effects, smooth spring animations, and responsive layouts.
+*   **State Management** - Centralized auth and user data handling with Zustand.
+*   **Real-time Updates** - WebSocket integration for instant chat and notification updates.
+*   **Interactive Components** - Custom-built drag-and-drop interfaces and data visualization.
+
+## 🛠️ Installation & Setup
+
+1.  **Install dependencies**:
+    ```bash
+    npm install
+    ```
+
+2.  **Start the development server**:
+    ```bash
+    npm run dev
+    ```
+    Access the app at `http://localhost:5173`.
+
+3.  **Build for production**:
+    ```bash
+    npm run build
+    ```
 
 ## 📂 Project Structure
 
--   `src/components/`: Reusable UI components.
--   `src/pages/`: Page components for routing.
--   `src/services/api.js`: Centralized API configuration and endpoints.
--   `src/stores/`: Zustand stores (e.g., `useAuthStore.js`).
--   `public/assets/`: Static image assets.
-
-## 🚀 Available Scripts
-
-In the project directory, you can run:
-
-### `npm run dev`
-Runs the app in the development mode.\
-Open [http://localhost:5173](http://localhost:5173) to view it in your browser.
-
-### `npm run build`
-Builds the app for production to the `dist` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-### `npm run lint`
-Runs ESLint to analyze code for potential errors.
-
-### `npm run preview`
-Locally preview the production build.
+| Directory | Description |
+| :--- | :--- |
+| `src/components/` | Reusable UI atoms and molecules. |
+| `src/pages/` | Main application routes/views. |
+| `src/stores/` | Global state management (Zustand). |
+| `src/services/` | API clients and configuration. |
+| `src/hooks/` | Custom React hooks. |
 
 ## ⚙️ Configuration
 
-The frontend communicates with the backend via API calls. Ensure the backend is running and CORS is configured correctly to accept requests from the frontend URL.
+Ensure your `.env` (if applicable) or API constants point to the correct backend URL (default: `http://localhost:8000`).
