@@ -112,4 +112,10 @@ export const authAPI = {
     api.post(`/profiles/admin/users/${username}/toggle-block/`),
 };
 
+// Payment endpoints
+export const paymentAPI = {
+  createOrder: (amount) => api.post("/payments/create-order/", { amount }),
+  verifyPayment: (data) => api.post("/payments/verify-payment/", data),
+};
+
 export default api;

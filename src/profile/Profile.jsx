@@ -41,6 +41,7 @@ import { Button } from "../components/ui/button";
 import { cn } from "../lib/utils";
 import { GitHubCalendar } from "react-github-calendar";
 
+
 const Profile = () => {
   const navigate = useNavigate();
   const { username } = useParams();
@@ -62,6 +63,7 @@ const Profile = () => {
   );
   const [loading, setLoading] = useState(!isOwnProfile);
   const [isEditing, setIsEditing] = useState(false);
+
 
   const [editForm, setEditForm] = useState({
     username: "",
@@ -613,6 +615,15 @@ const Profile = () => {
                             {stat.label}
                           </div>
                         </div>
+                        {stat.label === "Total XP" && isOwnProfile && (
+                           <button
+                             onClick={() => navigate('/shop')}
+                             className="ml-auto p-1.5 bg-[#FFD700]/10 hover:bg-[#FFD700]/20 rounded-lg text-[#FFD700] transition-colors"
+                             title="Buy XP"
+                           >
+                             <Sparkles size={14} />
+                           </button>
+                        )}
                       </div>
                     ))}
                   </div>
@@ -857,6 +868,7 @@ const Profile = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
     </div>
   );
 };

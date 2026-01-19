@@ -1,20 +1,12 @@
-import React from 'react';
 import { ShoppingBag } from 'lucide-react';
-import { motion } from 'framer-motion';
-import { notify } from '../services/notification';
+import { useNavigate } from 'react-router-dom';
 
 const ShopButton = () => {
+    const navigate = useNavigate();
     return (
-        <motion.div 
-            className="fixed left-6 bottom-6 z-30"
-            initial={{ y: 100, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ type: 'spring', damping: 20, stiffness: 100 }}
-        >
+        <div className="fixed left-6 bottom-6 z-30">
             <button 
-                onClick={() => notify.info("Blacksmith is sleeping!", {
-                    description: "Shop opens at Level 3."
-                })}
+                onClick={() => navigate('/shop')}
                 className="group relative"
             >
                 {/* Glow Effect */}
@@ -30,7 +22,7 @@ const ShopButton = () => {
                     </div>
                 </div>
             </button>
-        </motion.div>
+        </div>
     );
 };
 

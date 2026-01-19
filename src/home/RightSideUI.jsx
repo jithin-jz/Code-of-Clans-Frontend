@@ -1,5 +1,4 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Star, Settings, User, LogOut, Calendar, Trophy, ChevronRight } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { cn } from '../lib/utils';
@@ -12,14 +11,19 @@ const RightSideUI = ({
     setCheckInOpen,
     hasUnclaimedReward
 }) => {
+    const navigate = useNavigate();
+
     // Glass button style matches the previous design
     const glassButtonClass = "h-14 w-14 p-0 bg-[#121212]/80 backdrop-blur-xl border border-white/10 rounded-2xl hover:border-[#FFD700]/50 hover:bg-[#1a1a1a] transition-all text-white shadow-lg active:scale-95";
 
     return (
         <div className="fixed right-6 top-6 z-30 flex flex-col gap-4 items-end animate-slide-in-right">
             
-            {/* XP Bar */}
-            <div className="bg-[#121212]/80 backdrop-blur-xl border border-white/10 rounded-full pl-4 pr-6 py-2.5 flex items-center gap-4 shadow-xl">
+            {/* XP Bar - Link to Buy XP Page */}
+            <div 
+                onClick={() => navigate('/shop')}
+                className="bg-[#121212]/80 backdrop-blur-xl border border-white/10 rounded-full pl-4 pr-6 py-2.5 flex items-center gap-4 shadow-xl cursor-pointer hover:border-[#FFD700]/50 transition-all active:scale-95 group"
+            >
                 <div className="w-10 h-10 rounded-full bg-linear-to-br from-[#FFD700] to-orange-500 flex items-center justify-center text-black shadow-lg">
                     <Star fill="currentColor" size={18} />
                 </div>

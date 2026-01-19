@@ -10,6 +10,7 @@ import Home from './pages/Home';
 import OAuthCallback from './pages/OAuthCallback';
 import AdminDashboard from './admin/Dashboard';
 import NotFound from './pages/NotFound';
+import BuyXPPage from './pages/BuyXPPage';
 
 // Route Guards
 import ProtectedRoute from './routes/ProtectedRoute';
@@ -79,6 +80,11 @@ const AppContent = () => {
                         <Route path="/profile/:username" element={
                             <ProtectedRoute>
                                 <Profile />
+                            </ProtectedRoute>
+                        } />
+                        <Route path="/shop" element={
+                            <ProtectedRoute>
+                                <BuyXPPage />
                             </ProtectedRoute>
                         } />
                         
