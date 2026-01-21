@@ -53,7 +53,7 @@ const LevelModal = ({ selectedLevel, onClose }) => {
                     
                     {/* Play button */}
                     <Button 
-                        onClick={() => navigate(`/level/${selectedLevel.id}`)}
+                        onClick={() => navigate(`/level/${selectedLevel.slug || selectedLevel.id}`)}
                         className="w-full py-6 rounded-xl font-bold text-lg bg-white text-black hover:bg-gray-200 transition-all flex items-center justify-center gap-2 shadow-lg hover:scale-[1.02] active:scale-[0.98]"
                     >
                          <Play size={20} fill="currentColor" />

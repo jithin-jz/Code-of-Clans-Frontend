@@ -10,6 +10,7 @@ import ReactMarkdown from 'react-markdown';
 const CodeArena = () => {
     const { id } = useParams();
     const navigate = useNavigate();
+    const [challenge, setChallenge] = useState(null);
     const [output, setOutput] = useState([]);
     const [isRunning, setIsRunning] = useState(false);
     const [activeTab, setActiveTab] = useState('task'); // 'task' or 'ai'
@@ -18,18 +19,33 @@ const CodeArena = () => {
     const [isPyodideReady, setPyodideReady] = useState(false);
     const pyodideRef = useRef(null);
     const editorRef = useRef(null);
+
     // Initial code template
-    const [code, setCode] = useState(`# Level ${id} - Task
-# Write your python code here
-def solve():
-    print("Hello from Level ${id}!")
-solve()
-`);
-    // Load Pyodide
+    const [code, setCode] = useState("");
+    const [completionData, setCompletionData] = useState(null);
+
+    // Fetch Challenge Data
+    useEffect(() => {
+        const fetchChallenge = async () => {
+            try {
+                // Dynamic Import
+                const { challengesApi } = await import('../services/challengesApi');
+                const data = await challengesApi.getBySlug(id);
+                setChallenge(data);
+                setCode(data.initial_code || "");
+                setHint(null);
+            } catch (error) {
+                console.error("Failed to load challenge:", error);
+                setOutput([{ type: 'error', content: "Failed to load challenge data." }]);
+            }
+        };
+        fetchChallenge();
+    }, [id]);
+
+    // Load Pyodide (Same as before)
     useEffect(() => {
         const loadPyodide = async () => {
             try {
-                // Check if script already exists to avoid duplicates
                 if (window.pyodide) {
                     pyodideRef.current = window.pyodide;
                     setPyodideReady(true);
@@ -46,7 +62,6 @@ solve()
                         console.log("Pyodide loaded");
                     } catch (err) {
                         console.error("Failed to initialize Pyodide:", err);
-                        setOutput(prev => [...prev, { type: 'error', content: "Failed to initialize Python environment." }]);
                     }
                 };
                 document.body.appendChild(script);
@@ -56,44 +71,163 @@ solve()
         };
         loadPyodide();
     }, []);
-    const handleEditorDidMount = (editor, monaco) => {
+
+    const handleEditorDidMount = (editor) => {
         editorRef.current = editor;
     };
+
     const runCode = async () => {
-        if (!pyodideRef.current || isRunning) return;
+        if (!pyodideRef.current || isRunning || !challenge) return;
         
         setIsRunning(true);
-        setOutput([]); // Clear previous output
+        setOutput([]); 
         try {
             // Hijack stdout
             pyodideRef.current.setStdout({ batched: (msg) => {
                 setOutput(prev => [...prev, { type: 'log', content: msg }]);
             }});
             
-            // Run code
+            // Run User Code
             await pyodideRef.current.runPythonAsync(code);
+
+            // Run Test Code (Hidden assertion)
+            if (challenge.test_code) {
+                await pyodideRef.current.runPythonAsync(challenge.test_code);
+                // If assertions pass, we get here
+                setOutput(prev => [...prev, { type: 'success', content: "✅ Tests Passed!" }]);
+                
+                // Submit to Backend
+                const { challengesApi } = await import('../services/challengesApi');
+                const result = await challengesApi.submit(id, { passed: true });
+                
+                if (result.status === 'completed' || result.status === 'already_completed') {
+                    const starText = "⭐".repeat(result.stars || 0);
+                    setOutput(prev => [...prev, { type: 'success', content: `🎉 Challenge Completed! ${starText}` }]);
+                    if (result.xp_earned > 0) {
+                         setOutput(prev => [...prev, { type: 'success', content: `💪 XP Earned: +${result.xp_earned}` }]);
+                    }
+                    
+                    // Trigger Completion Modal
+                    setTimeout(() => {
+                        setCompletionData(result);
+                    }, 500); // 500ms delay for effect
+                }
+            } else {
+                 setOutput(prev => [...prev, { type: 'log', content: "⚠️ No tests defined. Code ran successfully." }]);
+            }
             
         } catch (error) {
-            setOutput(prev => [...prev, { type: 'error', content: error.toString() }]);
+            setOutput(prev => [...prev, { type: 'error', content: `❌ ${error.toString()}` }]);
         } finally {
             setIsRunning(false);
         }
     };
+
+    if (!challenge) return <div className="h-screen flex items-center justify-center bg-[#0a0a0a] text-white"><Loader2 className="animate-spin" /></div>;
+
     return (
-        <div className="h-screen flex flex-col bg-[#0a0a0a] text-white overflow-hidden">
+        <div className="h-screen flex flex-col bg-[#0a0a0a] text-white overflow-hidden relative">
+            {/* Completion Modal */}
+            {completionData && (
+                <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-300">
+                     <motion.div 
+                        initial={{ scale: 0.9, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        className="bg-[#121212] border border-white/10 rounded-2xl p-8 max-w-md w-full flex flex-col items-center text-center shadow-2xl relative overflow-hidden"
+                     >
+                        {/* Background Glow */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-green-500/10 via-purple-500/5 to-blue-500/10 pointer-events-none" />
+                        
+                        <div className="relative z-10 flex flex-col items-center gap-4">
+                            <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mb-2">
+                                <Sparkles size={40} className="text-green-400" />
+                            </div>
+                            
+                            <h2 className="text-3xl font-black text-white tracking-tight">Level Completed!</h2>
+                            
+                            <div className="flex gap-2 my-2">
+                                {[1, 2, 3].map((star) => (
+                                    <motion.div
+                                        key={star}
+                                        initial={{ scale: 0, opacity: 0 }}
+                                        animate={{ scale: 1, opacity: 1 }}
+                                        transition={{ delay: star * 0.2 }}
+                                    >
+                                        <div className={`w-12 h-12 flex items-center justify-center ${star <= completionData.stars ? 'text-yellow-400 fill-yellow-400' : 'text-gray-700'}`}>
+                                             <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                width="100%"
+                                                height="100%"
+                                                viewBox="0 0 24 24"
+                                                fill={star <= completionData.stars ? "currentColor" : "none"}
+                                                stroke="currentColor"
+                                                strokeWidth="2"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                              >
+                                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                                              </svg>
+                                        </div>
+                                    </motion.div>
+                                ))}
+                            </div>
+                            
+                            {completionData.xp_earned > 0 && (
+                                <div className="bg-yellow-500/10 text-yellow-500 px-4 py-2 rounded-lg font-bold text-sm border border-yellow-500/20">
+                                    +{completionData.xp_earned} XP Earned
+                                </div>
+                            )}
+                            
+                            <p className="text-gray-400 max-w-[250px] text-sm">
+                                {completionData.status === 'already_completed' ? 'You have already mastered this level.' : 'Great job! You have unlocked the next challenge.'}
+                            </p>
+                            
+                            <div className="flex flex-col w-full gap-3 mt-4">
+                                <Button 
+                                    onClick={() => {
+                                        if (completionData.next_level_slug) {
+                                            navigate(`/level/${completionData.next_level_slug}`);
+                                            // Reset state for next level (optional, but navigation handles remount)
+                                            setCompletionData(null); 
+                                        } else {
+                                             navigate('/');
+                                        }
+                                    }}
+                                    className="w-full py-6 font-bold text-lg bg-green-600 hover:bg-green-700 text-white shadow-lg flex items-center justify-center gap-2"
+                                >
+                                    {completionData.next_level_slug ? (
+                                        <>Next Level <ArrowLeft className="rotate-180" /></>
+                                    ) : (
+                                        <>Return to Map <ArrowLeft /></>
+                                    )}
+                                </Button>
+                                
+                                <Button 
+                                    variant="ghost" 
+                                    onClick={() => navigate('/')}
+                                    className="w-full text-gray-400 hover:text-white"
+                                >
+                                    Return to Map
+                                </Button>
+                            </div>
+                        </div>
+                     </motion.div>
+                </div>
+            )}
+
             {/* Header */}
             <div className="h-16 border-b border-white/10 flex items-center justify-between px-6 bg-[#121212]">
                 <div className="flex items-center gap-4">
-                    <Button variant="ghost" size="icon" onClick={() => navigate('/game')}>
+                    <Button variant="ghost" size="icon" onClick={() => navigate('/')}>
                         <ArrowLeft className="text-gray-400" />
                     </Button>
-                    <h1 className="font-bold text-lg">Level {id}: Python Basics</h1>
+                    <h1 className="font-bold text-lg">{challenge.title}</h1>
                 </div>
                 
                 <div className="flex items-center gap-2">
                     <div className="flex items-center gap-2 px-3 py-1.5 bg-yellow-500/10 text-yellow-500 rounded-full text-xs font-medium">
                         <div className={`w-2 h-2 rounded-full ${isPyodideReady ? 'bg-green-500' : 'bg-yellow-500 animate-pulse'}`} />
-                        {isPyodideReady ? 'Environment Ready' : 'Loading Python...'}
+                        {isPyodideReady ? 'Env Ready' : 'Loading...'}
                     </div>
                     <Button 
                         size="sm" 
@@ -101,7 +235,7 @@ solve()
                         disabled={!isPyodideReady || isRunning}
                         className="bg-green-600 hover:bg-green-700 text-white min-w-[100px]"
                     >
-                        {isRunning ? <Loader2 className="animate-spin w-4 h-4" /> : <><Play className="w-4 h-4 mr-2" /> Run Code</>}
+                        {isRunning ? <Loader2 className="animate-spin w-4 h-4" /> : <><Play className="w-4 h-4 mr-2" /> Run / Submit</>}
                     </Button>
                 </div>
             </div>
@@ -150,13 +284,9 @@ solve()
                         {activeTab === 'task' ? (
                             <div className="p-6">
                                 <h2 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Task Description</h2>
-                                <div className="prose prose-invert prose-sm">
-                                    <p>Write a python function that prints "Hello World".</p>
-                                    <ul className="list-disc pl-4 text-gray-400">
-                                        <li>Use the <code>print()</code> function.</li>
-                                        <li>Ensure the output matches exactly.</li>
-                                    </ul>
-                                </div>
+                                    <div className="prose prose-invert prose-sm">
+                                       <ReactMarkdown>{challenge.description}</ReactMarkdown>
+                                    </div>
                             </div>
                         ) : (
                             <div className="p-6 flex flex-col h-full">
@@ -182,9 +312,23 @@ solve()
                                 
                                 <Button 
                                     onClick={async () => {
-                                        const taskDesc = `Write a python function that prints "Hello World".`; // In real app, get this from props/state
-                                        const result = await generateHint(taskDesc, code);
-                                        setHint(result);
+                                        try {
+                                            const { challengesApi } = await import('../services/challengesApi');
+                                            // Deduct XP
+                                            await challengesApi.purchaseAIHint(id);
+                                            
+                                            // Generate Hint
+                                            const taskDesc = challenge.description;
+                                            const result = await generateHint(taskDesc, code);
+                                            setHint(result);
+                                            setOutput(prev => [...prev, { type: 'success', content: "💡 Hint Unlocked (-10 XP)" }]);
+                                        } catch (error) {
+                                            if (error.response?.status === 400) {
+                                                setOutput(prev => [...prev, { type: 'error', content: "❌ Insufficient XP for Hint (Cost: 10 XP)" }]);
+                                            } else {
+                                                console.error(error);
+                                            }
+                                        }
                                     }}
                                     disabled={aiLoading}
                                     className="w-full bg-linear-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white shadow-lg shadow-purple-900/20 border-0"
@@ -192,7 +336,7 @@ solve()
                                     {aiLoading ? (
                                         <><Loader2 className="animate-spin w-4 h-4 mr-2" /> Analyzing Code...</>
                                     ) : (
-                                        <><Sparkles className="w-4 h-4 mr-2" /> Get Hint</>
+                                        <><Sparkles className="w-4 h-4 mr-2" /> Get Hint (10 XP)</>
                                     )}
                                 </Button>
                             </div>

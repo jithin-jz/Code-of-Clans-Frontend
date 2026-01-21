@@ -33,6 +33,9 @@ const Home = () => {
     const [checkInOpen, setCheckInOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [hasUnclaimedReward, setHasUnclaimedReward] = useState(false);
+    
+    // Level Data State
+    const [apiLevels, setApiLevels] = useState([]);
 
     // Check for daily reward status on mount
     useEffect(() => {
@@ -49,20 +52,50 @@ const Home = () => {
         checkRewardStatus();
     }, [user]);
 
-    // Initialize Levels
-    const levels = useMemo(() => {
-        const initialLevels = generateLevels(25); // Spiral Logic expects 25
-        
-        if (user?.profile?.xp) {
-            const userLevel = Math.floor(user.profile.xp / 1000) + 1;
-            return initialLevels.map((lvl) => ({
-                ...lvl,
-                unlocked: lvl.id <= userLevel,
-                stars: 0 // Default 0 stars -> will show as 3 empty small stars
-            }));
-        }
-        return initialLevels;
+    // Fetch Levels
+    useEffect(() => {
+        const fetchLevels = async () => {
+            if (!user) return;
+            try {
+                // Dynamic Import to avoid circular dependency if any
+                const { challengesApi } = await import('../services/challengesApi');
+                const data = await challengesApi.getAll();
+                setApiLevels(data);
+            } catch (error) {
+                console.error("Failed to fetch challenges:", error);
+            }
+        };
+        fetchLevels();
     }, [user]);
+
+    // Initialize Levels (Merge Visuals with API Data)
+    const levels = useMemo(() => {
+        const visualLevels = generateLevels(25); // Get positions and icons
+        
+        return visualLevels.map((visual, index) => {
+            // Find matching API data by order (assuming index+1 == order)
+            const apiData = apiLevels.find(l => l.order === visual.id);
+            
+            if (apiData) {
+                return {
+                    ...visual,
+                    ...apiData, // Overwrite id, title with API data if needed, or keep visual
+                    // Ensure status maps correctly
+                    unlocked: apiData.status === 'UNLOCKED' || apiData.status === 'COMPLETED',
+                    completed: apiData.status === 'COMPLETED', // Helper for UI
+                    stars: apiData.stars || 0,
+                    slug: apiData.slug // Important for navigation
+                };
+            }
+             
+            // Default Fallback (Locked)
+            return {
+                ...visual,
+                unlocked: false,
+                stars: 0
+            };
+        });
+    }, [user, apiLevels]);
 
     // Loading logic
     useEffect(() => {
@@ -97,6 +130,7 @@ const Home = () => {
             return;
         }
         if (level.unlocked) {
+            // LevelModal uses this to show details before playing
             setSelectedLevel(level);
         }
     };
@@ -130,7 +164,7 @@ const Home = () => {
                 setCheckInOpen={setCheckInOpen}
                 hasUnclaimedReward={hasUnclaimedReward}
             />
-            <PlayButton user={user} />
+            <PlayButton user={user} levels={levels} />
             
             <CheckInReward 
                 isOpen={checkInOpen} 

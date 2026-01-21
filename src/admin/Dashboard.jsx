@@ -11,6 +11,7 @@ import { Users, Zap, Lock, Gem, AlertTriangle } from 'lucide-react';
 import AdminSidebar from './AdminSidebar';
 import StatsGrid from './StatsGrid';
 import UserTable from './UserTable';
+import AdminTasks from './AdminTasks';
 
 const AdminDashboard = () => {
     const navigate = useNavigate();
@@ -137,6 +138,12 @@ const AdminDashboard = () => {
                                 handleBlockToggle={handleBlockToggle}
                                 fetchUsers={fetchUsers}
                             />
+                        </div>
+                    )}
+
+                    {activeTab === 'tasks' && (
+                        <div className="flex-1">
+                            <AdminTasks />
                         </div>
                     )}
 

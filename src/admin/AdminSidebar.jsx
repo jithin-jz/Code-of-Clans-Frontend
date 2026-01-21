@@ -1,11 +1,12 @@
 import React from 'react';
-import { BarChart2, Users, Settings, LogOut, Shield } from 'lucide-react';
+import { BarChart2, Users, Settings, LogOut, Shield, Layers } from 'lucide-react';
 import { Button } from '../components/ui/button';
 
 const AdminSidebar = ({ user, activeTab, setActiveTab, handleLogout }) => {
-    const sidebarItems = [
+const sidebarItems = [
         { id: 'overview', label: 'Overview', icon: <BarChart2 size={18} /> },
         { id: 'users', label: 'Users', icon: <Users size={18} /> },
+        { id: 'tasks', label: 'Tasks', icon: <Layers size={18} /> },
         { id: 'settings', label: 'Settings', icon: <Settings size={18} /> },
     ];
 
