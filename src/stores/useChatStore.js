@@ -20,7 +20,7 @@ const useChatStore = create((set, get) => ({
     // but standard WebSocket API connects via URL.
     // The backend expects `?token=<jwt>` or a ticket system.
     // Assuming backend extracts from query param for now as standardized in previous steps.
-    const wsUrl = `${WS_URL}/global/?token=${token}`;
+    const wsUrl = `${WS_URL}/global?token=${token}`;
     const socket = new WebSocket(wsUrl);
 
     socket.onopen = () => {
@@ -34,7 +34,7 @@ const useChatStore = create((set, get) => ({
         // Handle different message types
         if (data.type === 'chat_message') {
             set((state) => ({
-                messages: [...state.messages, data.message]
+                messages: [...state.messages, data]
             }));
         } else if (data.type === 'history') {
              set({ messages: data.messages });
@@ -47,9 +47,11 @@ const useChatStore = create((set, get) => ({
     };
 
     socket.onclose = (event) => {
+      console.log("WS Close:", event.code, event.reason);
       set({ isConnected: false, socket: null });
       // Optional: data.code === 1008 (Policy Violation) -> Auth failed
       if (event.code === 1008) {
+          console.error("WS Auth Failed (1008)");
           set({ error: "Authentication failed" });
       }
     };

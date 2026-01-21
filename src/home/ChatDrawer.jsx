@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
+import useChatStore from '../stores/useChatStore';
 import { Link } from 'react-router-dom';
 import { Lock, MessageSquare, ChevronLeft, Send, Smile, X } from 'lucide-react';
 import EmojiPicker from 'emoji-picker-react';
@@ -10,14 +11,21 @@ import { motion, AnimatePresence } from 'framer-motion';
 const ChatDrawer = ({ isChatOpen, setChatOpen, user }) => {
     // ... refs and state ...
     const inputRef = useRef(null);
-    const socketRef = useRef(null);
     const messagesEndRef = useRef(null);
     const pickerRef = useRef(null);
+    
+    // Use global store
+    const { 
+        messages, 
+        onlineCount, 
+        isConnected, 
+        connect, 
+        disconnect, 
+        sendMessage: sendStoreMessage 
+    } = useChatStore();
 
-    const [messages, setMessages] = useState([]);
     const [inputMessage, setInputMessage] = useState("");
     const [showPicker, setShowPicker] = useState(false);
-    const [onlineCount, setOnlineCount] = useState(0);
 
     // ... (rest of the hooks remain the same) ...
 
@@ -50,70 +58,42 @@ const ChatDrawer = ({ isChatOpen, setChatOpen, user }) => {
     }, [messages]);
 
     /* --------------------------- websocket connect --------------------------- */
+    /* --------------------------- websocket connect --------------------------- */
     useEffect(() => {
-        if (!user || !isChatOpen) return;
-
-        // Clear messages to prevent duplication from history replay
-        setMessages([]);
-
-        const token = localStorage.getItem("access_token");
-        if (!token) return;
-
-        // Construct WS URL from Chat Service URL
-        const chatUrl = import.meta.env.VITE_CHAT_URL;
-        
-        const ws = new WebSocket(
-            `${chatUrl}/ws/chat/global/?token=${token}`
-        );
-
-        socketRef.current = ws;
-
-        ws.onopen = () => {
-            console.log("Chat connected");
-            notify.success("Connected to Global Chat");
-        };
-
-        ws.onmessage = (event) => {
-            try {
-                const data = JSON.parse(event.data);
-                
-                if (data.type === 'user_count') {
-                    setOnlineCount(data.count);
-                    return;
-                }
-                
-                if (data.type === 'history') {
-                    setMessages(data.messages);
-                    return;
-                }
-
-                if (!data?.message) return;
-                setMessages((prev) => [...prev, data]);
-            } catch (err) {
-                console.error("Invalid WS payload", err);
+        if (isChatOpen && user) {
+            const token = localStorage.getItem("access_token");
+            if (token) {
+                // Connect using store
+                connect(token);
             }
+        } 
+        // We generally don't disconnect on drawer close if we want to keep receiving messages,
+        // but for now, let's keep it simple or follow previous behavior.
+        // Previous behavior: close on unmount or deps change.
+        // Let's rely on store's idempotency and maybe disconnect on unmount?
+        // Actually, if we want background chat, we shouldn't disconnect when drawer closes.
+        // But the previous code closed it. Let's stick to previous behavior for now
+        // to save resources, or maybe keep it open.
+        // Let's disconnect ONLY on component unmount, but the dependency array 
+        // [user, isChatOpen] implies it reconnects every time drawer opens.
+        
+        return () => {
+             // Optional: disconnect on unmount or when drawer closes if undesired
+             // disconnect(); 
         };
-
-        ws.onclose = () => {
-            console.log("Chat disconnected");
-            notify.error("Disconnected from Chat");
-            socketRef.current = null;
-        };
-
-        return () => ws.close();
-    }, [user, isChatOpen]);
+    }, [isChatOpen, user, connect]);
 
     /* ----------------------------- send message ------------------------------ */
+    /* ----------------------------- send message ------------------------------ */
     const sendMessage = useCallback((content = null) => {
-        const ws = socketRef.current;
         const messageToSend = content || inputMessage.trim();
+        if (!messageToSend || !isConnected) return;
 
-        if (!ws || ws.readyState !== WebSocket.OPEN || !messageToSend) return;
-
-        ws.send(JSON.stringify({ message: messageToSend }));
+        sendStoreMessage(messageToSend);
+        
         if (!content) setInputMessage(""); // Clear input only if sending text
         setShowPicker(false);
-    }, [inputMessage]);
+    }, [inputMessage, isConnected, sendStoreMessage]);
 
     const handleEmojiClick = (emojiData) => {
         setInputMessage((prev) => prev + emojiData.emoji);
@@ -172,11 +152,11 @@ const ChatDrawer = ({ isChatOpen, setChatOpen, user }) => {
                                                 <img src={msg.avatar_url} alt={msg.username} className="w-full h-full object-cover" />
                                             ) : (
                                                 <div className="w-full h-full bg-zinc-800 flex items-center justify-center text-xs text-zinc-500 font-bold">
-                                                    {msg.username.charAt(0).toUpperCase()}
+                                                    {msg.username?.charAt(0).toUpperCase() || '?'}
                                                 </div>
                                             )}
                                         </Link>
-                                        <div className="flex flex-col gap-1 max-w-[85%]">
+                                        <div className={`flex flex-col gap-1 max-w-[85%] ${msg.username === user?.username ? 'items-end' : 'items-start'}`}>
                                             <div className="flex items-center gap-2">
                                                 <Link 
                                                     to={`/profile/${msg.username}`}
