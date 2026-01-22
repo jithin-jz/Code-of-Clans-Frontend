@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { checkInApi } from '../services/checkInApi';
 import useUserStore from '../stores/useUserStore';
-import { Calendar, Flame, Award, CheckCircle2, Snowflake } from 'lucide-react';
+import { Calendar, Flame, Award, CheckCircle2 } from 'lucide-react';
 import { toast } from 'sonner';
 import {
   Dialog,
@@ -90,7 +90,9 @@ const CheckInReward = ({ isOpen, onClose, onClaim }) => {
 
         {/* Streak Display */}
         {/* Streak & Freeze Stats */}
-        <div className="grid grid-cols-2 gap-4">
+        {/* Streak Display */}
+        {/* Streak Stats */}
+        <div className="grid grid-cols-1 gap-4">
           <Card className="bg-linear-to-r from-orange-500/10 to-red-500/10 border-orange-500/20">
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
@@ -98,26 +100,10 @@ const CheckInReward = ({ isOpen, onClose, onClaim }) => {
                   <Flame className="text-orange-400 h-5 w-5" />
                 </div>
                 <div className="flex-1">
-                  <p className="text-xs text-gray-400 uppercase tracking-wider">Streak</p>
+                  <p className="text-xs text-gray-400 uppercase tracking-wider">Current Cycle</p>
                   <p className="text-lg font-bold text-white">
-                    Day {checkInStatus?.current_streak || 0}{' '}
+                    Day {checkInStatus?.cycle_day || 1}{' '}
                     <span className="text-gray-500">/ 7</span>
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-linear-to-r from-blue-500/10 to-cyan-500/10 border-blue-500/20">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-blue-500/20 rounded-lg">
-                  <Snowflake className="text-blue-400 h-5 w-5" />
-                </div>
-                <div className="flex-1">
-                  <p className="text-xs text-gray-400 uppercase tracking-wider">Freezes</p>
-                  <p className="text-lg font-bold text-white">
-                    {checkInStatus?.freezes_left || 0}
                   </p>
                 </div>
               </div>
@@ -136,22 +122,36 @@ const CheckInReward = ({ isOpen, onClose, onClaim }) => {
               </p>
 
               {/* Calendar Grid */}
+              {/* Calendar Grid */}
               <div className="grid grid-cols-7 gap-2">
                 {[1, 2, 3, 4, 5, 6, 7].map((day) => {
-                  const isCompleted = checkInStatus?.current_streak >= day && 
-                                    checkInStatus?.checked_in_today;
-                  const isClaimable = !checkInStatus?.checked_in_today && 
-                                    day === (checkInStatus?.current_streak || 0) + 1;
+                  const currentCycleDay = checkInStatus?.cycle_day || 1;
+                  const isCheckedInToday = checkInStatus?.checked_in_today;
                   
+                  // Check if this specific day was claimed in the current cycle
+                  // We look through recent_checkins to find if 'streak_day' (which maps to cycle day) matches 'day'
+                  const isClaimedInHistory = checkInStatus?.recent_checkins?.some(
+                    (checkin) => checkin.streak_day === day
+                  );
+
+                  const isCompleted = isClaimedInHistory || (day === currentCycleDay && isCheckedInToday);
+                  
+                  // Claimable only if it's TODAY's cycle day and we haven't checked in yet
+                  const isClaimable = !isCheckedInToday && day === currentCycleDay;
+                  
+                  // Missed if it's a past day relative to current cycle day, and not claimed
+                  const isMissed = day < currentCycleDay && !isCompleted;
+
                   return (
                     <Card
                       key={day}
-                      onClick={() => handleCheckIn(day)}
+                      onClick={() => isClaimable ? handleCheckIn(day) : null}
                       className={cn(
-                        "relative transition-all cursor-default hover:shadow-md border-2",
-                        isCompleted && "bg-linear-to-br from-green-500/20 to-emerald-500/20 border-green-500/30",
+                        "relative transition-all border-2",
+                        isCompleted && "bg-linear-to-br from-green-500/20 to-emerald-500/20 border-green-500/30 cursor-default",
                         isClaimable && "bg-linear-to-br from-primary/20 to-orange-500/20 border-primary/50 cursor-pointer hover:scale-105 animate-pulse",
-                        !isCompleted && !isClaimable && "bg-[#1a1a1a] border-white/5",
+                        isMissed && "bg-red-500/10 border-red-500/20 opacity-70 cursor-not-allowed",
+                        !isCompleted && !isClaimable && !isMissed && "bg-[#1a1a1a] border-white/5 opacity-50 cursor-not-allowed",
                         checkingIn && "opacity-50 cursor-not-allowed"
                       )}
                     >
@@ -163,7 +163,8 @@ const CheckInReward = ({ isOpen, onClose, onClaim }) => {
                             "text-xs font-bold",
                             isCompleted && "bg-green-500 hover:bg-green-500 text-white border-none",
                             isClaimable && "bg-primary hover:bg-primary text-black border-none",
-                            !isCompleted && !isClaimable && "text-gray-500 border-white/10"
+                            isMissed && "bg-transparent text-red-500 border-red-500/30",
+                            !isCompleted && !isClaimable && !isMissed && "text-gray-500 border-white/10"
                           )}
 
                         >
@@ -178,6 +179,11 @@ const CheckInReward = ({ isOpen, onClose, onClaim }) => {
                         {isClaimable && (
                           <div className="absolute -top-1 -right-1 w-6 h-6 bg-primary rounded-full flex items-center justify-center animate-bounce">
                             <Award className="text-primary-foreground h-3 w-3" />
+                          </div>
+                        )}
+                         {isMissed && (
+                          <div className="absolute top-1 right-1">
+                             <span className="text-[10px] text-red-400 font-bold uppercase">Missed</span>
                           </div>
                         )}
                       </CardContent>
