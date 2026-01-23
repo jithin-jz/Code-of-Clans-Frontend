@@ -24,11 +24,15 @@ const ProfilePanel = ({ user }) => {
                             )}
                         </div>
                         {user && (
-                            <Link to="/shop" className="absolute -bottom-2 -right-2 z-20 hover:scale-110 transition-transform">
+                            <div className="absolute -bottom-2 -right-2 z-20 hover:scale-110 transition-transform cursor-pointer" onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                window.location.href = '/shop'; 
+                            }}>
                                 <div className="bg-[#FFD700] text-black text-[10px] font-black px-1.5 py-0.5 rounded-md border border-[#121212] shadow-sm flex items-center gap-1">
                                     LVL {Math.floor((user.profile?.xp || 0) / 1000) + 1}
                                 </div>
-                            </Link>
+                            </div>
                         )}
                     </div>
                     

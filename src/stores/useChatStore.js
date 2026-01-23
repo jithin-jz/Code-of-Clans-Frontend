@@ -33,10 +33,12 @@ const useChatStore = create((set, get) => ({
         
         // Handle different message types
         if (data.type === 'chat_message') {
+            // Backend sends the full message object now including timestamp
             set((state) => ({
                 messages: [...state.messages, data]
             }));
         } else if (data.type === 'history') {
+             // Replace messages with history from DB
              set({ messages: data.messages });
         } else if (data.type === 'presence') {
              set({ onlineCount: data.count });

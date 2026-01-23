@@ -148,12 +148,22 @@ const ChatDrawer = ({ isChatOpen, setChatOpen, user }) => {
                                             onClick={() => setChatOpen(false)}
                                             className="relative shrink-0 w-8 h-8 rounded-full overflow-hidden border border-white/10 hover:border-[#FFD700] transition-colors"
                                         >
-                                            {msg.avatar_url ? (
-                                                <img src={msg.avatar_url} alt={msg.username} className="w-full h-full object-cover" />
+                                            {msg.username === user?.username ? (
+                                                user?.profile?.avatar_url ? (
+                                                    <img src={user.profile.avatar_url} alt={msg.username} className="w-full h-full object-cover" />
+                                                ) : (
+                                                    <div className="w-full h-full bg-zinc-800 flex items-center justify-center text-xs text-zinc-500 font-bold">
+                                                        {msg.username?.charAt(0).toUpperCase() || '?'}
+                                                    </div>
+                                                )
                                             ) : (
-                                                <div className="w-full h-full bg-zinc-800 flex items-center justify-center text-xs text-zinc-500 font-bold">
-                                                    {msg.username?.charAt(0).toUpperCase() || '?'}
-                                                </div>
+                                                msg.avatar_url ? (
+                                                    <img src={msg.avatar_url} alt={msg.username} className="w-full h-full object-cover" />
+                                                ) : (
+                                                    <div className="w-full h-full bg-zinc-800 flex items-center justify-center text-xs text-zinc-500 font-bold">
+                                                        {msg.username?.charAt(0).toUpperCase() || '?'}
+                                                    </div>
+                                                )
                                             )}
                                         </Link>
                                         <div className={`flex flex-col gap-1 max-w-[85%] ${msg.username === user?.username ? 'items-end' : 'items-start'}`}>
@@ -165,6 +175,11 @@ const ChatDrawer = ({ isChatOpen, setChatOpen, user }) => {
                                                 >
                                                     {msg.username}
                                                 </Link>
+                                                {msg.timestamp && (
+                                                    <span className="text-[10px] text-zinc-500 font-mono">
+                                                        {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                    </span>
+                                                )}
                                             </div>
                                             <div className={`
                                                 rounded-2xl text-sm leading-relaxed shadow-sm transition-colors

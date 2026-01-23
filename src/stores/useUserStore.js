@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { authAPI } from "../services/api";
 import useAuthStore from "./useAuthStore";
+import useChatStore from "./useChatStore";
 
 const useUserStore = create((set, get) => ({
   // State
@@ -49,8 +50,20 @@ const useUserStore = create((set, get) => ({
         response = await authAPI.updateProfile(formData);
       }
 
+      // Update tokens in localStorage if present (Backend sends them on profile update)
+      if (response.data.access_token) {
+          localStorage.setItem("access_token", response.data.access_token);
+      }
+      if (response.data.refresh_token) {
+          localStorage.setItem("refresh_token", response.data.refresh_token);
+      }
+
       // Update Auth Store with new user data
       useAuthStore.getState().setUser(response.data);
+      
+      // Force Chat Reconnection with new token (for instant update)
+      useChatStore.getState().disconnect();
+      
       set({ loading: false });
       return response.data;
     } catch (error) {
