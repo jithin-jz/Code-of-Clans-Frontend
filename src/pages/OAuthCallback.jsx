@@ -24,6 +24,7 @@ const OAuthCallback = ({ provider }) => {
 
         const processCallback = async () => {
             const code = searchParams.get('code');
+            const state = searchParams.get('state');
             const errorParam = searchParams.get('error');
 
             if (errorParam) {
@@ -54,7 +55,7 @@ const OAuthCallback = ({ provider }) => {
             sessionStorage.setItem(processedKey, 'true');
             
             try {
-                const success = await handleOAuthCallback(provider, code);
+                const success = await handleOAuthCallback(provider, code, state);
                 
                 if (success) {
                     if (isPopupWindow) {

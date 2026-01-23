@@ -12,7 +12,8 @@ const aiApi = axios.create({
 });
 
 export const aiAPI = {
-  generate: (code, language = "python") => aiApi.post("/explain", { code, language }),
+  generate: (code, language = "python") =>
+    aiApi.post("/explain", { code, language }),
 };
 
 // Create axios instance
@@ -88,9 +89,10 @@ api.interceptors.response.use(
 // Auth API functions
 export const authAPI = {
   // Get OAuth URLs
-  getGithubAuthUrl: () => api.get("/auth/github/"),
-  getGoogleAuthUrl: () => api.get("/auth/google/"),
-  getDiscordAuthUrl: () => api.get("/auth/discord/"),
+  getGithubAuthUrl: (state) => api.get("/auth/github/", { params: { state } }),
+  getGoogleAuthUrl: (state) => api.get("/auth/google/", { params: { state } }),
+  getDiscordAuthUrl: (state) =>
+    api.get("/auth/discord/", { params: { state } }),
 
   // Handle OAuth callbacks
   githubCallback: (code) => api.post("/auth/github/callback/", { code }),
@@ -135,10 +137,10 @@ export const paymentAPI = {
 };
 
 export const storeAPI = {
-    getItems: () => api.get("/store/items/"),
-    buyItem: (id) => api.post(`/store/buy/${id}/`),
-    equipItem: (id) => api.post("/store/equip/", { item_id: id }),
-    unequipItem: (category) => api.post("/store/unequip/", { category }),
+  getItems: () => api.get("/store/items/"),
+  buyItem: (id) => api.post(`/store/buy/${id}/`),
+  equipItem: (id) => api.post("/store/equip/", { item_id: id }),
+  unequipItem: (category) => api.post("/store/unequip/", { category }),
 };
 
 export default api;

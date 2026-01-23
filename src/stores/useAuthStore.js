@@ -15,6 +15,11 @@ const openOAuthPopup = (url, name = "OAuth Login") => {
   );
 };
 
+// Helper to generate random state
+const generateState = () => {
+    return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+};
+
 const useAuthStore = create((set) => ({
   // State
   user: null,
@@ -70,20 +75,23 @@ const useAuthStore = create((set) => ({
     set({ loading: true, error: null });
 
     try {
+      const state = generateState();
+      localStorage.setItem('oauth_state', state);
+
       let response;
       let popupName;
 
       switch (provider) {
         case "github":
-          response = await authAPI.getGithubAuthUrl();
+          response = await authAPI.getGithubAuthUrl(state);
           popupName = "GitHub Login";
           break;
         case "google":
-          response = await authAPI.getGoogleAuthUrl();
+          response = await authAPI.getGoogleAuthUrl(state);
           popupName = "Google Login";
           break;
         case "discord":
-          response = await authAPI.getDiscordAuthUrl();
+          response = await authAPI.getDiscordAuthUrl(state);
           popupName = "Discord Login";
           break;
         default:
@@ -103,8 +111,20 @@ const useAuthStore = create((set) => ({
     }
   },
 
-  handleOAuthCallback: async (provider, code) => {
+  handleOAuthCallback: async (provider, code, returnedState) => {
     set({ loading: true, error: null });
+
+    // Verify State
+    const savedState = localStorage.getItem('oauth_state');
+    localStorage.removeItem('oauth_state'); // Clear immediately after use
+
+    if (!savedState || savedState !== returnedState) {
+         set({
+            loading: false,
+            error: "Security Error: State mismatch (CSFR protection). Please try again.",
+         });
+         return false;
+    }
 
     try {
       let response;
