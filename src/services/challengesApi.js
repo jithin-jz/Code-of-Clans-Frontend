@@ -36,5 +36,14 @@ export const challengesApi = {
     delete: async (slug) => {
         const response = await api.delete(`/challenges/${slug}/`);
         return response.data;
+    },
+    claimCertificate: async () => {
+        const response = await api.post('/certificates/claim/');
+        return response.data;
+    },
+    verifyCertificate: async (id) => {
+        // Public endpoint
+        const response = await api.get(`/certificates/verify/${id}/`);
+        return response.data;
     }
 };

@@ -2,7 +2,7 @@ import React from 'react';
 
 const HomeSkeleton = () => {
     return (
-        <div className="h-screen relative overflow-hidden bg-[#0a0a0a] text-white">
+        <div className="h-screen relative overflow-hidden bg-[#0a0a0a] text-white flex items-center justify-center">
             {/* Background Texture */}
              <div className="absolute inset-0 opacity-20 pointer-events-none" 
                 style={{ 
@@ -12,7 +12,7 @@ const HomeSkeleton = () => {
             />
             <div className="absolute inset-0 bg-linear-to-b from-black/50 via-transparent to-black/80 pointer-events-none" />
 
-            {/* Top Bar Skeleton */}
+            {/* Top Left Profile Skeleton */}
             <div className="absolute top-6 left-6 z-50 flex items-center gap-4 animate-pulse">
                 <div className="w-12 h-12 rounded-xl bg-white/10"></div>
                 <div className="flex flex-col gap-2">
@@ -23,28 +23,27 @@ const HomeSkeleton = () => {
 
             {/* Right Side UI Skeleton */}
             <div className="absolute top-6 right-6 z-50 flex flex-col gap-4 animate-pulse">
-                <div className="w-12 h-12 rounded-full bg-white/10"></div>
-                <div className="w-12 h-12 rounded-full bg-white/10"></div>
-                <div className="w-12 h-12 rounded-full bg-white/10"></div>
+                <div className="w-40 h-12 rounded-full bg-white/10"></div>
+                <div className="w-12 h-12 rounded-2xl bg-white/10"></div>
+                <div className="w-12 h-12 rounded-2xl bg-white/10"></div>
+                <div className="w-12 h-12 rounded-2xl bg-white/10"></div>
             </div>
 
             {/* Play Button Skeleton */}
-             <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-50 animate-pulse">
-                <div className="w-64 h-20 rounded-full bg-white/10"></div>
+             <div className="fixed bottom-6 right-6 z-50 animate-pulse">
+                <div className="w-48 h-16 rounded-full bg-white/10"></div>
             </div>
 
-            {/* Map Nodes Skeleton (Scattered) */}
-            <div className="absolute inset-0 z-0">
-                {[...Array(8)].map((_, i) => (
-                    <div 
-                        key={i}
-                        className="absolute w-16 h-16 rounded-full bg-white/5 animate-pulse"
-                        style={{
-                            top: `${20 + (i * 12) % 60}%`,
-                            left: `${10 + (i * 17) % 80}%`,
-                        }}
-                    ></div>
-                ))}
+            {/* Grid Skeleton - 9 columns, 6 rows = 54 items */}
+            <div className="w-full max-w-7xl pl-4 pr-28">
+                <div className="grid grid-cols-9 gap-4 gap-y-6 justify-items-center animate-pulse">
+                    {[...Array(54)].map((_, i) => (
+                        <div key={i} className="flex flex-col items-center gap-1">
+                            <div className="w-10 h-10 rounded-lg bg-white/10"></div>
+                            <div className="w-6 h-2 rounded bg-white/5"></div>
+                        </div>
+                    ))}
+                </div>
             </div>
         </div>
     );

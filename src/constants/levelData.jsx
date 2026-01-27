@@ -16,61 +16,112 @@ const ICONS = [
 
 const CERTIFICATE_ICON = <Award size={32} className="text-yellow-400" />;
 
-// Square Spiral Generation for 5x5 Grid (25 Levels)
-export const generateLevels = (count = 25) => {
+// Procedural Spiral Generator (Inward Winding)
+// Level 1: Bottom Right -> Level 50: Center
+export const generateLevels = (count = 53) => {
     const levels = [];
     
-    // Define the grid positions (0-4 x 0-4)
-    // We want to map linear index 0..24 to these grid coordinates in a spiral.
-    // Spiral Path for 5x5: Top-Left -> Right -> Down -> Left -> Up -> Right... -> Center
-    // Coordinates (col, row)
-    // Define the grid positions (0-4 x 0-4)
-    // We want to map linear index 0..24 to these grid coordinates in a spiral.
-    // Spiral Path for 5x5: Bottom-Right -> Left -> Up -> Right -> Down ... -> Center
-    // This places Level 1 near the Play Button (Bottom Right)
-    // Coordinates (col, row)
-    const spiralCoords = [
-        // Ring 0 (Outer) - 16 nodes
-        [4,4], [3,4], [2,4], [1,4], [0,4], // Bottom row <-
-        [0,3], [0,2], [0,1], [0,0],        // Left col ^
-        [1,0], [2,0], [3,0], [4,0],        // Top row ->
-        [4,1], [4,2], [4,3],               // Right col v
-        
-        // Ring 1 (Inner) - 8 nodes
-        [3,3], [2,3], [1,3],               // Bottom inner <-
-        [1,2], [1,1],                      // Left inner ^
-        [2,1], [3,1],                      // Top inner ->
-        [3,2],                             // Right inner v
-        
-        // Ring 2 (Center) - 1 node
-        [2,2]
-    ];
+    // 1. Generate Spiral Coordinates (Outwards from (0,0))
+    // Index 0 = Center (Level 50)
+    // Index N = Edge (Level 1)
+    const coords = [];
+    let x = 0;
+    let y = 0;
+    let dx = 0;
+    let dy = -1;
+    
+    // Generate one extra point so Level 1 starts at "Level 2's" spot
+    // leaving the outermost corner empty.
+    const numPoints = count + 1;
 
-    // Map grid coordinates to percentages (10%, 30%, 50%, 70%, 90%)
-    const getPos = (index) => (index * 20) + 10;
+    for (let i = 0; i < numPoints; i++) {
+        coords.push({x, y});
+        
+        if (x === y || (x < 0 && x === -y) || (x > 0 && x === 1 - y)) {
+            const temp = dx;
+            dx = -dy;
+            dy = temp;
+        }
+        
+        x += dx;
+        y += dy;
+    }
+    
+    // 2. Rotate/Flip to ensure the LAST point (The Empty Corner) is at Bottom-Right (+X, +Y)
+    // First, Transpose (Swap X/Y) to ensure Level 1 is to the LEFT of the corner, not ABOVE.
+    const rotatedCoords = coords.map(p => ({x: p.y, y: p.x}));
+    
+    const lastPoint = rotatedCoords[numPoints - 1];
+    
+    // Determine required flips
+    // We want lastPoint.x > 0 and lastPoint.y > 0
+    const flipX = lastPoint.x < 0 ? -1 : 1;
+    const flipY = lastPoint.y < 0 ? -1 : 1;
 
+    const transformedCoords = rotatedCoords.map(p => ({
+        x: p.x * flipX,
+        y: p.y * flipY
+    }));
+
+    // 3. Normalize Coordinates to %
+    let minX = 0, maxX = 0, minY = 0, maxY = 0;
+    transformedCoords.forEach(p => {
+        if(p.x < minX) minX = p.x;
+        if(p.x > maxX) maxX = p.x;
+        if(p.y < minY) minY = p.y;
+        if(p.y > maxY) maxY = p.y;
+    });
+
+    const rangeX = Math.max(maxX - minX, 1);
+    const rangeY = Math.max(maxY - minY, 1);
+    
+    // Tighter padding: 5% to 95% (Use 90% width/height)
+    // Tighter padding: 10% to 90% (Range 80%)
+    const scaleX = 80 / rangeX;
+    const scaleY = 80 / rangeY;
+    
+    // 4. Construct Levels (Reversed Mapping)
+    // coords index 0 -> Level 50 (Center)
+    // coords index 49 -> Level 1 (Bottom Right)
+    
     for (let i = 0; i < count; i++) {
-        // Safety check for count > 25, though we expect 25.
-        // If count > 25, validSpiralIndex will be undefined, so we fallback.
-        const coord = spiralCoords[i] || [2,2]; 
-        
-        const x = getPos(coord[0]);
-        const y = getPos(coord[1]);
-
-        const isLast = i === count - 1;
         const id = i + 1;
+        // Level 1 gets index 49
+        const coordIndex = count - id; 
+        const pos = transformedCoords[coordIndex];
 
+        // Map to percentage (10% to 90%)
+        const posX = 10 + ((pos.x - minX) * scaleX);
+        const posY = 10 + ((pos.y - minY) * scaleY);
+        
         levels.push({
             id: id,
-            name: isLast ? 'Certificate' : `Task ${id}`,
-            icon: isLast ? CERTIFICATE_ICON : ICONS[i % ICONS.length],
+            order: id,
+            name: `Level ${id}`,
+            icon: ICONS[(id - 1) % ICONS.length],
             stars: 0,
-            unlocked: i === 0, // Mock unlock
-            hasGift: isLast,
-            position: { x, y }
+            unlocked: id === 1,
+            hasGift: false,
+            position: { x: posX, y: posY }
         });
     }
+    
+    // Add Certificate as the final node (uses center position - index 0)
+    const certPos = transformedCoords[0];
+    const certX = 10 + ((certPos.x - minX) * scaleX);
+    const certY = 10 + ((certPos.y - minY) * scaleY);
+    
+    levels.push({
+        id: count + 1,
+        order: count + 1,
+        name: 'Certificate',
+        type: 'CERTIFICATE',
+        icon: CERTIFICATE_ICON,
+        stars: 0,
+        unlocked: false,
+        hasGift: true,
+        position: { x: certX, y: certY }
+    });
+    
     return levels;
 };
-
-

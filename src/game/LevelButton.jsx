@@ -23,7 +23,7 @@ const LevelButton = ({ level, isCurrentLevel, onClick }) => {
             whileTap={level.unlocked ? { scale: 0.95, y: 2 } : {}}
         >
             {/* Level Square */}
-            <div className={`w-12 h-12 rounded-lg flex items-center justify-center relative transition-all duration-300
+            <div className={`w-10 h-10 rounded-lg flex items-center justify-center relative transition-all duration-300
                 ${isCurrentLevel ? 'ring-2 ring-yellow-400 ring-offset-2 ring-offset-black' : ''}
                 ${level.unlocked ? 'hover:scale-105' : 'opacity-80 grayscale'}
             `}
@@ -33,25 +33,25 @@ const LevelButton = ({ level, isCurrentLevel, onClick }) => {
                 <div className="absolute inset-0 bg-linear-to-br from-white/20 to-transparent rounded-lg pointer-events-none" />
 
                 {level.unlocked ? (
-                    <span className="text-white drop-shadow-md">{level.icon}</span>
+                    <span className="text-white drop-shadow-md scale-75">{level.icon}</span>
                 ) : (
                     <span className="text-white/50">
-                        <Lock size={20} />
+                        <Lock size={16} />
                     </span>
                 )}
 
                 {isCurrentLevel && (
                     <motion.div
-                        className="absolute -top-8 left-1/2 -translate-x-1/2 text-yellow-400"
-                        animate={{ y: [0, -6, 0] }}
+                        className="absolute -top-6 left-1/2 -translate-x-1/2 text-yellow-400"
+                        animate={{ y: [0, -4, 0] }}
                         transition={{ repeat: Infinity, duration: 1.5 }}
                     >
-                        <MapPin size={24} fill="currentColor" />
+                        <MapPin size={20} fill="currentColor" />
                     </motion.div>
                 )}
                 {/* Stars (Small Overlay) */}
                 {level.unlocked && (
-                    <div className="absolute -bottom-1 flex gap-0.5 bg-[#1f2937]/80 rounded-full px-1 py-0.5 backdrop-blur-xs border border-white/5 shadow-sm transform scale-75">
+                    <div className="absolute -bottom-1 flex gap-0.5 bg-[#1f2937]/80 rounded-full px-1 py-0.5 backdrop-blur-xs border border-white/5 shadow-sm transform scale-[0.6]">
                         {[1, 2, 3].map((star) => (
                             <Star
                                 key={star}
@@ -63,9 +63,11 @@ const LevelButton = ({ level, isCurrentLevel, onClick }) => {
                 )}
             </div>
 
-            {/* Label (Compact) */}
-            <div className="mt-1">
-                <p className={`text-[10px] font-bold font-mono ${level.unlocked ? 'text-yellow-400' : 'text-gray-500'}`}>L{level.id}</p>
+            {/* Label */}
+            <div className="mt-0.5">
+                <p className={`text-[10px] font-bold font-mono ${level.unlocked ? 'text-yellow-400' : 'text-gray-500'}`}>
+                    {level.type === 'CERTIFICATE' ? 'Badge' : `L${level.order || level.id}`}
+                </p>
             </div>
         </motion.button>
     );

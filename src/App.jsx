@@ -12,6 +12,7 @@ import AdminDashboard from './admin/Dashboard';
 import NotFound from './pages/NotFound';
 import BuyXPPage from './pages/BuyXPPage';
 import Game from './pages/Game';
+import CertificateVerification from './pages/CertificateVerification';
 import CodeArena from './game/CodeArena';
 import Leaderboard from './challenges/Leaderboard';
 import Store from './store/Store';
@@ -62,6 +63,9 @@ const AppContent = () => {
                         <Route path="/auth/google/callback" element={<OAuthCallback provider="google" />} />
                         <Route path="/auth/discord/callback" element={<OAuthCallback provider="discord" />} />
                         
+                        {/* Certificate Verification - Public */}
+                        <Route path="/certificate/verify/:id" element={<CertificateVerification />} />
+
                         {/* Admin Dashboard - Admin Only */}
                         <Route path="/admin/dashboard" element={
                             <AdminRoute>

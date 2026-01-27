@@ -74,22 +74,33 @@ const Home = () => {
 
   // Initialize Levels (Merge Visuals with API Data)
   const levels = useMemo(() => {
-    const visualLevels = generateLevels(25); // Get positions and icons
+    const visualLevels = generateLevels(); // 53 Levels + 1 Certificate
 
     return visualLevels.map((visual) => {
-      // Find matching API data by order (assuming index+1 == order)
+      // Find matching API data by order
       const apiData = apiLevels.find((l) => l.order === visual.id);
+
+      // Certificate Special Case (Last Node)
+      if (visual.type === 'CERTIFICATE') {
+          // Check if all 53 levels are completed
+          const allCompleted = apiLevels.length >= 53 && apiLevels.every(l => l.status === 'COMPLETED');
+          return {
+              ...visual,
+              unlocked: allCompleted, 
+              completed: false, // We'll fetch actual cert status later
+              type: 'CERTIFICATE'
+          };
+      }
 
       if (apiData) {
         return {
           ...visual,
-          ...apiData, // Overwrite id, title with API data if needed, or keep visual
-          // Ensure status maps correctly
-          unlocked:
-            apiData.status === "UNLOCKED" || apiData.status === "COMPLETED",
-          completed: apiData.status === "COMPLETED", // Helper for UI
+          ...apiData,
+          unlocked: apiData.status === "UNLOCKED" || apiData.status === "COMPLETED",
+          completed: apiData.status === "COMPLETED",
           stars: apiData.stars || 0,
-          slug: apiData.slug, // Important for navigation
+          slug: apiData.slug,
+          type: 'LEVEL'
         };
       }
 
@@ -98,16 +109,10 @@ const Home = () => {
         ...visual,
         unlocked: false,
         stars: 0,
+        type: 'LEVEL'
       };
     });
   }, [apiLevels]);
-
-  // Loading logic removed for instant render
-  // useEffect(() => {
-  //    if (!isLoading) return;
-  //    const timeout = setTimeout(() => setIsLoading(false), 3000);
-  //    return () => clearTimeout(timeout);
-  // }, [isLoading]);
 
   // Keyboard Shortcuts
   useEffect(() => {
@@ -131,13 +136,31 @@ const Home = () => {
     return <HomeSkeleton />;
   }
 
-  const handleLevelClick = (level) => {
+  const handleLevelClick = async (level) => {
     if (!user) {
       navigate("/login");
       return;
     }
+
+    if (level.type === 'CERTIFICATE') {
+        if (level.unlocked) {
+             const { challengesApi } = await import("../services/challengesApi");
+             try {
+                 await challengesApi.claimCertificate(); 
+                 // navigate('/certificate/view/' + cert.id);
+                 alert("Certificate Claimed! (View Page WIP)"); 
+             } catch (e) {
+                 if(e.response && e.response.status === 400 && e.response.data.error === 'Certificate already claimed') {
+                     alert("You already have this certificate!");
+                 } else {
+                     alert("Complete all levels first!");
+                 }
+             }
+        }
+        return;
+    }
+
     if (level.unlocked) {
-      // LevelModal uses this to show details before playing
       setSelectedLevel(level);
     }
   };
@@ -173,8 +196,6 @@ const Home = () => {
         setCheckInOpen={setCheckInOpen}
         hasUnclaimedReward={hasUnclaimedReward}
       />
-      <PlayButton user={user} levels={levels} />
-
       <CheckInReward
         isOpen={checkInOpen}
         onClose={() => setCheckInOpen(false)}

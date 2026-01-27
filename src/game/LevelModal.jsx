@@ -21,9 +21,9 @@ const LevelModal = ({ selectedLevel, onClose }) => {
             <DialogContent className="sm:max-w-sm bg-[#09090b] border-white/10 text-white">
                 <DialogHeader className="flex flex-col items-center gap-2">
                     <DialogTitle className="text-2xl font-bold text-white">
-                        Level {selectedLevel.id}
+                        Level {selectedLevel.order || selectedLevel.id}
                     </DialogTitle>
-                    <p className="text-gray-400 font-medium">{selectedLevel.name}</p>
+                    <p className="text-gray-400 font-medium">{selectedLevel.title || selectedLevel.name}</p>
                 </DialogHeader>
 
                 <div className="flex flex-col items-center gap-8 py-4">

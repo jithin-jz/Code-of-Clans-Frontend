@@ -50,6 +50,7 @@ const Profile = () => {
     isOwnProfile ? currentUser : null,
   );
   const [loading, setLoading] = useState(!isOwnProfile);
+  const [userNotFound, setUserNotFound] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
 
   const [editForm, setEditForm] = useState({
@@ -77,17 +78,18 @@ const Profile = () => {
   const fetchProfile = useCallback(
     async (targetUsername) => {
       setLoading(true);
+      setUserNotFound(false);
       try {
         const response = await getUserProfile(targetUsername);
         setProfileUser(response.data);
       } catch (error) {
         console.error("Failed to fetch profile", error);
-        navigate("/404");
+        setUserNotFound(true);
       } finally {
         setLoading(false);
       }
     },
-    [navigate, getUserProfile],
+    [getUserProfile],
   );
 
   const fetchUserList = async (type) => {
@@ -194,6 +196,29 @@ const Profile = () => {
   // }
 
   // if (!profileUser) return null; // We still might need this if we have absolutely nothing, but better to show skeleton
+
+  // User Not Found UI
+  if (userNotFound) {
+    return (
+      <div className="h-screen w-full bg-[#050505] text-white flex flex-col items-center justify-center gap-6">
+        <div className="text-center">
+          <div className="w-24 h-24 rounded-full bg-red-500/10 flex items-center justify-center mx-auto mb-6">
+            <Users size={48} className="text-red-400" />
+          </div>
+          <h1 className="text-3xl font-bold mb-2">User Not Found</h1>
+          <p className="text-gray-400 mb-6">
+            This user may have changed their username or doesn't exist.
+          </p>
+          <button
+            onClick={() => navigate('/')}
+            className="px-6 py-3 bg-[#FFD700] hover:bg-[#FDB931] text-black rounded-xl font-bold transition-all hover:scale-105"
+          >
+            Back to Home
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="h-screen w-full bg-[#050505] text-white font-sans overflow-hidden content-center p-4 md:p-6 flex justify-center gap-6 selection:bg-[#FFD700] selection:text-black">

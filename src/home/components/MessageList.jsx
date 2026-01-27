@@ -37,7 +37,7 @@ const MessageList = ({
                         <Link 
                             to={`/profile/${msg.username}`}
                             onClick={() => setChatOpen(false)}
-                            className="relative shrink-0 w-8 h-8 rounded-full overflow-hidden border border-white/10 hover:border-[#FFD700] transition-colors"
+                            className="relative shrink-0 w-8 h-8 rounded-full overflow-hidden border-2 border-white/10 hover:border-[#FFD700] hover:scale-110 transition-all cursor-pointer"
                         >
                             {msg.username === user?.username ? (
                                 user?.profile?.avatar_url ? (
@@ -62,7 +62,7 @@ const MessageList = ({
                                 <Link 
                                     to={`/profile/${msg.username}`}
                                     onClick={() => setChatOpen(false)}
-                                    className={`${msg.username === user?.username ? 'text-[#FFD700]' : 'text-blue-400'} font-bold text-xs tracking-wide hover:underline cursor-pointer`}
+                                    className={`${msg.username === user?.username ? 'text-[#FFD700]' : 'text-blue-400'} font-bold text-xs tracking-wide hover:underline cursor-pointer hover:text-white transition-colors`}
                                 >
                                     {msg.username}
                                 </Link>
