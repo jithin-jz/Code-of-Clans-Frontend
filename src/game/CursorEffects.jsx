@@ -19,32 +19,46 @@ const CursorEffects = ({ effectType }) => {
         window.addEventListener('resize', resize);
 
         const createParticle = (x, y) => {
-            const count = effectType === 'fire' ? 5 : 2;
-            for (let i = 0; i < count; i++) {
-                particles.current.push({
-                    x,
-                    y,
-                    vx: (Math.random() - 0.5) * 4,
-                    vy: effectType === 'fire' ? -Math.random() * 4 : (Math.random() - 0.5) * 4,
-                    life: 1,
-                    color: effectType === 'fire' 
-                        ? `hsl(${Math.random() * 40 + 10}, 100%, 50%)` // Orange/Red
-                        : `hsl(${Math.random() * 360}, 100%, 50%)`, // Rainbow
-                    size: Math.random() * 4 + 2
-                });
+            if (effect_key === 'sparkle') {
+                for (let i = 0; i < 3; i++) {
+                    particles.current.push({
+                        x, y,
+                        vx: (Math.random() - 0.5) * 2,
+                        vy: (Math.random() - 0.5) * 2,
+                        life: 1.0,
+                        color: `hsl(50, 100%, ${70 + Math.random() * 30}%)`, // Gold/Yellow sparkle
+                        size: Math.random() * 3 + 1,
+                        type: 'sparkle'
+                    });
+                }
+            } else if (effect_key === 'rainbow') {
+                for (let i = 0; i < 2; i++) {
+                    particles.current.push({
+                        x, y,
+                        vx: (Math.random() - 0.5) * 3,
+                        vy: (Math.random() - 0.5) * 3,
+                        life: 1.0,
+                        color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+                        size: Math.random() * 4 + 2,
+                        type: 'rainbow'
+                    });
+                }
+            } else if (effect_key === 'matrix') {
+                if (Math.random() < 0.3) {
+                    particles.current.push({
+                        x, y,
+                        vx: 0,
+                        vy: Math.random() * 2 + 1,
+                        life: 1.0,
+                        color: '#00ff41', // Matrix Green
+                        size: 10,
+                        char: String.fromCharCode(0x30A0 + Math.random() * 96),
+                        type: 'matrix'
+                    });
+                }
             }
         };
 
-        // Listen for typing (simplified: any keydown)
-        const handleKeyDown = (e) => {
-            // We can't easily get exact cursor position from outside Monaco without passing coords.
-            // For now, let's just spawn random or center, OR better:
-            // We will trust the parent to pass coordinates or just use mouse for "fun" if we can't hook to cursor.
-            // ACTUALLY, in a real editor, we'd hook into monaco.onDidChangeCursorPosition.
-            // Since this is a separate component, let's just listen to generic window clicks/keys for demo, 
-            // BUT ideally CodeArena should drive this.
-        };
-        
         // Loop
         const render = () => {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -53,7 +67,12 @@ const CursorEffects = ({ effectType }) => {
                 p.x += p.vx;
                 p.y += p.vy;
                 p.life -= 0.02;
-                p.size *= 0.95;
+
+                if (p.type === 'matrix') {
+                    p.y += 2;
+                } else {
+                    p.size *= 0.96;
+                }
 
                 if (p.life <= 0) {
                     particles.current.splice(i, 1);
@@ -61,10 +80,16 @@ const CursorEffects = ({ effectType }) => {
                 }
 
                 ctx.globalAlpha = p.life;
-                ctx.fillStyle = p.color;
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                ctx.fill();
+                if (p.type === 'matrix') {
+                    ctx.font = `${p.size}px monospace`;
+                    ctx.fillStyle = p.color;
+                    ctx.fillText(p.char, p.x, p.y);
+                } else {
+                    ctx.fillStyle = p.color;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
             });
             ctx.globalAlpha = 1;
 
@@ -80,19 +105,42 @@ const CursorEffects = ({ effectType }) => {
 
     // Expose spawn method
     useEffect(() => {
+        const effect_key = effectType; // Use effectType passed from parent
         window.spawnCursorEffect = (x, y) => {
-             const count = effectType === 'fire' ? 8 : 4;
-             for (let i = 0; i < count; i++) {
+            if (effect_key === 'sparkle') {
+                for (let i = 0; i < 5; i++) {
+                    particles.current.push({
+                        x, y,
+                        vx: (Math.random() - 0.5) * 3,
+                        vy: (Math.random() - 0.5) * 3,
+                        life: 1.0,
+                        color: `hsl(50, 100%, ${80 + Math.random() * 20}%)`,
+                        size: Math.random() * 4 + 1,
+                        type: 'sparkle'
+                    });
+                }
+            } else if (effect_key === 'rainbow') {
+                for (let i = 0; i < 4; i++) {
+                    particles.current.push({
+                        x, y,
+                        vx: (Math.random() - 0.5) * 5,
+                        vy: (Math.random() - 0.5) * 5,
+                        life: 1.0,
+                        color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+                        size: Math.random() * 5 + 2,
+                        type: 'rainbow'
+                    });
+                }
+            } else if (effect_key === 'matrix') {
                 particles.current.push({
-                    x,
-                    y,
-                    vx: (Math.random() - 0.5) * 4,
-                    vy: effectType === 'fire' ? -Math.random() * 5 - 2 : (Math.random() - 0.5) * 5,
-                    life: 1.0,
-                    color: effectType === 'fire' 
-                        ? `rgba(255, ${Math.floor(Math.random() * 150)}, 0, 1)` 
-                        : `hsl(${Math.random() * 360}, 80%, 60%)`,
-                    size: Math.random() * 6 + 2
+                    x, y,
+                    vx: 0,
+                    vy: 2,
+                    life: 1.5,
+                    color: '#00ff41',
+                    size: 14,
+                    char: String.fromCharCode(0x30A0 + Math.random() * 96),
+                    type: 'matrix'
                 });
             }
         };

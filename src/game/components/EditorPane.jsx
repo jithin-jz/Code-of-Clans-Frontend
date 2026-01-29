@@ -4,7 +4,6 @@ import Editor from '@monaco-editor/react';
 const EditorPane = ({ 
     code, 
     setCode, 
-    user, 
     handleEditorDidMount,
     loading 
 }) => {
@@ -26,7 +25,7 @@ const EditorPane = ({
              <Editor
                 height="100%"
                 defaultLanguage="python"
-                theme={user?.profile?.active_theme || "vs-dark"}
+                theme="vs-dark"
                 value={code}
                 onChange={(value) => setCode(value)}
                 onMount={handleEditorDidMount}
@@ -35,7 +34,6 @@ const EditorPane = ({
                     fontSize: 14,
                     padding: { top: 20 },
                     scrollBeyondLastLine: false,
-                    fontFamily: user?.profile?.active_font || 'Consolas, "Courier New", monospace',
                     fontLigatures: true,
                 }}
              />

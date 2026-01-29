@@ -35,8 +35,8 @@ const AdminStore = () => {
         name: '',
         description: '',
         cost: 100,
-        category: 'ITEM',
-        icon_name: 'Package',
+        category: 'THEME',
+        icon_name: 'Palette',
         image: '',
         is_active: true,
         item_data: '{}'
@@ -77,8 +77,8 @@ const AdminStore = () => {
                 name: '',
                 description: '',
                 cost: 100,
-                category: 'ITEM',
-                icon_name: 'Package',
+                category: 'THEME',
+                icon_name: 'Palette',
                 image: '',
                 is_active: true,
                 item_data: '{}'
@@ -217,10 +217,7 @@ const AdminStore = () => {
                                     onChange={e => setFormData({...formData, category: e.target.value})}
                                     className="w-full h-10 px-3 rounded-md bg-black/50 border border-white/10 text-sm"
                                 >
-                                    <option value="ITEM">Item</option>
                                     <option value="THEME">Theme</option>
-                                    <option value="BADGE">Badge</option>
-                                    <option value="BOOSTER">Booster</option>
                                     <option value="FONT">Font</option>
                                     <option value="EFFECT">Effect</option>
                                     <option value="VICTORY">Victory</option>

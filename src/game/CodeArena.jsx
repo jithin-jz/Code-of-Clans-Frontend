@@ -113,7 +113,9 @@ const CodeArena = () => {
     const handleEditorDidMount = useCallback((editor, monaco) => {
         editorRef.current = editor;
         
-        // Define Custom Themes (Keeping these here as they are global to Monaco instance)
+        // --- THEME DEFINITIONS ---
+        
+        // Dracula
         monaco.editor.defineTheme('dracula', {
             base: 'vs-dark',
             inherit: true,
@@ -133,6 +135,86 @@ const CodeArena = () => {
             }
         });
 
+        // Nord
+        monaco.editor.defineTheme('nord', {
+            base: 'vs-dark',
+            inherit: true,
+            rules: [
+                { token: 'comment', foreground: '616e88' },
+                { token: 'keyword', foreground: '81a1c1' },
+                { token: 'string', foreground: 'a3be8c' },
+                { token: 'number', foreground: 'b48ead' },
+                { token: 'type', foreground: '8fbcbb' },
+            ],
+            colors: {
+                'editor.background': '#2e3440',
+                'editor.foreground': '#d8dee9',
+                'editorCursor.foreground': '#d8dee9',
+                'editor.lineHighlightBackground': '#3b4252',
+                'editor.selectionBackground': '#434c5e',
+            }
+        });
+
+        // Monokai
+        monaco.editor.defineTheme('monokai', {
+            base: 'vs-dark',
+            inherit: true,
+            rules: [
+                { token: 'comment', foreground: '75715e' },
+                { token: 'keyword', foreground: 'f92672' },
+                { token: 'string', foreground: 'e6db74' },
+                { token: 'number', foreground: 'ae81ff' },
+                { token: 'type', foreground: '66d9ef' },
+            ],
+            colors: {
+                'editor.background': '#272822',
+                'editor.foreground': '#f8f8f2',
+                'editorCursor.foreground': '#f8f8f0',
+                'editor.lineHighlightBackground': '#3e3d32',
+                'editor.selectionBackground': '#49483e',
+            }
+        });
+
+        // Solarized Dark
+        monaco.editor.defineTheme('solarized-dark', {
+            base: 'vs-dark',
+            inherit: true,
+            rules: [
+                { token: 'comment', foreground: '586e75' },
+                { token: 'keyword', foreground: '859900' },
+                { token: 'string', foreground: '2aa198' },
+                { token: 'number', foreground: 'd33682' },
+                { token: 'type', foreground: 'b58900' },
+            ],
+            colors: {
+                'editor.background': '#002b36',
+                'editor.foreground': '#839496',
+                'editorCursor.foreground': '#839496',
+                'editor.lineHighlightBackground': '#073642',
+                'editor.selectionBackground': '#073642',
+            }
+        });
+
+        // Cyberpunk
+        monaco.editor.defineTheme('cyberpunk', {
+            base: 'vs-dark',
+            inherit: true,
+            rules: [
+                { token: 'comment', foreground: '323232' },
+                { token: 'keyword', foreground: 'ff007f' },
+                { token: 'string', foreground: '00ffff' },
+                { token: 'number', foreground: '9d00ff' },
+                { token: 'type', foreground: 'ff7700' },
+            ],
+            colors: {
+                'editor.background': '#0d0d0d',
+                'editor.foreground': '#f0f0f0',
+                'editorCursor.foreground': '#ff007f',
+                'editor.lineHighlightBackground': '#1a1a1a',
+                'editor.selectionBackground': '#333333',
+            }
+        });
+
         // Cursor Effect Hook
         editor.onDidChangeCursorPosition((e) => {
             if (user?.profile?.active_effect && window.spawnCursorEffect) {
@@ -147,11 +229,32 @@ const CodeArena = () => {
             }
         });
 
-        // Force re-layout or update if needed
-        if (user?.profile?.active_theme) {
-             monaco.editor.setTheme(user.profile.active_theme);
+        // Apply active theme after defining it
+        // Map backend theme names (may have underscores) to Monaco-compatible names (hyphens only)
+        const themeNameMap = {
+            'solarized_dark': 'solarized-dark',
+        };
+        const activeTheme = user?.profile?.active_theme;
+        const validThemes = ['dracula', 'nord', 'monokai', 'solarized_dark', 'solarized-dark', 'cyberpunk'];
+        if (activeTheme && validThemes.includes(activeTheme)) {
+            const monacoThemeName = themeNameMap[activeTheme] || activeTheme;
+            monaco.editor.setTheme(monacoThemeName);
         }
-    }, [user?.profile?.active_effect, user?.profile?.active_theme]);
+
+        // Apply active font
+        if (user?.profile?.active_font) {
+            editor.updateOptions({ fontFamily: `"${user.profile.active_font}", Consolas, "Courier New", monospace` });
+        }
+    }, [user?.profile?.active_effect, user?.profile?.active_theme, user?.profile?.active_font]);
+
+    // Apply Active Theme Reactively
+    useEffect(() => {
+        if (editorRef.current && user?.profile?.active_theme) {
+            // Need to set theme via monaco instance or simple editor prop?
+            // Since we passed the theme prop in EditorPane, it should update automatically.
+            // But let's double check if we need to force it.
+        }
+    }, [user?.profile?.active_theme]);
 
     const runCode = useCallback(() => {
         if (!workerRef.current || isRunning) return;
