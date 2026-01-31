@@ -6,17 +6,20 @@ import PlayButton from './PlayButton';
 const LevelMap = ({ 
     levels, 
     handleLevelClick, 
-    user 
+    user,
+    isLeaderboardOpen
 }) => {
     // Standard Grid Layout
     return (
         <div className="w-full h-screen relative overflow-hidden bg-[#0a0a0a] flex items-center justify-center">
             {/* Play Button - Fixed */}
-            <PlayButton 
-                user={user} 
-                levels={levels} 
-                className="fixed bottom-6 right-6 z-50 scale-90 origin-bottom-right" 
-            />
+            {!isLeaderboardOpen && (
+                <PlayButton 
+                    user={user} 
+                    levels={levels} 
+                    className="fixed bottom-6 right-6 z-50 scale-90 origin-bottom-right" 
+                />
+            )}
 
             {/* Added right padding to prevent overlap with fixed UI buttons */}
             <div className="w-full max-w-7xl pl-4 pr-28">

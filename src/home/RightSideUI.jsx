@@ -9,6 +9,7 @@ const RightSideUI = ({
     settingsOpen, 
     setSettingsOpen, 
     setCheckInOpen,
+    setLeaderboardOpen,
     hasUnclaimedReward
 }) => {
     const navigate = useNavigate();
@@ -91,7 +92,7 @@ const RightSideUI = ({
                 <Button 
                     variant="ghost" 
                     className={glassButtonClass}
-                    onClick={() => navigate('/leaderboard')}
+                    onClick={() => setLeaderboardOpen(prev => !prev)}
                 >
                     <Trophy size={24} className="text-[#FFD700]" />
                 </Button>

@@ -9,6 +9,7 @@ import HomeSkeleton from "./HomeSkeleton";
 import LevelModal from "../game/LevelModal";
 import ProfilePanel from "../home/ProfilePanel";
 import ChatDrawer from "../home/ChatDrawer";
+import LeaderboardDrawer from "../home/LeaderboardDrawer";
 import ShopButton from "../home/ShopButton";
 import RightSideUI from "../home/RightSideUI";
 import PlayButton from "../home/PlayButton";
@@ -28,6 +29,7 @@ const Home = () => {
   // State
   const [selectedLevel, setSelectedLevel] = useState(null);
   const [isChatOpen, setChatOpen] = useState(false);
+  const [isLeaderboardOpen, setLeaderboardOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [checkInOpen, setCheckInOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -121,11 +123,33 @@ const Home = () => {
         e.preventDefault();
         setChatOpen((prev) => !prev);
       }
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "l") {
+        e.preventDefault();
+        setLeaderboardOpen((prev) => !prev);
+      }
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "p") {
+        e.preventDefault();
+        if (user) {
+          navigate("/profile");
+        }
+      }
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "x") {
+        e.preventDefault();
+        if (user) {
+          navigate("/shop");
+        }
+      }
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "s") {
+        e.preventDefault();
+        if (user) {
+          navigate("/store");
+        }
+      }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
+  }, [user, navigate]);
 
   const handleLogout = async () => {
     await logout();
@@ -186,6 +210,10 @@ const Home = () => {
         setChatOpen={setChatOpen}
         user={user}
       />
+      <LeaderboardDrawer
+        isLeaderboardOpen={isLeaderboardOpen}
+        setLeaderboardOpen={setLeaderboardOpen}
+      />
       <ShopButton />
       <RightSideUI
         user={user}
@@ -194,6 +222,7 @@ const Home = () => {
         setSettingsOpen={setSettingsOpen}
         checkInOpen={checkInOpen}
         setCheckInOpen={setCheckInOpen}
+        setLeaderboardOpen={setLeaderboardOpen}
         hasUnclaimedReward={hasUnclaimedReward}
       />
       <CheckInReward
@@ -202,7 +231,7 @@ const Home = () => {
         onClaim={() => setHasUnclaimedReward(false)}
       />
 
-      <LevelMap levels={levels} handleLevelClick={handleLevelClick} />
+      <LevelMap levels={levels} handleLevelClick={handleLevelClick} isLeaderboardOpen={isLeaderboardOpen} />
 
       {/* Level Modal */}
       {selectedLevel && (

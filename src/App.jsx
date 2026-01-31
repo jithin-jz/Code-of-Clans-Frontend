@@ -14,7 +14,6 @@ import BuyXPPage from './pages/BuyXPPage';
 import Game from './pages/Game';
 import CertificateVerification from './pages/CertificateVerification';
 import CodeArena from './game/CodeArena';
-import Leaderboard from './challenges/Leaderboard';
 import Store from './store/Store';
 
 // Route Guards
@@ -102,12 +101,6 @@ const AppContent = () => {
                         <Route path="/game" element={
                             <ProtectedRoute>
                                 <Game />
-                            </ProtectedRoute>
-                        } />
-
-                        <Route path="/leaderboard" element={
-                            <ProtectedRoute>
-                                <Leaderboard />
                             </ProtectedRoute>
                         } />
 
