@@ -30,23 +30,6 @@ async function loadPyodideAndPackages() {
 
 loadPyodideAndPackages();
 
-// Helper function to reset Python state between runs
-async function resetPythonState() {
-    if (!pyodide) return;
-    
-    // Clear user-defined variables while preserving built-ins
-    await pyodide.runPythonAsync(`
-import sys
-# Get all user-defined names (excluding built-ins and modules)
-_to_delete = [name for name in list(globals().keys()) 
-              if not name.startswith('_') 
-              and name not in ('sys', 'builtins', '__builtins__', '__name__', '__doc__')]
-for _name in _to_delete:
-    del globals()[_name]
-del _to_delete, _name
-    `);
-}
-
 // Execute code with timeout protection
 function executeWithTimeout(asyncFn, timeoutMs) {
     return new Promise((resolve, reject) => {
@@ -76,9 +59,6 @@ self.onmessage = async (event) => {
         }
 
         try {
-            // Reset state before each run to prevent variable leakage
-            await resetPythonState();
-            
             // Run User Code with timeout protection
             await executeWithTimeout(
                 () => pyodide.runPythonAsync(code),
@@ -94,7 +74,7 @@ self.onmessage = async (event) => {
                         EXECUTION_TIMEOUT
                     );
                     
-                    // Now call check() with the user's code scope (globals)
+                    // Call check() with the user's code scope (globals)
                     await executeWithTimeout(
                         () => pyodide.runPythonAsync(`
 # Get the current global scope which contains user's functions/classes

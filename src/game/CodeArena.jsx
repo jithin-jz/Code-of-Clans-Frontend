@@ -90,7 +90,7 @@ const CodeArena = () => {
                         
                         if (result.status === 'completed' || result.status === 'already_completed') {
                              const starText = "⭐".repeat(result.stars || 0);
-                             setOutput(prev => [...prev, { type: 'success', content: `🎉 Challenge Completed! ${starText}` }]);
+                             setOutput([{ type: 'success', content: `🎉 Challenge Completed! ${starText}` }]);
                              if (result.xp_earned > 0) {
                                   setOutput(prev => [...prev, { type: 'success', content: `💪 XP Earned: +${result.xp_earned}` }]);
                              }
@@ -316,44 +316,49 @@ const CodeArena = () => {
             <CursorEffects effectType={user?.profile?.active_effect} />
             
             {/* Completion Modal */}
+            {/* Completion Modal */}
             {completionData && (
-                <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-300">
+                <div className="absolute inset-0 z-50 flex items-center justify-center bg-[#000000]/90 backdrop-blur-xl p-4 animate-in fade-in duration-500">
                      <VictoryAnimation type={user?.profile?.active_victory} />
                      <motion.div 
-                        animate={{ scale: 1, opacity: 1 }}
-                        className="bg-[#121212] border border-white/10 rounded-2xl p-8 max-w-md w-full flex flex-col items-center text-center shadow-2xl relative overflow-hidden z-70"
+                        initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                        animate={{ scale: 1, opacity: 1, y: 0 }}
+                        transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+                        className="bg-[#0a0a0a] border border-white/10 rounded-3xl p-10 max-w-sm w-full flex flex-col items-center text-center shadow-[0_0_50px_-12px_rgba(74,222,128,0.2)] relative overflow-hidden z-70"
                      >
-                        {/* Background Glow */}
-                        <div className="absolute inset-0 bg-linear-to-br from-green-500/10 via-purple-500/5 to-blue-500/10 pointer-events-none" />
+                        {/* Background Glows */}
+                        <div className="absolute -top-20 -right-20 w-64 h-64 bg-green-500/10 rounded-full blur-3xl pointer-events-none" />
+                        <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
                         
-                        <div className="relative z-10 flex flex-col items-center gap-4">
-                            <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mb-2">
-                                <Sparkles size={40} className="text-green-400" />
+                        <div className="relative z-10 flex flex-col items-center gap-6">
+                            <div className="w-24 h-24 bg-[#121212] border border-green-500/20 rounded-full flex items-center justify-center mb-2 shadow-inner shadow-green-500/10 relative group">
+                                <div className="absolute inset-0 bg-green-500/20 rounded-full blur-xl opacity-50 animate-pulse" />
+                                <Sparkles size={40} className="text-green-400 relative z-10 drop-shadow-[0_0_10px_rgba(74,222,128,0.5)]" />
                             </div>
                             
-                            <h2 className="text-3xl font-black text-white tracking-tight">Level Completed!</h2>
+                            <div className="space-y-1">
+                                <h2 className="text-3xl font-black text-white tracking-tight">Level Conquered!</h2>
+                                <p className="text-gray-500 text-sm font-medium uppercase tracking-widest">Mission Accomplished</p>
+                            </div>
                             
-                            <div className="flex gap-2 my-2">
+                            <div className="flex gap-3 my-2 bg-white/5 p-3 rounded-2xl border border-white/5">
                                 {[1, 2, 3].map((star) => (
                                     <motion.div
                                         key={star}
-                                        initial={{ scale: 0, opacity: 0 }}
-                                        animate={{ scale: 1, opacity: 1 }}
-                                        transition={{ delay: star * 0.2 }}
+                                        initial={{ scale: 0, opacity: 0, rotate: -180 }}
+                                        animate={{ scale: 1, opacity: 1, rotate: 0 }}
+                                        transition={{ delay: 0.2 + star * 0.15, type: 'spring' }}
                                     >
-                                        <div className={`w-12 h-12 flex items-center justify-center ${star <= completionData.stars ? 'text-yellow-400 fill-yellow-400' : 'text-gray-700'}`}>
+                                        <div className={`w-10 h-10 flex items-center justify-center transition-all duration-500 ${star <= completionData.stars ? 'text-yellow-400 drop-shadow-[0_0_10px_rgba(250,204,21,0.5)]' : 'text-gray-800'}`}>
                                              <svg
                                                 xmlns="http://www.w3.org/2000/svg"
                                                 width="100%"
                                                 height="100%"
                                                 viewBox="0 0 24 24"
-                                                fill={star <= completionData.stars ? "currentColor" : "none"}
-                                                stroke="currentColor"
-                                                strokeWidth="2"
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
+                                                fill={star <= completionData.stars ? "currentColor" : "currentColor"}
+                                                className={star <= completionData.stars ? "" : "opacity-20"}
                                               >
-                                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-5.82 3.25L7.38 14.14 2 9.27l6.91-1.01L12 2z" />
                                               </svg>
                                         </div>
                                     </motion.div>
@@ -361,14 +366,15 @@ const CodeArena = () => {
                             </div>
                             
                             {completionData.xp_earned > 0 && (
-                                <div className="bg-yellow-500/10 text-yellow-500 px-4 py-2 rounded-lg font-bold text-sm border border-yellow-500/20">
-                                    +{completionData.xp_earned} XP Earned
-                                </div>
+                                <motion.div 
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 0.8 }}
+                                    className="bg-gradient-to-r from-yellow-500/10 to-orange-500/10 text-yellow-500 px-5 py-2 rounded-full font-bold text-sm border border-yellow-500/20 flex items-center gap-2"
+                                >
+                                    <span className="text-yellow-200">+</span>{completionData.xp_earned} <span className="text-xs uppercase opacity-70">XP Gained</span>
+                                </motion.div>
                             )}
-                            
-                            <p className="text-gray-400 max-w-[250px] text-sm">
-                                {completionData.status === 'already_completed' ? 'You have already mastered this level.' : 'Great job! You have unlocked the next challenge.'}
-                            </p>
                             
                             <div className="flex flex-col w-full gap-3 mt-4">
                                 {completionData.next_level_slug && (
@@ -377,18 +383,18 @@ const CodeArena = () => {
                                             navigate(`/level/${completionData.next_level_slug}`);
                                             setCompletionData(null); 
                                         }}
-                                        className="w-full py-6 font-bold text-lg bg-green-600 hover:bg-green-700 text-white shadow-lg flex items-center justify-center gap-2 transform active:scale-95 transition-all"
+                                        className="w-full py-6 font-bold text-base bg-white text-black hover:bg-gray-100 shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:shadow-[0_0_30px_rgba(255,255,255,0.3)] transition-all flex items-center justify-center gap-2 rounded-xl"
                                     >
-                                        Next Level <ArrowRight />
+                                        Next Level <ArrowRight className="w-5 h-5" />
                                     </Button>
                                 )}
                                 
                                 <Button 
-                                    variant={completionData.next_level_slug ? "outline" : "default"}
+                                    variant="ghost"
                                     onClick={() => navigate('/')}
-                                    className={`w-full py-6 font-bold text-lg flex items-center justify-center gap-2 ${!completionData.next_level_slug ? 'bg-green-600 hover:bg-green-700 text-white shadow-lg' : 'border-white/20 hover:bg-white/5 text-gray-300 hover:text-white'}`}
+                                    className="w-full py-6 font-bold text-base text-gray-500 hover:text-white hover:bg-white/5 border border-transparent hover:border-white/10 rounded-xl transition-all flex items-center justify-center gap-2"
                                 >
-                                    <Home size={20} /> Go Home
+                                    <Home className="w-5 h-5" /> Return to Base
                                 </Button>
                             </div>
                         </div>

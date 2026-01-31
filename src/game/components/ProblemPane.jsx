@@ -1,6 +1,8 @@
 import React, { memo } from 'react';
 import ReactMarkdown from 'react-markdown';
 
+import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
+
 const ProblemPane = ({ 
     challenge, 
     loading
@@ -24,25 +26,27 @@ const ProblemPane = ({
     }
 
     return (
-        <div className="flex-1 flex flex-col bg-[#0a0a0a] overflow-hidden">
+        <Card className="flex-1 flex flex-col bg-[#0a0a0a] border-none rounded-none overflow-hidden">
             {/* Header */}
-            <div className="flex border-b border-white/10 bg-[#1a1a1a]">
-                <div 
-                    className="flex-1 py-3 text-xs font-bold uppercase tracking-wider text-center text-white border-b-2 border-purple-500 bg-white/5"
-                >
-                    Task
-                </div>
-            </div>
+            <CardHeader className="border-b border-white/5 bg-[#0a0a0a]/50 px-6 py-4 flex flex-row items-center gap-3 space-y-0">
+                <div className="w-1 h-4 bg-purple-500 rounded-full" />
+                <CardTitle className="text-sm font-bold text-white tracking-wide uppercase">Mission Brief</CardTitle>
+            </CardHeader>
 
-            <div className="flex-1 overflow-y-auto relative custom-scrollbar">
-                <div className="p-6">
-                    <h2 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Task Description</h2>
-                        <div className="prose prose-invert prose-sm max-w-none">
-                           <ReactMarkdown>{challenge.description}</ReactMarkdown>
-                        </div>
+            <CardContent className="flex-1 overflow-y-auto relative custom-scrollbar p-0">
+                <div className="p-8 max-w-2xl mx-auto">
+                    <div className="prose prose-invert prose-sm max-w-none 
+                        prose-headings:text-white prose-headings:font-bold prose-headings:tracking-tight
+                        prose-p:text-gray-300 prose-p:leading-relaxed prose-p:text-base
+                        prose-code:text-purple-300 prose-code:bg-purple-900/20 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-md prose-code:font-mono prose-code:text-[13px]
+                        prose-strong:text-white prose-strong:font-bold
+                        prose-ul:text-gray-400 prose-li:marker:text-purple-500
+                    ">
+                       <ReactMarkdown>{challenge.description}</ReactMarkdown>
+                    </div>
                 </div>
-            </div>
-        </div>
+            </CardContent>
+        </Card>
     );
 };
 

@@ -12,7 +12,7 @@ import ChatDrawer from "../home/ChatDrawer";
 import LeaderboardDrawer from "../home/LeaderboardDrawer";
 import ShopButton from "../home/ShopButton";
 import RightSideUI from "../home/RightSideUI";
-import PlayButton from "../home/PlayButton";
+
 import LevelMap from "../home/LevelMap";
 import CheckInReward from "../home/CheckInReward";
 import { checkInApi } from "../services/checkInApi";
@@ -203,6 +203,7 @@ const Home = () => {
         }}
       />
       <div className="absolute inset-0 bg-linear-to-b from-black/50 via-transparent to-black/80 pointer-events-none" />
+
 
       <ProfilePanel user={user} />
       <ChatDrawer

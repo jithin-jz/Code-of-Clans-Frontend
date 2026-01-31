@@ -4,15 +4,18 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 
 
-const PlayButton = ({ user, levels, className }) => {
+const PlayButton = ({ levels, className }) => {
     const navigate = useNavigate();
     
-    // Find the first available level:
-    // ... (comments)
+    // Priority 1: First unlocked but not completed level (Current Grind)
+    // Priority 2: Highest order unlocked level (Latest Reached)
+    // Priority 3: First level (Fallback)
     
-    const currentLevel = levels?.find(l => l.unlocked && !l.completed) 
-        || levels?.find(l => l.unlocked) // Fallback for pure replaying or if only 1 level
-        || levels?.[0]; // Absolute fallback
+    // Assuming levels are sorted by order 1..N
+    const activeLevel = levels?.find(l => l.unlocked && !l.completed);
+    const latestLevel = levels?.filter(l => l.unlocked).pop(); 
+    
+    const currentLevel = activeLevel || latestLevel || levels?.[0];
 
     if (!currentLevel) return null;
 
