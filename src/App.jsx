@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, lazy, Suspense } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -7,27 +7,29 @@ import {
 } from "react-router-dom";
 import useAuthStore from "./stores/useAuthStore";
 
-// Pages
+// Components (loaded immediately)
+import Loader from "./common/Loader";
+import ErrorBoundary from "./components/ErrorBoundary";
 
-import Login from "./auth/Login";
-import Profile from "./profile/Profile";
-import Home from "./pages/Home";
-import OAuthCallback from "./pages/OAuthCallback";
-import AdminDashboard from "./admin/Dashboard";
-import NotFound from "./pages/NotFound";
-import BuyXPPage from "./pages/BuyXPPage";
-import Game from "./pages/Game";
-import CertificateVerification from "./pages/CertificateVerification";
-import CodeArena from "./game/CodeArena";
-import Store from "./store/Store";
-
-// Route Guards
+// Route Guards (loaded immediately)
 import ProtectedRoute from "./routes/ProtectedRoute";
 import PublicOnlyRoute from "./routes/PublicOnlyRoute";
 import AdminRoute from "./routes/AdminRoute";
 
-// Components
-import Loader from "./common/Loader";
+// Lazy-loaded Pages (code splitting)
+const Login = lazy(() => import("./auth/Login"));
+const Profile = lazy(() => import("./profile/Profile"));
+const Home = lazy(() => import("./pages/Home"));
+const OAuthCallback = lazy(() => import("./pages/OAuthCallback"));
+const AdminDashboard = lazy(() => import("./admin/Dashboard"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+const BuyXPPage = lazy(() => import("./pages/BuyXPPage"));
+const Game = lazy(() => import("./pages/Game"));
+const CertificateVerification = lazy(
+  () => import("./pages/CertificateVerification"),
+);
+const CodeArena = lazy(() => import("./game/CodeArena"));
+const Store = lazy(() => import("./store/Store"));
 
 // Auth initializer component
 const AuthInitializer = ({ children }) => {
@@ -45,116 +47,120 @@ import { NotificationContainer } from "./services/notification";
 const AppContent = () => {
   return (
     <AuthInitializer>
-      <NotificationContainer />
-      <div className="min-h-screen">
-        <main>
-          <Routes>
-            {/* Public Landing (Game Map) - Visible to all */}
-            <Route path="/" element={<Home />} />
+      <ErrorBoundary>
+        <NotificationContainer />
+        <div className="min-h-screen">
+          <main>
+            <Suspense fallback={<Loader />}>
+              <Routes>
+                {/* Public Landing (Game Map) - Visible to all */}
+                <Route path="/" element={<Home />} />
 
-            {/* Authentication - Public Only */}
-            <Route
-              path="/login"
-              element={
-                <PublicOnlyRoute>
-                  <Login />
-                </PublicOnlyRoute>
-              }
-            />
+                {/* Authentication - Public Only */}
+                <Route
+                  path="/login"
+                  element={
+                    <PublicOnlyRoute>
+                      <Login />
+                    </PublicOnlyRoute>
+                  }
+                />
 
-            {/* Redirect legacy routes to / */}
-            <Route path="/home" element={<Navigate to="/" replace />} />
+                {/* Redirect legacy routes to / */}
+                <Route path="/home" element={<Navigate to="/" replace />} />
 
-            {/* OAuth Callbacks */}
-            <Route
-              path="/auth/github/callback"
-              element={<OAuthCallback provider="github" />}
-            />
-            <Route
-              path="/auth/google/callback"
-              element={<OAuthCallback provider="google" />}
-            />
-            <Route
-              path="/auth/discord/callback"
-              element={<OAuthCallback provider="discord" />}
-            />
+                {/* OAuth Callbacks */}
+                <Route
+                  path="/auth/github/callback"
+                  element={<OAuthCallback provider="github" />}
+                />
+                <Route
+                  path="/auth/google/callback"
+                  element={<OAuthCallback provider="google" />}
+                />
+                <Route
+                  path="/auth/discord/callback"
+                  element={<OAuthCallback provider="discord" />}
+                />
 
-            {/* Certificate Verification - Public */}
-            <Route
-              path="/certificate/verify/:id"
-              element={<CertificateVerification />}
-            />
+                {/* Certificate Verification - Public */}
+                <Route
+                  path="/certificate/verify/:id"
+                  element={<CertificateVerification />}
+                />
 
-            {/* Admin Dashboard - Admin Only */}
-            <Route
-              path="/admin/dashboard"
-              element={
-                <AdminRoute>
-                  <AdminDashboard />
-                </AdminRoute>
-              }
-            />
+                {/* Admin Dashboard - Admin Only */}
+                <Route
+                  path="/admin/dashboard"
+                  element={
+                    <AdminRoute>
+                      <AdminDashboard />
+                    </AdminRoute>
+                  }
+                />
 
-            {/* Protected Routes */}
-            <Route
-              path="/profile"
-              element={
-                <ProtectedRoute>
-                  <Profile />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/profile/:username"
-              element={
-                <ProtectedRoute>
-                  <Profile />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/level/:id"
-              element={
-                <ProtectedRoute>
-                  <CodeArena />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/shop"
-              element={
-                <ProtectedRoute>
-                  <BuyXPPage />
-                </ProtectedRoute>
-              }
-            />
+                {/* Protected Routes */}
+                <Route
+                  path="/profile"
+                  element={
+                    <ProtectedRoute>
+                      <Profile />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/profile/:username"
+                  element={
+                    <ProtectedRoute>
+                      <Profile />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/level/:id"
+                  element={
+                    <ProtectedRoute>
+                      <CodeArena />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/shop"
+                  element={
+                    <ProtectedRoute>
+                      <BuyXPPage />
+                    </ProtectedRoute>
+                  }
+                />
 
-            <Route
-              path="/game"
-              element={
-                <ProtectedRoute>
-                  <Game />
-                </ProtectedRoute>
-              }
-            />
+                <Route
+                  path="/game"
+                  element={
+                    <ProtectedRoute>
+                      <Game />
+                    </ProtectedRoute>
+                  }
+                />
 
-            <Route
-              path="/store"
-              element={
-                <ProtectedRoute>
-                  <Store />
-                </ProtectedRoute>
-              }
-            />
+                <Route
+                  path="/store"
+                  element={
+                    <ProtectedRoute>
+                      <Store />
+                    </ProtectedRoute>
+                  }
+                />
 
-            {/* Fallback */}
-            <Route path="/admin" element={<AdminDashboard />} />
+                {/* Fallback */}
+                <Route path="/admin" element={<AdminDashboard />} />
 
-            {/* 404 Route */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </main>
-      </div>
+                {/* 404 Route */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Suspense>
+          </main>
+        </div>
+      </ErrorBoundary>
     </AuthInitializer>
   );
 };

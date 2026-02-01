@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import useAuthStore from "../stores/useAuthStore";
 
 // Components
@@ -83,26 +84,29 @@ const Home = () => {
       const apiData = apiLevels.find((l) => l.order === visual.id);
 
       // Certificate Special Case (Last Node)
-      if (visual.type === 'CERTIFICATE') {
-          // Check if all 53 levels are completed
-          const allCompleted = apiLevels.length >= 53 && apiLevels.every(l => l.status === 'COMPLETED');
-          return {
-              ...visual,
-              unlocked: allCompleted, 
-              completed: false, // We'll fetch actual cert status later
-              type: 'CERTIFICATE'
-          };
+      if (visual.type === "CERTIFICATE") {
+        // Check if all 53 levels are completed
+        const allCompleted =
+          apiLevels.length >= 53 &&
+          apiLevels.every((l) => l.status === "COMPLETED");
+        return {
+          ...visual,
+          unlocked: allCompleted,
+          completed: false, // We'll fetch actual cert status later
+          type: "CERTIFICATE",
+        };
       }
 
       if (apiData) {
         return {
           ...visual,
           ...apiData,
-          unlocked: apiData.status === "UNLOCKED" || apiData.status === "COMPLETED",
+          unlocked:
+            apiData.status === "UNLOCKED" || apiData.status === "COMPLETED",
           completed: apiData.status === "COMPLETED",
           stars: apiData.stars || 0,
           slug: apiData.slug,
-          type: 'LEVEL'
+          type: "LEVEL",
         };
       }
 
@@ -111,7 +115,7 @@ const Home = () => {
         ...visual,
         unlocked: false,
         stars: 0,
-        type: 'LEVEL'
+        type: "LEVEL",
       };
     });
   }, [apiLevels]);
@@ -156,32 +160,32 @@ const Home = () => {
     navigate("/");
   };
 
-  if (isLoading) {
-    return <HomeSkeleton />;
-  }
-
   const handleLevelClick = async (level) => {
     if (!user) {
       navigate("/login");
       return;
     }
 
-    if (level.type === 'CERTIFICATE') {
-        if (level.unlocked) {
-             const { challengesApi } = await import("../services/challengesApi");
-             try {
-                 await challengesApi.claimCertificate(); 
-                 // navigate('/certificate/view/' + cert.id);
-                 alert("Certificate Claimed! (View Page WIP)"); 
-             } catch (e) {
-                 if(e.response && e.response.status === 400 && e.response.data.error === 'Certificate already claimed') {
-                     alert("You already have this certificate!");
-                 } else {
-                     alert("Complete all levels first!");
-                 }
-             }
+    if (level.type === "CERTIFICATE") {
+      if (level.unlocked) {
+        const { challengesApi } = await import("../services/challengesApi");
+        try {
+          await challengesApi.claimCertificate();
+          // navigate('/certificate/view/' + cert.id);
+          alert("Certificate Claimed! (View Page WIP)");
+        } catch (e) {
+          if (
+            e.response &&
+            e.response.status === 400 &&
+            e.response.data.error === "Certificate already claimed"
+          ) {
+            alert("You already have this certificate!");
+          } else {
+            alert("Complete all levels first!");
+          }
         }
-        return;
+      }
+      return;
     }
 
     if (level.unlocked) {
@@ -191,56 +195,80 @@ const Home = () => {
 
   return (
     <div className="h-screen relative select-none overflow-hidden bg-[#0a0a0a] text-white">
-      {/* Background Texture */}
+      <AnimatePresence mode="wait">
+        {isLoading ? (
+          <motion.div
+            key="skeleton"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+            className="absolute inset-0 z-50"
+          >
+            <HomeSkeleton />
+          </motion.div>
+        ) : (
+          <motion.div
+            key="content"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            className="h-full w-full relative"
+          >
+            {/* Background Texture */}
+            <div
+              className="absolute inset-0 opacity-20 pointer-events-none"
+              style={{
+                backgroundImage:
+                  "radial-gradient(circle at 1px 1px, rgba(255,255,255,0.05) 1px, transparent 0)",
+                backgroundSize: "40px 40px",
+              }}
+            />
+            <div className="absolute inset-0 bg-linear-to-b from-black/50 via-transparent to-black/80 pointer-events-none" />
 
-      {/* Background Texture */}
-      <div
-        className="absolute inset-0 opacity-20 pointer-events-none"
-        style={{
-          backgroundImage:
-            "radial-gradient(circle at 1px 1px, rgba(255,255,255,0.05) 1px, transparent 0)",
-          backgroundSize: "40px 40px",
-        }}
-      />
-      <div className="absolute inset-0 bg-linear-to-b from-black/50 via-transparent to-black/80 pointer-events-none" />
+            <ProfilePanel user={user} />
+            <ChatDrawer
+              isChatOpen={isChatOpen}
+              setChatOpen={setChatOpen}
+              user={user}
+            />
+            <LeaderboardDrawer
+              isLeaderboardOpen={isLeaderboardOpen}
+              setLeaderboardOpen={setLeaderboardOpen}
+            />
+            <ShopButton />
+            <RightSideUI
+              user={user}
+              handleLogout={handleLogout}
+              settingsOpen={settingsOpen}
+              setSettingsOpen={setSettingsOpen}
+              checkInOpen={checkInOpen}
+              setCheckInOpen={setCheckInOpen}
+              setLeaderboardOpen={setLeaderboardOpen}
+              hasUnclaimedReward={hasUnclaimedReward}
+            />
+            <CheckInReward
+              isOpen={checkInOpen}
+              onClose={() => setCheckInOpen(false)}
+              onClaim={() => setHasUnclaimedReward(false)}
+            />
 
+            <LevelMap
+              levels={levels}
+              handleLevelClick={handleLevelClick}
+              isLeaderboardOpen={isLeaderboardOpen}
+            />
 
-      <ProfilePanel user={user} />
-      <ChatDrawer
-        isChatOpen={isChatOpen}
-        setChatOpen={setChatOpen}
-        user={user}
-      />
-      <LeaderboardDrawer
-        isLeaderboardOpen={isLeaderboardOpen}
-        setLeaderboardOpen={setLeaderboardOpen}
-      />
-      <ShopButton />
-      <RightSideUI
-        user={user}
-        handleLogout={handleLogout}
-        settingsOpen={settingsOpen}
-        setSettingsOpen={setSettingsOpen}
-        checkInOpen={checkInOpen}
-        setCheckInOpen={setCheckInOpen}
-        setLeaderboardOpen={setLeaderboardOpen}
-        hasUnclaimedReward={hasUnclaimedReward}
-      />
-      <CheckInReward
-        isOpen={checkInOpen}
-        onClose={() => setCheckInOpen(false)}
-        onClaim={() => setHasUnclaimedReward(false)}
-      />
-
-      <LevelMap levels={levels} handleLevelClick={handleLevelClick} isLeaderboardOpen={isLeaderboardOpen} />
-
-      {/* Level Modal */}
-      {selectedLevel && (
-        <LevelModal
-          selectedLevel={selectedLevel}
-          onClose={() => setSelectedLevel(null)}
-        />
-      )}
+            {/* Level Modal */}
+            {selectedLevel && (
+              <LevelModal
+                selectedLevel={selectedLevel}
+                onClose={() => setSelectedLevel(null)}
+              />
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
