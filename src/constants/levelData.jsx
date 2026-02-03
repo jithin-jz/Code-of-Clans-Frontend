@@ -16,7 +16,6 @@ import {
   BoxSelect,
   Rocket,
   Code,
-  Award,
   Crown,
   Shield,
   Zap,
@@ -53,8 +52,6 @@ export const ICONS = [
   <Scroll size={24} />,
   <Crown size={24} />,
 ];
-
-const CERTIFICATE_ICON = <Award size={32} className="text-yellow-400" />;
 
 // Procedural Spiral Generator (Inward Winding)
 // Level 1: Bottom Right -> Level 50: Center
@@ -148,23 +145,6 @@ export const generateLevels = (count = 53) => {
       position: { x: posX, y: posY },
     });
   }
-
-  /* Certificate Removed - Endless Mode */
-  // const certPos = transformedCoords[0];
-  // const certX = 10 + (certPos.x - minX) * scaleX;
-  // const certY = 10 + (certPos.y - minY) * scaleY;
-  //
-  // levels.push({
-  //   id: "certificate",
-  //   order: count + 1,
-  //   name: "Certificate",
-  //   type: "CERTIFICATE",
-  //   icon: CERTIFICATE_ICON,
-  //   stars: 0,
-  //   unlocked: false,
-  //   hasGift: true,
-  //   position: { x: certX, y: certY },
-  // });
 
   return levels;
 };

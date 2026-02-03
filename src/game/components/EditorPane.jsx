@@ -20,7 +20,7 @@ const EditorPane = ({ code, setCode, handleEditorDidMount, loading }) => {
   }
 
   return (
-    <div className="flex-1 border-r border-white/5 flex flex-col bg-glass border-glass relative group m-1 mb-0 rounded-none">
+    <div className="flex-1 border-r border-white/5 flex flex-col bg-[#0d0d0d] border-glass relative group m-1 mb-0 rounded-none overflow-hidden">
       {/* Glow Effect on Hover */}
       <div className="absolute inset-y-0 right-0 w-px bg-linear-to-b from-transparent via-primary/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
 

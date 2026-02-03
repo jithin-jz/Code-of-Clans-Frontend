@@ -2,21 +2,7 @@ import axios from "axios";
 import { notify } from "./notification";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL;
-const AI_API_URL = import.meta.env.VITE_AI_URL;
 
-const aiApi = axios.create({
-  baseURL: AI_API_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
-
-export const aiAPI = {
-  generate: (code, language = "python") =>
-    aiApi.post("/explain", { code, language }),
-  getHint: (user_code, challenge_slug, language = "python") =>
-    aiApi.post("/hints", { user_code, challenge_slug, language }),
-};
 
 // Create axios instance
 const api = axios.create({

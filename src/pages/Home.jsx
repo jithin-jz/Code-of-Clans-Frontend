@@ -19,7 +19,7 @@ import CheckInReward from "../home/CheckInReward";
 import { checkInApi } from "../services/checkInApi";
 
 // Data
-import { generateLevels, ICONS } from "../constants/levelData.jsx";
+import { ICONS } from "../constants/levelData.jsx";
 
 // Hooks
 const Home = () => {
@@ -78,22 +78,13 @@ const Home = () => {
   // Initialize Levels (Merge Visuals with API Data)
   const levels = useMemo(() => {
     // Unified Processing for ALL Levels
+    // const visualPositions = generateLevels(Math.max(53, maxOrder));
+
     // We trust the API to return the correct order.
     // We map them to visuals dynamically.
 
     // Sort API levels by order
     const sortedApiLevels = [...apiLevels].sort((a, b) => a.order - b.order);
-
-    // We also need positions.
-    // We can reuse the spiral generator for positions, but we need to generate enough points
-    // for ALL levels returned by API, effectively extending the spiral infinitely if needed.
-    // For now, let's generate enough for the max order found in API + buffer.
-
-    const maxOrder =
-      sortedApiLevels.length > 0
-        ? sortedApiLevels[sortedApiLevels.length - 1].order
-        : 53;
-    const visualPositions = generateLevels(Math.max(53, maxOrder));
 
     return sortedApiLevels.map((apiData) => {
       // Find matching position/visual config if it exists
@@ -101,7 +92,7 @@ const Home = () => {
       // visualPositions[0] is usually Level 1 IF the generator returns sorted array?
       // Wait, generateLevels returns an array of objects with { id: 1, ... }
 
-      const visual = visualPositions.find((v) => v.id === apiData.order);
+      // const visual = visualPositions.find((v) => v.id === apiData.order);
 
       // If we have a visual config (position), use it. otherwise null (Grid fallback handled in LevelMap?)
       // Note: LevelMap uses a grid layout in the screenshot, so positions might be ignored anyway?
@@ -169,28 +160,6 @@ const Home = () => {
   const handleLevelClick = async (level) => {
     if (!user) {
       navigate("/login");
-      return;
-    }
-
-    if (level.type === "CERTIFICATE") {
-      if (level.unlocked) {
-        const { challengesApi } = await import("../services/challengesApi");
-        try {
-          await challengesApi.claimCertificate();
-          // navigate('/certificate/view/' + cert.id);
-          alert("Certificate Claimed! (View Page WIP)");
-        } catch (e) {
-          if (
-            e.response &&
-            e.response.status === 400 &&
-            e.response.data.error === "Certificate already claimed"
-          ) {
-            alert("You already have this certificate!");
-          } else {
-            alert("Complete all levels first!");
-          }
-        }
-      }
       return;
     }
 

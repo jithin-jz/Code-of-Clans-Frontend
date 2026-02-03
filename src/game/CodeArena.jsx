@@ -31,6 +31,7 @@ const CodeArena = () => {
   // Initial code template
   const [code, setCode] = useState("");
   const [completionData, setCompletionData] = useState(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   // AI Hint State
   const [hint, setHint] = useState("");
@@ -41,22 +42,17 @@ const CodeArena = () => {
     if (!challenge || !code) return;
     setIsHintLoading(true);
     try {
-      const resp = await fetch(`${import.meta.env.VITE_AI_URL}/hints`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          user_code: code,
-          challenge_slug: challenge.slug,
-          hint_level: hintLevel,
-          user_xp: user?.profile?.xp || 0,
-        }),
+      const { challengesApi } = await import("../services/challengesApi");
+      const data = await challengesApi.getAIHint(challenge.slug, {
+        user_code: code,
+        hint_level: hintLevel,
       });
-      const data = await resp.json();
       setHint(data.hint);
       // Increment hint level for next request, max 3
       setHintLevel((prev) => Math.min(prev + 1, 3));
     } catch (err) {
       console.error("Hint Error:", err);
+      // Handle error display if needed
     } finally {
       setIsHintLoading(false);
     }
@@ -171,24 +167,29 @@ const CodeArena = () => {
               result.status === "already_completed"
             ) {
               const starText = "⭐".repeat(result.stars || 0);
-              setOutput([
-                {
-                  type: "success",
-                  content: `🎉 Challenge Completed! ${starText}`,
-                },
-              ]);
-              if (result.xp_earned > 0) {
-                setOutput((prev) => [
-                  ...prev,
+
+              // Artificial delay for "Analysis" feel
+              setIsAnalyzing(true);
+
+              setTimeout(() => {
+                setIsAnalyzing(false);
+                setOutput([
                   {
                     type: "success",
-                    content: `💪 XP Earned: +${result.xp_earned}`,
+                    content: `🎉 Challenge Completed! ${starText}`,
                   },
                 ]);
-              }
-              setTimeout(() => {
+                if (result.xp_earned > 0) {
+                  setOutput((prev) => [
+                    ...prev,
+                    {
+                      type: "success",
+                      content: `💪 XP Earned: +${result.xp_earned}`,
+                    },
+                  ]);
+                }
                 setCompletionData(result);
-              }, 500);
+              }, 2000); // 2 second "Analysis" period
             }
           } catch (err) {
             console.error("Submission error:", err);
@@ -428,6 +429,31 @@ const CodeArena = () => {
     <div className="h-screen flex flex-col bg-modern text-white overflow-hidden relative">
       <CursorEffects effectType={user?.profile?.active_effect} />
 
+      <AnimatePresence>
+        {isAnalyzing && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-black/60 backdrop-blur-md"
+          >
+            <div className="relative">
+              <div className="w-24 h-24 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+              <Sparkles
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-primary animate-pulse"
+                size={32}
+              />
+            </div>
+            <h2 className="mt-8 text-xl font-bold tracking-tight text-white animate-pulse">
+              Analyzing Solution...
+            </h2>
+            <p className="mt-2 text-gray-400 font-mono text-sm">
+              Verifying algorithm complexity & test cases
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Completion Modal */}
       {completionData && (
         <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-300">
@@ -479,9 +505,13 @@ const CodeArena = () => {
               <div className="flex flex-col w-full gap-3 mt-4">
                 {completionData.next_level_slug ? (
                   <Button
-                    onClick={() => {
-                      navigate(`/level/${completionData.next_level_slug}`);
+                    onClick={async () => {
+                      // Small transition delay
+                      const slug = completionData.next_level_slug;
                       setCompletionData(null);
+                      setTimeout(() => {
+                        navigate(`/level/${slug}`);
+                      }, 100);
                     }}
                     className="w-full bg-white text-black hover:bg-gray-200"
                   >
@@ -511,7 +541,10 @@ const CodeArena = () => {
       )}
 
       <HeaderBar
-        title={challenge?.title || "Loading..."}
+        title={
+          challenge?.title ||
+          (isPollingNextLevel ? "Generating next level..." : "Loading...")
+        }
         navigate={navigate}
         isPyodideReady={isPyodideReady}
         isRunning={isRunning}

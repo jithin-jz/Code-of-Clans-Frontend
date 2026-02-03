@@ -73,6 +73,9 @@
     border-radius: 99px;
   }
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #3f3f46;
+  }
+
   /* Clean Glass - subtle and professional */
   .bg-glass {
     background: rgba(9, 9, 11, 0.7);
@@ -87,7 +90,6 @@
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
-}
   .no-scrollbar {
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */

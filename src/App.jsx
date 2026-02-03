@@ -25,9 +25,7 @@ const AdminDashboard = lazy(() => import("./admin/Dashboard"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const BuyXPPage = lazy(() => import("./pages/BuyXPPage"));
 const Game = lazy(() => import("./pages/Game"));
-const CertificateVerification = lazy(
-  () => import("./pages/CertificateVerification"),
-);
+
 const CodeArena = lazy(() => import("./game/CodeArena"));
 const Store = lazy(() => import("./store/Store"));
 
@@ -81,12 +79,6 @@ const AppContent = () => {
                 <Route
                   path="/auth/discord/callback"
                   element={<OAuthCallback provider="discord" />}
-                />
-
-                {/* Certificate Verification - Public */}
-                <Route
-                  path="/certificate/verify/:id"
-                  element={<CertificateVerification />}
                 />
 
                 {/* Admin Dashboard - Admin Only */}

@@ -25,6 +25,10 @@ export const challengesApi = {
         const response = await api.post(`/challenges/${slug}/purchase_ai_assist/`);
         return response.data;
     },
+    getAIHint: async (slug, data) => {
+        const response = await api.post(`/challenges/${slug}/ai-hint/`, data);
+        return response.data;
+    },
     create: async (data) => {
         const response = await api.post('/challenges/', data);
         return response.data;
@@ -37,13 +41,4 @@ export const challengesApi = {
         const response = await api.delete(`/challenges/${slug}/`);
         return response.data;
     },
-    claimCertificate: async () => {
-        const response = await api.post('/certificates/claim/');
-        return response.data;
-    },
-    verifyCertificate: async (id) => {
-        // Public endpoint
-        const response = await api.get(`/certificates/verify/${id}/`);
-        return response.data;
-    }
 };
