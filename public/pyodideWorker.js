@@ -59,6 +59,15 @@ self.onmessage = async (event) => {
         }
 
         try {
+            // Buffer to capture stdout for tests
+            let stdoutBuffer = [];
+            pyodide.setStdout({
+                batched: (msg) => {
+                    stdoutBuffer.push(msg);
+                    postMessage({ type: 'log', content: msg });
+                }
+            });
+
             // Run User Code with timeout protection
             await executeWithTimeout(
                 () => pyodide.runPythonAsync(code),
@@ -68,19 +77,22 @@ self.onmessage = async (event) => {
             // Run Test Code if exists
             if (testCode) {
                 try {
-                    // Run test code to define the check() function
+                    // Expose captured output to Python scope
+                    pyodide.globals.set("output", stdoutBuffer.join("\n"));
+                    
+                    // Run test code to define the check() function (or run assertions directly)
                     await executeWithTimeout(
                         () => pyodide.runPythonAsync(testCode),
                         EXECUTION_TIMEOUT
                     );
                     
-                    // Call check() with the user's code scope (globals)
+                    // Call check() if it was defined, otherwise we assume assertions in testCode were enough
                     await executeWithTimeout(
                         () => pyodide.runPythonAsync(`
-# Get the current global scope which contains user's functions/classes
-_user_scope = globals().copy()
-# Call the check function with the scope
-check(_user_scope)
+# Check if 'check' function exists
+if 'check' in globals() and callable(globals()['check']):
+    _user_scope = {k: v for k, v in globals().items() if not k.startswith('_')}
+    check(_user_scope)
 `),
                         EXECUTION_TIMEOUT
                     );

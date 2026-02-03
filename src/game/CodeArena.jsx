@@ -48,11 +48,48 @@ const CodeArena = () => {
         hint_level: hintLevel,
       });
       setHint(data.hint);
-      // Increment hint level for next request, max 3
       setHintLevel((prev) => Math.min(prev + 1, 3));
     } catch (err) {
       console.error("Hint Error:", err);
-      // Handle error display if needed
+      const errorMsg =
+        err.response?.data?.error || "AI Assistant is currently unavailable.";
+      setOutput((prev) => [
+        ...prev,
+        { type: "error", content: `🤖 AI Assistant: ${errorMsg}` },
+      ]);
+    } finally {
+      setIsHintLoading(false);
+    }
+  };
+
+  const handlePurchaseAIAssist = async () => {
+    if (!challenge) return;
+    setIsHintLoading(true);
+    try {
+      const { challengesApi } = await import("../services/challengesApi");
+      const data = await challengesApi.purchaseAIHint(challenge.slug);
+
+      // Update local state to reflect purchase
+      setChallenge((prev) => ({
+        ...prev,
+        ai_hints_purchased: data.hints_purchased,
+      }));
+
+      setOutput((prev) => [
+        ...prev,
+        {
+          type: "success",
+          content: `🔓 AI Hint Level ${data.hints_purchased} Unlocked!`,
+        },
+      ]);
+    } catch (err) {
+      console.error("Purchase Error:", err);
+      const errorMsg =
+        err.response?.data?.error || "Failed to purchase AI Assistance.";
+      setOutput((prev) => [
+        ...prev,
+        { type: "error", content: `❌ Error: ${errorMsg}` },
+      ]);
     } finally {
       setIsHintLoading(false);
     }
@@ -101,6 +138,10 @@ const CodeArena = () => {
   useEffect(() => {
     const fetchChallenge = async () => {
       try {
+        // Reset AI state on challenge change
+        setHint("");
+        setHintLevel(1);
+
         // Dynamic Import
         const { challengesApi } = await import("../services/challengesApi");
         const data = await challengesApi.getBySlug(id);
@@ -592,9 +633,11 @@ const CodeArena = () => {
             {activeTab === "ai" && (
               <NeuralLinkPane
                 onGetHint={handleGetHint}
+                onPurchase={handlePurchaseAIAssist}
                 hint={hint}
                 isHintLoading={isHintLoading}
                 hintLevel={hintLevel}
+                ai_hints_purchased={challenge?.ai_hints_purchased || 0}
               />
             )}
             {activeTab === "console" && (
