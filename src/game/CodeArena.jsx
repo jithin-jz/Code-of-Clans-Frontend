@@ -75,6 +75,18 @@ const CodeArena = () => {
         ai_hints_purchased: data.hints_purchased,
       }));
 
+      // Update User XP locally
+      if (data.remaining_xp !== undefined) {
+        const { setUser } = useAuthStore.getState();
+        setUser({
+          ...user,
+          profile: {
+            ...user.profile,
+            xp: data.remaining_xp,
+          },
+        });
+      }
+
       setOutput((prev) => [
         ...prev,
         {

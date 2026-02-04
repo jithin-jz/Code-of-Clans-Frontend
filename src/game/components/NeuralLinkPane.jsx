@@ -35,8 +35,31 @@ const NeuralLinkPane = ({
     }
   }, [hintLevel]);
 
+  // Cost Logic: 10, 20, 30 XP
+  // Consistent with backend logic
   const nextCost = 10 * (ai_hints_purchased + 1);
   const isLocked = ai_hints_purchased < hintLevel;
+  const isMaxReached = ai_hints_purchased >= 3;
+
+  // Star Penalty Logic (Balanced Option 3)
+  // 0-1 Hint: Safe (3 Stars)
+  // 2 Hints: 2 Stars
+  // 3 Hints: 1 Star
+  let penaltyText = "";
+  let penaltyColor = "text-green-400";
+
+  if (ai_hints_purchased === 0) {
+    penaltyText = "Safe: 3-Star Rating Preserved";
+  } else if (ai_hints_purchased === 1) {
+    penaltyText = "Warning: Max Reward drops to 2 Stars";
+    penaltyColor = "text-yellow-400";
+  } else if (ai_hints_purchased === 2) {
+    penaltyText = "Critical: Max Reward drops to 1 Star";
+    penaltyColor = "text-red-400";
+  } else {
+    penaltyText = "Max Hints Used (1 Star Limit)";
+    penaltyColor = "text-red-500";
+  }
 
   return (
     <Card className="flex-1 flex flex-col bg-[#09090b] border-none rounded-none overflow-hidden m-0">
@@ -118,6 +141,14 @@ const NeuralLinkPane = ({
               Unlock Next Hint <span className="opacity-50">•</span> {nextCost}{" "}
               XP
             </Button>
+          ) : isMaxReached ? (
+            <Button
+              disabled
+              className="w-full bg-red-500/10 text-red-400 border border-red-500/20 text-xs font-bold h-10 rounded-lg cursor-not-allowed flex items-center justify-center gap-2"
+            >
+              <Sparkles size={14} />
+              Max Hints Reached (3/3)
+            </Button>
           ) : (
             <Button
               onClick={onGetHint}
@@ -135,6 +166,13 @@ const NeuralLinkPane = ({
           <p className="text-[10px] text-gray-600 text-center mt-3 uppercase tracking-tighter">
             AI Assistant Protocol v4.2 // Direct Logic Feed Only
           </p>
+          {isLocked && !isMaxReached && (
+            <p
+              className={`text-[10px] text-center mt-2 font-medium ${penaltyColor}`}
+            >
+              {penaltyText}
+            </p>
+          )}
         </div>
       </CardContent>
     </Card>
