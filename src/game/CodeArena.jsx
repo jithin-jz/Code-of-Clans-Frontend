@@ -163,9 +163,28 @@ const CodeArena = () => {
         console.error("Failed to load challenge:", error);
         setChallenge(null);
         setCode("");
-        setOutput([
-          { type: "error", content: "Failed to load challenge data." },
-        ]);
+        // Check if it's a 404 error
+        if (error.response?.status === 404 || error.message?.includes("404")) {
+          setOutput([
+            {
+              type: "error",
+              content:
+                "Challenge not found. It may still be generating or doesn't exist.",
+            },
+            { type: "log", content: "Redirecting to dashboard..." },
+          ]);
+          // Redirect to dashboard after a short delay
+          setTimeout(() => {
+            navigate("/");
+          }, 2000);
+        } else {
+          setOutput([
+            {
+              type: "error",
+              content: "Failed to load challenge. Please try again.",
+            },
+          ]);
+        }
       }
     };
     fetchChallenge();
@@ -184,7 +203,8 @@ const CodeArena = () => {
 
   // Initialize Worker (Only Once)
   useEffect(() => {
-    const worker = new Worker("/pyodideWorker.js");
+    // Cache-busting to ensure latest worker version is loaded
+    const worker = new Worker(`/pyodideWorker.js?v=${Date.now()}`);
     workerRef.current = worker;
 
     worker.onmessage = async (event) => {
@@ -482,30 +502,7 @@ const CodeArena = () => {
     <div className="h-screen flex flex-col bg-modern text-white overflow-hidden relative">
       <CursorEffects effectType={user?.profile?.active_effect} />
 
-      <AnimatePresence>
-        {isAnalyzing && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-black/60 backdrop-blur-md"
-          >
-            <div className="relative">
-              <div className="w-24 h-24 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
-              <Sparkles
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-primary animate-pulse"
-                size={32}
-              />
-            </div>
-            <h2 className="mt-8 text-xl font-bold tracking-tight text-white animate-pulse">
-              Analyzing Solution...
-            </h2>
-            <p className="mt-2 text-gray-400 font-mono text-sm">
-              Verifying algorithm complexity & test cases
-            </p>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Analyzing overlay removed */}
 
       {/* Completion Modal */}
       {completionData && (

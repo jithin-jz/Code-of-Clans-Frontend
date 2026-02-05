@@ -54,7 +54,7 @@ function executeWithTimeout(asyncFn, timeoutMs) {
 
 // Helper: Python Security & Cleanup Script
 // This mirrors services/ai/sandbox.py
-const BOOTSTRAP_SCRIPT = \`
+const BOOTSTRAP_SCRIPT = `
 import ast
 import sys
 
@@ -104,7 +104,7 @@ def cleanup_globals():
     for key in current_keys:
         if key not in keep and not key.startswith('_'):
              del globals()[key]
-\`;
+`;
 
 self.onmessage = async (event) => {
     const { type, code, testCode } = event.data;
@@ -138,7 +138,7 @@ self.onmessage = async (event) => {
             const [isSafe, errorMsg] = checkSafe(code).toJs();
             
             if (!isSafe) {
-                 postMessage({ type: 'error', content: \`🛡️ Security Violation: \${errorMsg}\` });
+                 postMessage({ type: 'error', content: `🛡️ Security Violation: ${errorMsg}` });
                  postMessage({ type: 'completed', passed: false });
                  return;
             }
@@ -156,28 +156,40 @@ self.onmessage = async (event) => {
             // 5. Run Tests
             if (testCode) {
                 try {
-                    // Expose captured output to Python scope for "print" tests
-                    pyodide.globals.set("output", stdoutBuffer.join("\\n"));
+                    // Set output BEFORE running test code (for check function definition)
+                    const currentOutput = stdoutBuffer.join("\n") || "";
+                    pyodide.globals.set("output", currentOutput);
                     
+                    // Run test code (defines check function)
                     await executeWithTimeout(
                         () => pyodide.runPythonAsync(testCode),
                         EXECUTION_TIMEOUT
                     );
                     
-                    // Call check() if defined
+                    // Update output AFTER test code runs (captures prints from function calls within test code)
+                    const finalOutput = stdoutBuffer.join("\n") || "";
+                    pyodide.globals.set("output", finalOutput);
+                    
+                    // Call check() with robust output handling
+                    // - Ensure output is in scope dict
+                    // - Fallback to empty string if check expects scope['output']
                     await executeWithTimeout(
-                        () => pyodide.runPythonAsync(\`
+                        () => pyodide.runPythonAsync(`
 if 'check' in globals() and callable(globals()['check']):
+    _output = output if 'output' in globals() else ''
     _user_scope = {k: v for k, v in globals().items() if not k.startswith('_')}
+    _user_scope['output'] = _output
+    # Make output also available for tests that access it directly
+    globals()['output'] = _output
     check(_user_scope)
-\`),
+`),
                         EXECUTION_TIMEOUT
                     );
                     
                     postMessage({ type: 'success', content: "✅ Tests Passed!" });
                     postMessage({ type: 'completed', passed: true });
                 } catch (testError) {
-                    postMessage({ type: 'error', content: \`❌ Test Failed: \${testError.toString()}\` });
+                    postMessage({ type: 'error', content: `❌ Test Failed: ${testError.toString()}` });
                     postMessage({ type: 'completed', passed: false });
                 }
             } else {
@@ -185,7 +197,7 @@ if 'check' in globals() and callable(globals()['check']):
                 postMessage({ type: 'completed', passed: false });
             }
         } catch (error) {
-            postMessage({ type: 'error', content: \`❌ \${error.toString()}\` });
+            postMessage({ type: 'error', content: `❌ ${error.toString()}` });
             postMessage({ type: 'completed', passed: false });
         }
     }
