@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import useAuthStore from "../stores/useAuthStore";
 import useUserStore from "../stores/useUserStore";
+import useChatStore from "../stores/useChatStore";
 import { notify } from "../services/notification";
 import {
   Camera,
@@ -48,9 +49,18 @@ const Profile = () => {
   const { username } = useParams();
   const { user: currentUser, logout, deleteAccount } = useAuthStore();
   const { updateProfile, followUser, redeemReferral } = useUserStore();
+  const { connect, isConnected } = useChatStore(); // Added
 
   const isOwnProfile =
     !username || (currentUser && username === currentUser.username);
+
+  // Connect to chat for sharing functionality
+  useEffect(() => {
+    const token = localStorage.getItem("access_token");
+    if (token && !isConnected) {
+      connect(token);
+    }
+  }, [isConnected, connect]);
   const [profileUser, setProfileUser] = useState(
     isOwnProfile ? currentUser : null,
   );
@@ -338,17 +348,17 @@ const Profile = () => {
                       variant="ghost"
                       size="icon"
                       onClick={() => setIsEditing(!isEditing)}
-                      className="h-9 w-9 text-zinc-400 hover:text-white hover:bg-white/5"
+                      className="h-10 w-10 text-zinc-400 hover:text-white hover:bg-white/10 rounded-xl transition-all"
                     >
-                      <Settings size={18} />
+                      <Settings size={20} />
                     </Button>
                     <Button
                       variant="ghost"
                       size="icon"
                       onClick={handleLogout}
-                      className="h-9 w-9 text-zinc-400 hover:text-white hover:bg-white/5"
+                      className="h-10 w-10 text-zinc-400 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-all"
                     >
-                      <LogOut size={18} />
+                      <LogOut size={20} />
                     </Button>
                   </div>
                 )}
@@ -737,7 +747,10 @@ const Profile = () => {
             open={!!listType}
             onOpenChange={(open) => !open && setListType(null)}
           >
-            <DialogContent className="bg-zinc-900 border border-white/10 max-w-sm rounded-xl p-0">
+            <DialogContent
+              showClose={false}
+              className="bg-zinc-900 border border-white/10 max-w-sm rounded-xl p-0"
+            >
               <DialogHeader className="p-4 border-b border-white/5">
                 <DialogTitle className="text-white text-sm font-medium">
                   {listType === "followers" ? "Followers" : "Following"}

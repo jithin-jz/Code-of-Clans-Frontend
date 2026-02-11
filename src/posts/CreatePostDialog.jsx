@@ -138,7 +138,10 @@ const CreatePostDialog = ({ open, onOpenChange, onPostCreated }) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-zinc-900 border border-white/10 text-white sm:max-w-[500px] gap-0 p-0 overflow-hidden">
+      <DialogContent
+        showClose={false}
+        className="bg-zinc-900 border border-white/10 text-white sm:max-w-[500px] gap-0 p-0 overflow-hidden"
+      >
         <DialogHeader className="p-4 border-b border-white/10 flex flex-row items-center justify-between space-y-0">
           {isCropping ? (
             <Button

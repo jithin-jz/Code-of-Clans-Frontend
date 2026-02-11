@@ -3,7 +3,7 @@ import { Play } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 
-const PlayButton = ({ levels, className }) => {
+const PlayButton = ({ levels, user, className }) => {
   const navigate = useNavigate();
 
   // Priority 1: First unlocked but not completed level (Current Grind)
@@ -27,6 +27,10 @@ const PlayButton = ({ levels, className }) => {
     >
       <button
         onClick={() => {
+          if (!user) {
+            navigate("/login");
+            return;
+          }
           navigate(`/level/${currentLevel.slug}`);
         }}
         className="group relative"

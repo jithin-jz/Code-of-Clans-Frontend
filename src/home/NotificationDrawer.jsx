@@ -116,6 +116,13 @@ const NotificationDrawer = ({ isOpen, onClose, onUnreadCountChange }) => {
     }
   };
 
+  const getImageUrl = (url) => {
+    if (!url) return null;
+    if (url.startsWith("http")) return url;
+    const baseUrl = import.meta.env.VITE_API_URL?.replace("/api", "") || "";
+    return `${baseUrl}${url}`;
+  };
+
   return (
     <motion.div
       className="fixed top-0 right-0 h-full z-50 w-[380px]"
@@ -234,18 +241,25 @@ const NotificationDrawer = ({ isOpen, onClose, onUnreadCountChange }) => {
                 )}
 
                 {/* Avatar */}
-                <div className="w-10 h-10 rounded-full overflow-hidden ring-1 ring-white/10 shrink-0 bg-zinc-800">
-                  {notification.actor?.avatar_url ? (
-                    <img
-                      src={`${import.meta.env.VITE_API_URL.replace("/api", "")}${notification.actor.avatar_url}`}
-                      alt={notification.actor.username}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-xs font-bold text-gray-500 bg-zinc-800">
-                      {notification.actor?.username?.[0]?.toUpperCase() || "?"}
-                    </div>
-                  )}
+                <div className="relative shrink-0">
+                  <div className="w-10 h-10 rounded-full overflow-hidden ring-1 ring-white/10 bg-zinc-800">
+                    {getImageUrl(notification.actor?.avatar_url) ? (
+                      <img
+                        src={getImageUrl(notification.actor.avatar_url)}
+                        alt={notification.actor.username}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-xs font-bold text-gray-500 bg-zinc-800">
+                        {notification.actor?.username?.[0]?.toUpperCase() ||
+                          "?"}
+                      </div>
+                    )}
+                  </div>
+                  {/* Action Icon Badge */}
+                  <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-[#121212] flex items-center justify-center border border-white/10">
+                    {getNotificationIcon(notification.verb)}
+                  </div>
                 </div>
 
                 {/* Content */}
@@ -269,7 +283,7 @@ const NotificationDrawer = ({ isOpen, onClose, onUnreadCountChange }) => {
                 {notification.target_preview && (
                   <div className="w-10 h-10 rounded-lg bg-zinc-800 overflow-hidden shrink-0 border border-white/5">
                     <img
-                      src={`${import.meta.env.VITE_API_URL.replace("/api", "")}${notification.target_preview}`}
+                      src={getImageUrl(notification.target_preview)}
                       alt=""
                       className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
                     />

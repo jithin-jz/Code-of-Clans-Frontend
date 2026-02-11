@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { postsAPI } from "../services/api";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "../components/ui/dialog";
+import { Dialog, DialogContent } from "../components/ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
 import { Button } from "../components/ui/button";
-import { Heart, MessageCircle, MoreHorizontal, Loader2 } from "lucide-react";
+import {
+  Heart,
+  MessageCircle,
+  MoreHorizontal,
+  Send,
+  Share2,
+} from "lucide-react";
 import { notify } from "../services/notification";
 import useAuthStore from "../stores/useAuthStore";
+import useChatStore from "../stores/useChatStore"; // Added useChatStore
 import { formatDistanceToNow } from "date-fns";
-import { Textarea } from "../components/ui/textarea";
+import { useSearchParams } from "react-router-dom";
 
 const PostGrid = ({ username, refreshTrigger }) => {
   const [posts, setPosts] = useState([]);
@@ -21,16 +23,35 @@ const PostGrid = ({ username, refreshTrigger }) => {
   const [isOptionsOpen, setIsOptionsOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editCaption, setEditCaption] = useState("");
+
   const { user: currentUser } = useAuthStore();
+  const { sendMessage } = useChatStore(); // Chat store
+  const [searchParams, setSearchParams] = useSearchParams(); // URL params
 
   useEffect(() => {
     fetchPosts();
   }, [username, refreshTrigger]);
 
-  // Reset edit state when modal closes or post changes
+  // Deep Linking: Open post from URL
+  useEffect(() => {
+    const postId = searchParams.get("post");
+    if (postId && posts.length > 0) {
+      const post = posts.find((p) => p.id === parseInt(postId));
+      if (post) {
+        setSelectedPost(post);
+      }
+    }
+  }, [searchParams, posts]);
+
+  // Sync selectedPost closing with URL cleanup
   useEffect(() => {
     if (!selectedPost) {
-      setIsEditing(false);
+      // Remove post param if present
+      if (searchParams.get("post")) {
+        const newParams = new URLSearchParams(searchParams);
+        newParams.delete("post");
+        setSearchParams(newParams);
+      }
       setEditCaption("");
     }
   }, [selectedPost]);
@@ -45,6 +66,13 @@ const PostGrid = ({ username, refreshTrigger }) => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleShareToChat = () => {
+    if (!selectedPost) return;
+    const message = `IMAGE:${selectedPost.image_url}|${selectedPost.user.username}`;
+    sendMessage(message);
+    notify.success("Image shared to Global Chat!");
   };
 
   const handleLike = async (post) => {
@@ -181,132 +209,120 @@ const PostGrid = ({ username, refreshTrigger }) => {
         open={!!selectedPost}
         onOpenChange={(open) => !open && setSelectedPost(null)}
       >
-        <DialogContent className="bg-zinc-950 border border-white/10 p-0 text-white max-w-4xl w-full h-[80vh] flex overflow-hidden">
-          <div className="grid grid-cols-1 md:grid-cols-[1fr,350px] w-full h-full">
-            {/* Image Section */}
-            <div className="bg-black flex items-center justify-center relative border-r border-white/5">
-              {selectedPost && (
-                <img
-                  src={selectedPost.image_url}
-                  alt="Post"
-                  className="max-w-full max-h-full object-contain"
-                />
-              )}
-            </div>
+        <DialogContent className="bg-zinc-950 border border-white/10 p-0 text-white max-w-5xl w-full h-[85vh] flex flex-col md:flex-row overflow-y-auto md:overflow-hidden rounded-xl">
+          {/* Image Section */}
+          <div className="w-full md:flex-1 bg-black flex items-center justify-center relative border-b md:border-b-0 md:border-r border-white/5 bg-zinc-900/50 min-h-[300px] shrink-0 md:shrink">
+            {selectedPost && (
+              <img
+                src={selectedPost.image_url}
+                alt="Post"
+                className="max-w-full max-h-full object-contain"
+              />
+            )}
+          </div>
 
-            {/* Details Section */}
-            <div className="flex flex-col h-full bg-zinc-900">
-              {/* Header */}
-              <div className="p-4 border-b border-white/5 flex items-center justify-between shrink-0">
-                <div className="flex items-center gap-3">
-                  <Avatar className="w-8 h-8">
-                    <AvatarImage src={selectedPost?.user?.avatar_url} />
-                    <AvatarFallback>
-                      {selectedPost?.user?.username?.[0]}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex flex-col">
-                    <span className="font-semibold text-sm">
-                      {selectedPost?.user?.username}
-                    </span>
-                    {selectedPost?.user?.bio && (
-                      <span className="text-xs text-zinc-400 max-w-[200px] truncate">
-                        {selectedPost.user.bio}
-                      </span>
-                    )}
-                  </div>
+          {/* Details Section */}
+          <div className="flex flex-col w-full md:w-[400px] h-auto md:h-full bg-zinc-950 shrink-0">
+            {/* Header */}
+            <div className="p-4 border-b border-white/5 flex items-center justify-between shrink-0">
+              <div className="flex items-center gap-3">
+                <Avatar className="w-8 h-8 ring-1 ring-white/10">
+                  <AvatarImage src={selectedPost?.user?.avatar_url} />
+                  <AvatarFallback>
+                    {selectedPost?.user?.username?.[0]}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex flex-col">
+                  <span className="font-semibold text-sm hover:underline cursor-pointer">
+                    {selectedPost?.user?.username}
+                  </span>
                 </div>
+              </div>
+              <div className="flex items-center gap-2 pr-12">
                 {currentUser?.username === selectedPost?.user?.username && (
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="text-white hover:bg-transparent"
+                    className="h-9 w-9 text-zinc-400 hover:text-white hover:bg-white/5 transition-all"
                     onClick={() => setIsOptionsOpen(true)}
                   >
                     <MoreHorizontal size={20} />
                   </Button>
                 )}
               </div>
+            </div>
 
-              {/* Actions Bar (Moved up) */}
-              <div className="p-4 border-b border-white/5 space-y-3 bg-zinc-900 shrink-0">
-                <div className="flex items-center gap-4">
-                  <button
-                    onClick={() => handleLike(selectedPost)}
-                    className={`transition-colors hover:scale-110 active:scale-95 ${selectedPost?.is_liked ? "text-red-500" : "text-white hover:text-zinc-300"}`}
-                  >
-                    <Heart
-                      size={24}
-                      className={selectedPost?.is_liked ? "fill-current" : ""}
-                    />
-                  </button>
-                  <button className="text-white hover:text-zinc-300">
-                    <MessageCircle size={24} />
-                  </button>
-                </div>
-                <div className="font-semibold text-sm">
-                  {selectedPost?.likes_count} likes
-                </div>
-                <div className="text-[10px] text-zinc-500 uppercase tracking-wide">
-                  {selectedPost &&
-                    new Date(selectedPost.created_at).toLocaleDateString(
-                      undefined,
-                      {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      },
-                    )}
-                </div>
-              </div>
-
-              {/* Comments/Caption Area (Scrollable) */}
-              <div className="flex-1 p-4 overflow-y-auto">
-                {/* Caption */}
-                {selectedPost && (
-                  <div className="flex gap-3 mb-4">
-                    <Avatar className="w-8 h-8 hidden sm:block">
-                      <AvatarImage src={selectedPost?.user?.avatar_url} />
-                      <AvatarFallback>
-                        {selectedPost?.user?.username?.[0]}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="text-sm w-full">
-                      <span className="font-semibold mr-2">
-                        {selectedPost?.user?.username}
-                      </span>
-
-                      {isEditing ? (
-                        <div className="mt-2 space-y-2">
-                          <Textarea
-                            value={editCaption}
-                            onChange={(e) => setEditCaption(e.target.value)}
-                            className="bg-zinc-800 border-zinc-700 min-h-[100px]"
-                          />
-                          <div className="flex gap-2 justify-end">
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={() => setIsEditing(false)}
-                            >
-                              Cancel
-                            </Button>
-                            <Button size="sm" onClick={handleUpdate}>
-                              Save
-                            </Button>
-                          </div>
+            {/* Caption Area (Scrollable) */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent">
+              {selectedPost && (
+                <div className="flex gap-3">
+                  <Avatar className="w-8 h-8 hidden sm:block shrink-0">
+                    <AvatarImage src={selectedPost?.user?.avatar_url} />
+                    <AvatarFallback>
+                      {selectedPost?.user?.username?.[0]}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="text-sm w-full">
+                    <span className="font-semibold mr-2">
+                      {selectedPost?.user?.username}
+                    </span>
+                    {isEditing ? (
+                      <div className="mt-2 space-y-2">
+                        <textarea
+                          value={editCaption}
+                          onChange={(e) => setEditCaption(e.target.value)}
+                          className="w-full bg-zinc-900 border border-zinc-800 rounded-md p-2 min-h-[100px] focus:outline-none focus:ring-1 focus:ring-zinc-700 text-sm text-white"
+                          placeholder="Update caption..."
+                        />
+                        <div className="flex gap-2 justify-end">
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => setIsEditing(false)}
+                          >
+                            Cancel
+                          </Button>
+                          <Button size="sm" onClick={handleUpdate}>
+                            Save
+                          </Button>
                         </div>
-                      ) : (
-                        <>
-                          <span className="text-zinc-300">
-                            {selectedPost.caption}
-                          </span>
-                        </>
-                      )}
+                      </div>
+                    ) : (
+                      <span className="text-zinc-300 leading-relaxed whitespace-pre-wrap">
+                        {selectedPost.caption}
+                      </span>
+                    )}
+                    <div className="text-[10px] text-zinc-500 mt-2 uppercase tracking-wide">
+                      {formatDistanceToNow(new Date(selectedPost.created_at), {
+                        addSuffix: true,
+                      })}
                     </div>
                   </div>
-                )}
-                {/* Comments would go here */}
+                </div>
+              )}
+            </div>
+
+            {/* Actions Bar */}
+            <div className="p-4 border-t border-white/5 bg-zinc-950 shrink-0 space-y-4">
+              <div className="flex items-center gap-4">
+                <button
+                  onClick={() => handleLike(selectedPost)}
+                  className={`transition-colors hover:scale-110 active:scale-95 ${selectedPost?.is_liked ? "text-red-500" : "text-white hover:text-zinc-300"}`}
+                >
+                  <Heart
+                    size={26}
+                    className={selectedPost?.is_liked ? "fill-current" : ""}
+                  />
+                </button>
+                <button
+                  onClick={handleShareToChat}
+                  className="text-white hover:text-zinc-300"
+                >
+                  <Share2 size={26} />
+                </button>
+              </div>
+              <div className="font-semibold text-sm block">
+                {selectedPost?.likes_count} likes
               </div>
             </div>
           </div>
@@ -315,7 +331,10 @@ const PostGrid = ({ username, refreshTrigger }) => {
 
       {/* Options Dialog (Instagram Style) */}
       <Dialog open={isOptionsOpen} onOpenChange={setIsOptionsOpen}>
-        <DialogContent className="bg-zinc-900 border border-white/10 p-0 text-white sm:max-w-[400px] gap-0 overflow-hidden rounded-xl">
+        <DialogContent
+          showClose={false}
+          className="bg-zinc-900 border border-white/10 p-0 text-white sm:max-w-[400px] gap-0 overflow-hidden rounded-xl"
+        >
           <div className="flex flex-col">
             <button
               onClick={() => {

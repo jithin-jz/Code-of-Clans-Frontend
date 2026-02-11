@@ -21,7 +21,7 @@ import { challengesApi } from "../services/challengesApi";
 import CertificateModal from "../components/CertificateModal";
 
 // Data
-import { ICONS } from "../constants/levelData.jsx";
+import { ICONS, generateLevels } from "../constants/levelData.jsx";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -97,6 +97,16 @@ const Home = () => {
 
   // Initialize Levels (Merge Visuals with API Data)
   const levels = useMemo(() => {
+    // If no levels from API, provide fallback for background
+    if (!apiLevels || apiLevels.length === 0) {
+      return generateLevels(54).map((l) => ({
+        ...l,
+        status: l.id === 1 ? "UNLOCKED" : "LOCKED",
+        unlocked: l.id === 1,
+        completed: false,
+      }));
+    }
+
     // Unified Processing for ALL Levels
     // const visualPositions = generateLevels(Math.max(53, maxOrder));
 
@@ -258,6 +268,7 @@ const Home = () => {
             />
 
             <LevelMap
+              user={user}
               levels={levels}
               handleLevelClick={handleLevelClick}
               isLeaderboardOpen={isLeaderboardOpen}

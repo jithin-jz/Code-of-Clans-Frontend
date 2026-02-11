@@ -205,4 +205,6 @@ export const notificationsAPI = {
   clearAll: () => api.delete("/notifications/clear_all/"),
 };
 
+
+
 export default api;

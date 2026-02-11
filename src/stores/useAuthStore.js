@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { authAPI } from "../services/api";
+import useChallengesStore from "./useChallengesStore";
 
 // Helper function to open OAuth in a popup window
 const openOAuthPopup = (url, name = "OAuth Login") => {
@@ -212,6 +213,10 @@ const useAuthStore = create((set) => ({
     }
     localStorage.removeItem("access_token");
     localStorage.removeItem("refresh_token");
+    
+    // Clear challenges cache
+    useChallengesStore.getState().clearCache();
+
     set({
       user: null,
       isAuthenticated: false,
@@ -226,6 +231,10 @@ const useAuthStore = create((set) => ({
       
       localStorage.removeItem("access_token");
       localStorage.removeItem("refresh_token");
+
+      // Clear challenges cache
+      useChallengesStore.getState().clearCache();
+
       set({
         user: null,
         isAuthenticated: false,
