@@ -34,7 +34,6 @@ const CodeArena = () => {
   // Initial code template
   const [code, setCode] = useState("");
   const [completionData, setCompletionData] = useState(null);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   // AI Hint State
   const [hint, setHint] = useState("");
@@ -195,66 +194,6 @@ const CodeArena = () => {
     }
   };
 
-  // Polling for Next Level
-  const [isPollingNextLevel, setIsPollingNextLevel] = useState(false);
-  const pollCountRef = useRef(0);
-  const MAX_POLL_ATTEMPTS = 20; // 20 * 3s = 60 seconds max
-
-  useEffect(() => {
-    let interval;
-    pollCountRef.current = 0;
-
-    if (completionData && !completionData.next_level_slug && challenge) {
-      setIsPollingNextLevel(true);
-      interval = setInterval(async () => {
-        pollCountRef.current += 1;
-
-        // Timeout after max attempts
-        if (pollCountRef.current >= MAX_POLL_ATTEMPTS) {
-          setIsPollingNextLevel(false);
-          setOutput((prev) => [
-            ...prev,
-            {
-              type: "error",
-              content:
-                "⏱️ Level generation timed out. Please go back to dashboard and try again.",
-            },
-          ]);
-          clearInterval(interval);
-          return;
-        }
-
-        try {
-          const { challengesApi } = await import("../services/challengesApi");
-          const allLevels = await challengesApi.getAll();
-
-          const nextLevel = allLevels.find(
-            (l) => l.order === challenge.order + 1,
-          );
-
-          if (
-            nextLevel &&
-            (nextLevel.status === "UNLOCKED" ||
-              nextLevel.status === "COMPLETED")
-          ) {
-            setCompletionData((prev) => ({
-              ...prev,
-              next_level_slug: nextLevel.slug,
-            }));
-            setIsPollingNextLevel(false);
-            clearInterval(interval);
-          }
-        } catch (e) {
-          console.error("Polling error", e);
-        }
-      }, 3000); // Check every 3 seconds
-    } else if (completionData && completionData.next_level_slug) {
-      setIsPollingNextLevel(false);
-    }
-
-    return () => clearInterval(interval);
-  }, [completionData, challenge]);
-
   // Fetch Challenge Data
   useEffect(() => {
     const fetchChallenge = async () => {
@@ -368,28 +307,22 @@ const CodeArena = () => {
             ) {
               const starText = "⭐".repeat(result.stars || 0);
 
-              // Artificial delay for "Analysis" feel
-              setIsAnalyzing(true);
-
-              setTimeout(() => {
-                setIsAnalyzing(false);
-                setOutput([
+              setOutput([
+                {
+                  type: "success",
+                  content: `🎉 Challenge Completed! ${starText}`,
+                },
+              ]);
+              if (result.xp_earned > 0) {
+                setOutput((prev) => [
+                  ...prev,
                   {
                     type: "success",
-                    content: `🎉 Challenge Completed! ${starText}`,
+                    content: `💪 XP Earned: +${result.xp_earned}`,
                   },
                 ]);
-                if (result.xp_earned > 0) {
-                  setOutput((prev) => [
-                    ...prev,
-                    {
-                      type: "success",
-                      content: `💪 XP Earned: +${result.xp_earned}`,
-                    },
-                  ]);
-                }
-                setCompletionData(result);
-              }, 2000); // 2 second "Analysis" period
+              }
+              setCompletionData(result);
             }
           } catch (err) {
             console.error("Submission error:", err);
@@ -697,14 +630,6 @@ const CodeArena = () => {
                   >
                     Next Challenge <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
-                ) : isPollingNextLevel ? (
-                  <Button
-                    disabled
-                    className="w-full bg-white/20 text-white cursor-not-allowed"
-                  >
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" /> Generating
-                    Level...
-                  </Button>
                 ) : null}
 
                 <Button
@@ -721,10 +646,7 @@ const CodeArena = () => {
       )}
 
       <HeaderBar
-        title={
-          challenge?.title ||
-          (isPollingNextLevel ? "Generating next level..." : "Loading...")
-        }
+        title={challenge?.title || "Loading..."}
         navigate={navigate}
         isPyodideReady={isPyodideReady}
         isRunning={isRunning}

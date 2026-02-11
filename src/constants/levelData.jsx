@@ -55,7 +55,7 @@ export const ICONS = [
 
 // Procedural Spiral Generator (Inward Winding)
 // Level 1: Bottom Right -> Level 50: Center
-export const generateLevels = (count = 53) => {
+export const generateLevels = (count = 54) => {
   const levels = [];
 
   // 1. Generate Spiral Coordinates (Outwards from (0,0))

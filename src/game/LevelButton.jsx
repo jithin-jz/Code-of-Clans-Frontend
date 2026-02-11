@@ -77,7 +77,7 @@ const LevelButton = ({ level, isCurrentLevel, onClick }) => {
         <p
           className={`text-[9px] font-bold font-mono ${isCertificate ? "text-[#FFD700]" : level.unlocked ? "text-yellow-400" : "text-gray-500"}`}
         >
-          {isCertificate ? "BADGE" : `L${level.order || level.id}`}
+          {isCertificate ? "CERT" : `L${level.order || level.id}`}
         </p>
       </div>
     </motion.button>

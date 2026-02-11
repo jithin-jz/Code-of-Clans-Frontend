@@ -117,23 +117,13 @@ const Home = () => {
     const sortedApiLevels = [...apiLevels].sort((a, b) => a.order - b.order);
 
     return sortedApiLevels.map((apiData) => {
-      // Find matching position/visual config if it exists
-      // visualPositions are 0-indexed in the array, but correspond to order 1..N
-      // visualPositions[0] is usually Level 1 IF the generator returns sorted array?
-      // Wait, generateLevels returns an array of objects with { id: 1, ... }
-
-      // const visual = visualPositions.find((v) => v.id === apiData.order);
-
-      // If we have a visual config (position), use it. otherwise null (Grid fallback handled in LevelMap?)
-      // Note: LevelMap uses a grid layout in the screenshot, so positions might be ignored anyway?
-      // Checking LevelMap code earlier: "Standard Grid Layout" ... "grid grid-cols-9".
-      // It seems LevelMap IGNORES the x/y positions from generateLevels entirely and just uses CSS grid!
-      // This makes things MUCH easier. We just need a flat list.
-
+      const isCertificate = apiData.order === 54;
       return {
         id: apiData.order,
         order: apiData.order,
-        name: `Level ${apiData.order}`,
+        name: isCertificate
+          ? "Professional Certificate"
+          : `Level ${apiData.order}`,
         slug: apiData.slug,
         icon: ICONS[(apiData.order - 1) % ICONS.length],
         stars: apiData.stars || 0,
@@ -141,7 +131,7 @@ const Home = () => {
         unlocked:
           apiData.status === "UNLOCKED" || apiData.status === "COMPLETED",
         completed: apiData.status === "COMPLETED",
-        type: "LEVEL",
+        type: isCertificate ? "CERTIFICATE" : "LEVEL",
         ...apiData,
       };
     });
