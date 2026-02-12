@@ -115,11 +115,43 @@ const NeuralLinkPane = ({
                   <div
                     className="prose prose-invert prose-sm max-w-none 
                             prose-p:text-gray-300 prose-p:leading-relaxed prose-p:text-[13px]
-                            prose-code:text-blue-300 prose-code:bg-blue-900/20 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:font-mono prose-code:text-xs
                             prose-strong:text-white prose-strong:font-semibold
+                            prose-pre:bg-[#050505] prose-pre:border prose-pre:border-white/5 prose-pre:rounded-lg prose-pre:p-0
+                            prose-code:text-blue-300 prose-code:bg-blue-900/20 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:font-mono prose-code:text-xs prose-code:before:content-none prose-code:after:content-none
                         "
                   >
-                    <ReactMarkdown>{h}</ReactMarkdown>
+                    <ReactMarkdown
+                      components={{
+                        pre: ({ children }) => (
+                          <pre className="relative p-3 overflow-x-auto custom-scrollbar-thin">
+                            {children}
+                          </pre>
+                        ),
+                        code: ({
+                          node,
+                          inline,
+                          className,
+                          children,
+                          ...props
+                        }) => {
+                          const match = /language-(\w+)/.exec(className || "");
+                          return !inline ? (
+                            <code
+                              className={`${className} block text-[12px] leading-normal font-mono text-gray-300`}
+                              {...props}
+                            >
+                              {children}
+                            </code>
+                          ) : (
+                            <code className={className} {...props}>
+                              {children}
+                            </code>
+                          );
+                        },
+                      }}
+                    >
+                      {h}
+                    </ReactMarkdown>
                   </div>
                 </div>
               </div>

@@ -124,42 +124,6 @@ const RightSideUI = ({
 
       {/* Minor Actions */}
       <div className="flex flex-col gap-4">
-        {userCertificate && (
-          <Button
-            variant="ghost"
-            className={glassButtonClass}
-            onClick={async () => {
-              try {
-                const { challengesApi } =
-                  await import("../services/challengesApi");
-                const response = await challengesApi.downloadCertificate();
-                const url = window.URL.createObjectURL(
-                  new Blob([response.data]),
-                );
-                const link = document.createElement("a");
-                link.href = url;
-                link.setAttribute(
-                  "download",
-                  `certificate_${user.username}.png`,
-                );
-                document.body.appendChild(link);
-                link.click();
-                link.remove();
-                window.URL.revokeObjectURL(url);
-              } catch (error) {
-                console.error("Download failed:", error);
-                // simple alert or toast if available, but console is fine for now as fallback
-              }
-            }}
-            title="Download Certificate"
-          >
-            <Trophy
-              size={24}
-              className="text-[#FFD700] drop-shadow-[0_0_8px_rgba(255,215,0,0.5)]"
-            />
-          </Button>
-        )}
-
         <Button
           variant="ghost"
           className={glassButtonClass}
