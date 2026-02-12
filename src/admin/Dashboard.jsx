@@ -4,14 +4,29 @@ import useAuthStore from "../stores/useAuthStore";
 import { authAPI } from "../services/api";
 import { notify } from "../services/notification";
 import Loader from "../common/Loader";
+import { Button } from "../components/ui/button";
+import { Badge } from "../components/ui/badge";
 
-import { Users, Zap, Lock, Gem, AlertTriangle } from "lucide-react";
+import {
+  Users,
+  Zap,
+  Lock,
+  Gem,
+  AlertTriangle,
+  Shield,
+  Database,
+  Activity,
+  Terminal,
+} from "lucide-react";
 
 // Components
 import AdminSidebar from "./AdminSidebar";
-import StatsGrid from "./StatsGrid";
 import UserTable from "./UserTable";
 import AdminTasks from "./AdminTasks";
+import ChallengeAnalytics from "./ChallengeAnalytics";
+import StoreAnalytics from "./StoreAnalytics";
+import AdminBroadcast from "./AdminBroadcast";
+import AdminAuditLogs from "./AdminAuditLogs";
 
 import AdminStore from "./AdminStore";
 
@@ -19,17 +34,24 @@ const AdminDashboard = () => {
   const navigate = useNavigate();
   const { user, isAuthenticated, logout, checkAuth } = useAuthStore();
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState("users");
+  const [activeTab, setActiveTab] = useState(() => {
+    return localStorage.getItem("admin_active_tab") || "users";
+  });
 
-  const [stats, setStats] = useState([
-    { label: "Total Users", value: "0", icon: <Users size={24} /> },
-    { label: "Active Sessions", value: "0", icon: <Zap size={24} /> },
-    { label: "OAuth Logins", value: "0", icon: <Lock size={24} /> },
-    { label: "Total Gems", value: "0", icon: <Gem size={24} /> },
-  ]);
+  useEffect(() => {
+    localStorage.setItem("admin_active_tab", activeTab);
+  }, [activeTab]);
+
+  const [rawStats, setRawStats] = useState({
+    total_users: 0,
+    active_sessions: 0,
+    oauth_logins: 0,
+    total_gems: 0,
+  });
 
   const [userList, setUserList] = useState([]);
   const [tableLoading, setTableLoading] = useState(false);
+  const [integrity, setIntegrity] = useState(null);
 
   useEffect(() => {
     const verifyAdmin = async () => {
@@ -48,6 +70,7 @@ const AdminDashboard = () => {
       } else {
         fetchUsers();
         fetchStats();
+        fetchIntegrity();
       }
     }
   }, [loading, isAuthenticated, user, navigate]);
@@ -67,25 +90,18 @@ const AdminDashboard = () => {
   const fetchStats = async () => {
     try {
       const response = await authAPI.getAdminStats();
-      const { total_users, active_sessions, oauth_logins, total_gems } =
-        response.data;
-
-      setStats([
-        { label: "Total Users", value: total_users, icon: <Users size={24} /> },
-        {
-          label: "Active Sessions",
-          value: active_sessions,
-          icon: <Zap size={24} />,
-        },
-        {
-          label: "OAuth Logins",
-          value: oauth_logins,
-          icon: <Lock size={24} />,
-        },
-        { label: "Total Gems", value: total_gems, icon: <Gem size={24} /> },
-      ]);
+      setRawStats(response.data);
     } catch (error) {
       console.error("Failed to fetch admin stats", error);
+    }
+  };
+
+  const fetchIntegrity = async () => {
+    try {
+      const response = await authAPI.getSystemIntegrity();
+      setIntegrity(response.data);
+    } catch (error) {
+      console.error("Failed to fetch system integrity", error);
     }
   };
 
@@ -143,6 +159,7 @@ const AdminDashboard = () => {
   };
 
   const handleLogout = async () => {
+    localStorage.removeItem("admin_active_tab");
     await logout();
     navigate("/login");
   };
@@ -151,7 +168,7 @@ const AdminDashboard = () => {
   if (!user?.is_staff && !user?.is_superuser) return null;
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] font-sans selection:bg-white selection:text-black flex">
+    <div className="flex h-screen bg-zinc-950 overflow-hidden font-sans antialiased text-zinc-200">
       <AdminSidebar
         user={user}
         activeTab={activeTab}
@@ -159,28 +176,96 @@ const AdminDashboard = () => {
         handleLogout={handleLogout}
       />
 
-      <main className="flex-1 overflow-y-auto h-screen bg-black">
-        <div className="container mx-auto p-6 max-w-[1600px]">
-          <div className="flex items-center justify-between mb-8 pt-2">
-            <div>
-              <h1 className="text-3xl font-bold text-white tracking-tight">
-                Dashboard
-              </h1>
-              <p className="text-gray-400 mt-1">
-                Manage users and view system statistics.
-              </p>
-            </div>
-          </div>
-
-          {activeTab === "overview" && (
-            <div className="space-y-6">
-              <StatsGrid stats={stats} />
-              {/* You could add a chart here in the future */}
-            </div>
-          )}
-
+      <main className="flex-1 overflow-y-auto bg-zinc-950">
+        <div className="p-8 max-w-7xl mx-auto space-y-6">
           {activeTab === "users" && (
-            <div className="flex-1">
+            <div className="space-y-8 animate-in slide-in-from-bottom-4 duration-500">
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 gap-6">
+                  <div className="p-6 rounded-xl bg-zinc-900 border border-zinc-800 shadow-sm flex flex-col justify-between group/card">
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <h3 className="text-sm font-semibold text-white">
+                          System Health
+                        </h3>
+                        <Badge
+                          variant="outline"
+                          className="bg-emerald-500/5 text-emerald-500 border-emerald-500/10 text-[9px] font-medium uppercase tracking-wider h-5"
+                        >
+                          Operational
+                        </Badge>
+                      </div>
+                      <div className="grid grid-cols-2 lg:grid-cols-6 gap-3 mt-6">
+                        <div className="p-3 rounded-lg bg-zinc-950 border border-zinc-800 text-center">
+                          <p className="text-[9px] uppercase font-semibold text-zinc-500 mb-1">
+                            Users
+                          </p>
+                          <p className="text-xl font-bold text-white tracking-tight">
+                            {integrity?.users || 0}
+                          </p>
+                        </div>
+                        <div className="p-3 rounded-lg bg-zinc-950 border border-zinc-800 text-center">
+                          <p className="text-[9px] uppercase font-semibold text-zinc-500 mb-1">
+                            Sessions
+                          </p>
+                          <p className="text-xl font-bold text-white tracking-tight">
+                            {rawStats.active_sessions || 0}
+                          </p>
+                        </div>
+                        <div className="p-3 rounded-lg bg-zinc-950 border border-zinc-800 text-center">
+                          <p className="text-[9px] uppercase font-semibold text-zinc-500 mb-1">
+                            Challenges
+                          </p>
+                          <p className="text-xl font-bold text-white tracking-tight">
+                            {integrity?.challenges || 0}
+                          </p>
+                        </div>
+                        <div className="p-3 rounded-lg bg-zinc-950 border border-zinc-800 text-center">
+                          <p className="text-[9px] uppercase font-semibold text-zinc-500 mb-1">
+                            Inventory
+                          </p>
+                          <p className="text-xl font-bold text-white tracking-tight">
+                            {integrity?.store_items || 0}
+                          </p>
+                        </div>
+                        <div className="p-3 rounded-lg bg-zinc-950 border border-zinc-800 text-center">
+                          <p className="text-[9px] uppercase font-semibold text-zinc-500 mb-1">
+                            Audit Logs
+                          </p>
+                          <p className="text-xl font-bold text-white tracking-tight">
+                            {integrity?.audit_logs || 0}
+                          </p>
+                        </div>
+                        <div className="p-3 rounded-lg bg-zinc-950 border border-zinc-800 text-center">
+                          <p className="text-[9px] uppercase font-semibold text-zinc-500 mb-1">
+                            XP Spent
+                          </p>
+                          <p className="text-xl font-bold text-white tracking-tight">
+                            {rawStats.total_gems || 0}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between mt-6 pt-4 border-t border-zinc-800">
+                      <div className="flex items-center gap-2">
+                        <Shield className="text-emerald-500" size={12} />
+                        <span className="text-[9px] font-medium text-zinc-500 uppercase tracking-wider">
+                          Real-time synchronization active
+                        </span>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setActiveTab("audit")}
+                        className="text-zinc-500 hover:text-white text-[9px] h-7 px-3 font-medium uppercase tracking-wider rounded-md hover:bg-zinc-800"
+                      >
+                        View Logs
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               <UserTable
                 userList={userList}
                 tableLoading={tableLoading}
@@ -192,20 +277,35 @@ const AdminDashboard = () => {
             </div>
           )}
 
+          {activeTab === "analytics" && (
+            <div className="space-y-8 animate-in slide-in-from-bottom-4 duration-500">
+              <ChallengeAnalytics />
+              <StoreAnalytics />
+            </div>
+          )}
+
           {activeTab === "tasks" && (
-            <div className="flex-1">
+            <div className="animate-in slide-in-from-bottom-4 duration-500">
               <AdminTasks />
             </div>
           )}
 
           {activeTab === "store" && (
-            <div className="flex-1">
+            <div className="animate-in slide-in-from-bottom-4 duration-500">
               <AdminStore />
             </div>
           )}
 
-          {activeTab === "settings" && (
-            <div className="text-white">Settings panel coming soon.</div>
+          {activeTab === "broadcast" && (
+            <div className="animate-in slide-in-from-bottom-4 duration-500">
+              <AdminBroadcast />
+            </div>
+          )}
+
+          {activeTab === "audit" && (
+            <div className="animate-in slide-in-from-bottom-4 duration-500">
+              <AdminAuditLogs />
+            </div>
           )}
         </div>
       </main>

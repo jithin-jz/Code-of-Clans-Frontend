@@ -30,35 +30,40 @@ const UserTable = ({
 }) => {
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold text-white tracking-tight">
-          Users
-        </h2>
+      <div className="flex items-center justify-end">
         <Button
           variant="outline"
           size="sm"
           onClick={fetchUsers}
           disabled={tableLoading}
-          className="h-8 gap-2 border-white/10 text-gray-400 hover:text-white hover:bg-[#1a1a1a]"
+          className="h-8 gap-2 bg-zinc-900 border-zinc-800 text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors rounded-md"
         >
           <RefreshCw
             className={`h-3.5 w-3.5 ${tableLoading ? "animate-spin" : ""}`}
           />
-          <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+          <span className="text-xs font-medium uppercase tracking-wider">
             Refresh
           </span>
         </Button>
       </div>
 
-      <div className="rounded-md border border-white/10 bg-[#0a0a0a]">
+      <div className="rounded-lg border border-zinc-800 bg-zinc-950 overflow-hidden">
         <Table>
           <TableHeader>
-            <TableRow className="border-white/10 hover:bg-transparent">
-              <TableHead className="w-[80px] text-gray-400">Avatar</TableHead>
-              <TableHead className="text-gray-400">Username</TableHead>
-              <TableHead className="text-gray-400">Role</TableHead>
-              <TableHead className="text-gray-400">Status</TableHead>
-              <TableHead className="text-right text-gray-400">
+            <TableRow className="border-zinc-800 hover:bg-transparent bg-zinc-900/50">
+              <TableHead className="w-[80px] text-[10px] font-medium uppercase tracking-wider text-zinc-500 py-3">
+                Avatar
+              </TableHead>
+              <TableHead className="text-[10px] font-medium uppercase tracking-wider text-zinc-500 py-3">
+                User
+              </TableHead>
+              <TableHead className="text-[10px] font-medium uppercase tracking-wider text-zinc-500 py-3">
+                Role
+              </TableHead>
+              <TableHead className="text-[10px] font-medium uppercase tracking-wider text-zinc-500 py-3">
+                Status
+              </TableHead>
+              <TableHead className="text-right text-[10px] font-medium uppercase tracking-wider text-zinc-500 py-3">
                 Actions
               </TableHead>
             </TableRow>
@@ -66,9 +71,12 @@ const UserTable = ({
           <TableBody>
             {tableLoading ? (
               <TableRow>
-                <TableCell colSpan={5} className="h-24 text-center">
-                  <div className="flex justify-center">
-                    <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
+                <TableCell colSpan={5} className="h-32 text-center">
+                  <div className="flex flex-col items-center justify-center gap-2">
+                    <Loader2 className="h-6 w-6 animate-spin text-zinc-700" />
+                    <span className="text-xs font-medium text-zinc-600 uppercase tracking-widest">
+                      Loading...
+                    </span>
                   </div>
                 </TableCell>
               </TableRow>
@@ -76,7 +84,7 @@ const UserTable = ({
               <TableRow>
                 <TableCell
                   colSpan={5}
-                  className="h-24 text-center text-gray-400"
+                  className="h-24 text-center text-zinc-500 text-sm italic"
                 >
                   No users found.
                 </TableCell>
@@ -85,10 +93,10 @@ const UserTable = ({
               userList.map((usr) => (
                 <TableRow
                   key={usr.username}
-                  className="border-white/10 hover:bg-[#1a1a1a]"
+                  className="border-zinc-800 hover:bg-zinc-900/40 transition-colors group"
                 >
-                  <TableCell>
-                    <div className="h-9 w-9 rounded-sm overflow-hidden bg-[#1a1a1a] border border-white/10 flex items-center justify-center">
+                  <TableCell className="py-3">
+                    <div className="h-8 w-8 rounded-full overflow-hidden bg-zinc-900 border border-zinc-800 flex items-center justify-center">
                       {usr.profile?.avatar_url ? (
                         <img
                           src={usr.profile.avatar_url}
@@ -96,64 +104,67 @@ const UserTable = ({
                           className="h-full w-full object-cover"
                         />
                       ) : (
-                        <span className="text-xs font-bold text-gray-400">
+                        <span className="text-[10px] font-bold text-zinc-600">
                           {usr.username[0]?.toUpperCase()}
                         </span>
                       )}
                     </div>
                   </TableCell>
-                  <TableCell className="font-medium text-white">
+                  <TableCell className="py-3">
                     <div className="flex flex-col">
-                      <span>{usr.username}</span>
-                      <span className="text-xs text-gray-500 font-normal">
+                      <span className="text-sm font-medium text-white tracking-tight">
+                        {usr.username}
+                        {currentUser.username === usr.username && (
+                          <span className="ml-2 text-[10px] text-zinc-500 font-normal">
+                            (You)
+                          </span>
+                        )}
+                      </span>
+                      <span className="text-[11px] text-zinc-500">
                         {usr.email}
                       </span>
                     </div>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="py-3">
                     <div className="flex items-center gap-2">
                       {usr.is_superuser ? (
-                        <Badge
-                          variant="destructive"
-                          className="bg-red-900/20 text-red-400 hover:bg-red-900/30 border-red-900/50"
-                        >
+                        <div className="px-2 py-0.5 rounded-md bg-red-500/5 text-red-500 border border-red-500/10 text-[10px] font-medium uppercase tracking-wider">
                           Admin
-                        </Badge>
+                        </div>
+                      ) : usr.is_staff ? (
+                        <div className="px-2 py-0.5 rounded-md bg-amber-500/5 text-amber-500 border border-amber-500/10 text-[10px] font-medium uppercase tracking-wider">
+                          Staff
+                        </div>
                       ) : (
-                        <Badge
-                          variant="secondary"
-                          className="bg-white/5 text-gray-400 hover:bg-white/10 border-white/10"
-                        >
+                        <div className="px-2 py-0.5 rounded-md bg-zinc-900 text-zinc-400 border border-zinc-800 text-[10px] font-medium uppercase tracking-wider">
                           User
-                        </Badge>
+                        </div>
                       )}
                     </div>
                   </TableCell>
-                  <TableCell>
-                    <Badge
-                      variant="outline"
-                      className={`
-                                                ${
-                                                  usr.is_active
-                                                    ? "border-emerald-500/20 text-emerald-500 bg-emerald-500/10"
-                                                    : "border-red-500/20 text-red-500 bg-red-500/10"
-                                                }
-                                            `}
-                    >
-                      {usr.is_active ? "Active" : "Blocked"}
-                    </Badge>
+                  <TableCell className="py-3 text-[11px] font-medium">
+                    {usr.is_active ? (
+                      <div className="flex items-center gap-1.5 text-emerald-500">
+                        <div className="w-1 h-1 rounded-full bg-emerald-500" />
+                        Active
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-1.5 text-zinc-500">
+                        <div className="w-1 h-1 rounded-full bg-zinc-700" />
+                        Blocked
+                      </div>
+                    )}
                   </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
+                  <TableCell className="text-right py-3">
+                    <div className="flex justify-end gap-1">
                       <Button
                         variant="ghost"
                         size="sm"
                         asChild
-                        className="h-8 w-8 p-0 text-gray-400 hover:text-white"
+                        className="h-8 w-8 p-0 text-zinc-500 hover:text-white hover:bg-zinc-800 rounded-md"
                       >
                         <Link to={`/profile/${usr.username}`} target="_blank">
-                          <span className="sr-only">View</span>
-                          <Eye className="h-4 w-4" />
+                          <Eye className="h-3.5 w-3.5" />
                         </Link>
                       </Button>
 
@@ -162,10 +173,10 @@ const UserTable = ({
                         size="sm"
                         onClick={() => handleBlockToggle(usr.username)}
                         disabled={currentUser.username === usr.username}
-                        className={`h-8 px-2 text-xs ${
+                        className={`h-8 px-2 text-[10px] font-semibold uppercase tracking-wider rounded-md transition-colors ${
                           usr.is_active
-                            ? "text-red-400 hover:text-red-300 hover:bg-red-900/20"
-                            : "text-emerald-400 hover:text-emerald-300 hover:bg-emerald-900/20"
+                            ? "text-zinc-400 hover:text-red-500 hover:bg-red-500/5"
+                            : "text-emerald-500 hover:bg-emerald-500/5"
                         }`}
                       >
                         {usr.is_active ? "Block" : "Unblock"}
@@ -176,10 +187,9 @@ const UserTable = ({
                         size="sm"
                         onClick={() => handleDeleteUser(usr.username)}
                         disabled={currentUser.username === usr.username}
-                        className="h-8 w-8 p-0 text-red-500 hover:text-red-400 hover:bg-red-900/20"
+                        className="h-8 w-8 p-0 text-zinc-500 hover:text-red-500 hover:bg-red-500/5 rounded-md"
                       >
-                        <Trash className="h-4 w-4" />
-                        <span className="sr-only">Delete</span>
+                        <Trash className="h-3.5 w-3.5" />
                       </Button>
                     </div>
                   </TableCell>

@@ -168,6 +168,13 @@ export const authAPI = {
     api.post(`/admin/users/${username}/toggle-block/`),
   deleteUser: (username) => api.delete(`/admin/users/${username}/delete/`),
   getAdminStats: () => api.get("/admin/stats/"),
+  getChallengeAnalytics: () => api.get("/admin/analytics/challenges/"),
+  getStoreAnalytics: () => api.get("/admin/analytics/store/"),
+  getSystemIntegrity: () => api.get("/admin/system/integrity/"),
+  getSystemSettings: () => api.get("/admin/system/settings/"),
+  updateSystemSettings: (data) => api.post("/admin/system/settings/", data),
+  sendBroadcast: (message) => api.post("/admin/notifications/broadcast/", { message }),
+  getAuditLogs: () => api.get("/admin/audit-logs/"),
 };
 
 // Payment endpoints
