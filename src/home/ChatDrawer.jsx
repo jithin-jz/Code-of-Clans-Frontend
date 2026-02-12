@@ -213,9 +213,6 @@ const ChatDrawer = ({ isChatOpen, setChatOpen, user }) => {
                 size={20}
                 strokeWidth={2.5}
               />
-              {messages.length > 0 && (
-                <div className="absolute -top-1.5 -right-1.5 w-2.5 h-2.5 bg-[#FFD700] rounded-full animate-pulse shadow-[0_0_8px_rgba(255,215,0,0.8)]" />
-              )}
             </>
           )}
         </div>
