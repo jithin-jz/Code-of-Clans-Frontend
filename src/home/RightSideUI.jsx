@@ -1,3 +1,4 @@
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import {
   Star,
@@ -7,10 +8,12 @@ import {
   Calendar,
   Trophy,
   ChevronRight,
+  Bell,
 } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { cn } from "../lib/utils";
-import { Bell } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import useNotificationStore from "../stores/useNotificationStore";
 
 const RightSideUI = ({
   user,
@@ -21,9 +24,39 @@ const RightSideUI = ({
   setLeaderboardOpen,
   setNotificationOpen,
   hasUnclaimedReward,
-  userCertificate,
 }) => {
   const navigate = useNavigate();
+  const [hasNewNotification, setHasNewNotification] = useState(false);
+  const prevUnreadCountRef = useRef(0);
+
+  const { unreadCount, fetchNotifications } = useNotificationStore();
+
+  // Initial fetch
+  useEffect(() => {
+    if (user) {
+      fetchNotifications();
+    }
+  }, [user, fetchNotifications]);
+
+  // Detect new notifications and trigger animation
+  useEffect(() => {
+    if (
+      unreadCount > prevUnreadCountRef.current &&
+      prevUnreadCountRef.current > 0
+    ) {
+      // Small delay to ensure it doesn't trigger during render cycle
+      const triggerTimeout = setTimeout(() => setHasNewNotification(true), 10);
+
+      // Reset intense animation after 3 seconds, but keep dot pulsing subtly
+      const resetTimeout = setTimeout(() => setHasNewNotification(false), 3000);
+
+      return () => {
+        clearTimeout(triggerTimeout);
+        clearTimeout(resetTimeout);
+      };
+    }
+    prevUnreadCountRef.current = unreadCount;
+  }, [unreadCount]);
 
   // Glass button style matches the previous design
   const glassButtonClass =
@@ -135,10 +168,56 @@ const RightSideUI = ({
         {/* Notifications */}
         <Button
           variant="ghost"
-          className={glassButtonClass}
+          className={cn(glassButtonClass, "relative overflow-visible")}
           onClick={() => setNotificationOpen((prev) => !prev)}
         >
-          <Bell size={24} className="text-gray-400" />
+          <motion.div
+            animate={
+              hasNewNotification
+                ? {
+                    rotate: [0, -10, 10, -10, 10, 0],
+                    scale: [1, 1.1, 1, 1.1, 1],
+                  }
+                : {}
+            }
+            transition={{ duration: 0.5 }}
+          >
+            <Bell
+              size={24}
+              className={cn(
+                "transition-colors duration-300",
+                unreadCount > 0 ? "text-blue-400" : "text-gray-400",
+              )}
+            />
+          </motion.div>
+
+          {/* Glowing Red Dot */}
+          <AnimatePresence>
+            {unreadCount > 0 && (
+              <motion.div
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0, opacity: 0 }}
+                className="absolute top-3.5 right-3.5"
+              >
+                <div className="relative">
+                  <div className="w-2.5 h-2.5 bg-red-500 rounded-full shadow-[0_0_8px_rgba(239,68,68,0.8)]" />
+                  {/* Pulse Effect */}
+                  <div className="absolute inset-0 w-2.5 h-2.5 bg-red-500 rounded-full animate-ping opacity-75" />
+
+                  {/* Secondary intense ripple on NEW notification */}
+                  {hasNewNotification && (
+                    <motion.div
+                      className="absolute inset-0 rounded-full bg-red-400"
+                      initial={{ scale: 1, opacity: 1 }}
+                      animate={{ scale: 3, opacity: 0 }}
+                      transition={{ duration: 0.8, repeat: 3 }}
+                    />
+                  )}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </Button>
 
         <Button

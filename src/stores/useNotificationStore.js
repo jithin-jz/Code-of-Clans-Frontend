@@ -41,7 +41,7 @@ const useNotificationStore = create((set, get) => ({
       const notifications = response.data;
 
       // Calculate unread count
-      const unreadCount = notifications.filter((n) => !n.read).length;
+      const unreadCount = notifications.filter((n) => !n.is_read).length;
 
       set({
         notifications,
@@ -72,9 +72,9 @@ const useNotificationStore = create((set, get) => ({
       // Update local state
       set((state) => {
         const updatedNotifications = state.notifications.map((n) =>
-          n.id === notificationId ? { ...n, read: true } : n
+          n.id === notificationId ? { ...n, is_read: true } : n
         );
-        const unreadCount = updatedNotifications.filter((n) => !n.read).length;
+        const unreadCount = updatedNotifications.filter((n) => !n.is_read).length;
 
         return {
           notifications: updatedNotifications,
@@ -98,7 +98,7 @@ const useNotificationStore = create((set, get) => ({
 
       // Update local state
       set((state) => ({
-        notifications: state.notifications.map((n) => ({ ...n, read: true })),
+        notifications: state.notifications.map((n) => ({ ...n, is_read: true })),
         unreadCount: 0,
       }));
 

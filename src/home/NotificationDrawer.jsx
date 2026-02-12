@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   Bell,
@@ -11,82 +11,47 @@ import {
   Gift,
 } from "lucide-react";
 import { motion } from "framer-motion";
-import { notificationsAPI } from "../services/api";
 import { formatDistanceToNow } from "date-fns";
 import { SkeletonBase } from "../common/SkeletonPrimitives";
+import useNotificationStore from "../stores/useNotificationStore";
 
-const NotificationDrawer = ({ isOpen, onClose, onUnreadCountChange }) => {
-  const [notifications, setNotifications] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [unreadCount, setUnreadCount] = useState(0);
+const NotificationDrawer = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
-
-  const fetchNotifications = React.useCallback(async () => {
-    try {
-      const response = await notificationsAPI.getNotifications();
-      setNotifications(response.data);
-      const count = response.data.filter((n) => !n.is_read).length;
-      setUnreadCount(count);
-      if (onUnreadCountChange) onUnreadCountChange(count);
-    } catch (error) {
-      console.error("Failed to fetch notifications", error);
-    } finally {
-      if (isOpen) setLoading(false);
-    }
-  }, [isOpen, onUnreadCountChange]);
+  const {
+    notifications,
+    unreadCount,
+    isLoading,
+    fetchNotifications,
+    markAsRead,
+    markAllAsRead,
+    clearAll,
+  } = useNotificationStore();
 
   // Poll for notifications every 30 seconds
   useEffect(() => {
     fetchNotifications();
-    const interval = setInterval(fetchNotifications, 30000);
+    const interval = setInterval(() => fetchNotifications(), 30000);
     return () => clearInterval(interval);
   }, [fetchNotifications]);
 
   // Re-fetch when opened to ensure fresh data
   useEffect(() => {
     if (isOpen) {
-      setLoading(true);
-      fetchNotifications();
+      fetchNotifications(true);
     }
   }, [isOpen, fetchNotifications]);
 
   const handleMarkRead = async (id, e) => {
     if (e) e.stopPropagation();
-    try {
-      await notificationsAPI.markRead(id);
-      setNotifications((prev) =>
-        prev.map((n) => (n.id === id ? { ...n, is_read: true } : n)),
-      );
-      setUnreadCount((prev) => {
-        const newCount = Math.max(0, prev - 1);
-        if (onUnreadCountChange) onUnreadCountChange(newCount);
-        return newCount;
-      });
-    } catch (error) {
-      console.error(error);
-    }
+    await markAsRead(id);
   };
 
   const handleMarkAllRead = async () => {
-    try {
-      await notificationsAPI.markAllRead();
-      setNotifications((prev) => prev.map((n) => ({ ...n, is_read: true })));
-      setUnreadCount(0);
-      if (onUnreadCountChange) onUnreadCountChange(0);
-    } catch (error) {
-      console.error("Failed to mark all read", error);
-    }
+    await markAllAsRead();
   };
 
   const handleClearAll = async () => {
-    try {
-      await notificationsAPI.clearAll();
-      setNotifications([]);
-      setUnreadCount(0);
-      if (onUnreadCountChange) onUnreadCountChange(0);
-    } catch (error) {
-      console.error("Failed to clear notifications", error);
-    }
+    await clearAll();
   };
 
   const handleNotificationClick = async (notification) => {
@@ -194,7 +159,7 @@ const NotificationDrawer = ({ isOpen, onClose, onUnreadCountChange }) => {
 
         {/* Notifications List */}
         <div className="flex-1 overflow-y-auto px-4 py-4 space-y-2 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
-          {loading && notifications.length === 0 ? (
+          {isLoading && notifications.length === 0 ? (
             <div className="flex flex-col gap-3">
               {[...Array(6)].map((_, i) => (
                 <div
