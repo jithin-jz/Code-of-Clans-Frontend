@@ -2,203 +2,301 @@
 importScripts("https://cdn.jsdelivr.net/pyodide/v0.29.3/full/pyodide.js");
 
 let pyodide = null;
-const EXECUTION_TIMEOUT = 3000; // 3 seconds timeout for better UX
+let isReady = false;
 
-async function loadPyodideAndPackages() {
+const EXECUTION_TIMEOUT = 5000; // Increased to 5 seconds
+
+/* ================= PYODIDE INITIALIZATION ================= */
+
+async function initPyodide() {
     try {
-        pyodide = await loadPyodide();
+        pyodide = await loadPyodide({
+            indexURL: "https://cdn.jsdelivr.net/pyodide/v0.29.3/full/"
+        });
         
-        // Load Micropip (Package Manager) for future flexibility
         await pyodide.loadPackage("micropip");
-        
-        // Redirect stdout to main thread
+
+        // Set up stdout/stderr handlers
         pyodide.setStdout({
-            batched: (msg) => {
-                postMessage({ type: 'log', content: msg });
-            }
+            batched: (msg) => postMessage({ type: "log", content: msg })
         });
-        
-        // Redirect stderr for better error capture
+
         pyodide.setStderr({
-            batched: (msg) => {
-                postMessage({ type: 'error', content: msg });
-            }
+            batched: (msg) => postMessage({ type: "error", content: msg })
         });
+
+        // Bootstrap security and utility functions
+        await bootstrapPython();
         
-        postMessage({ type: 'ready' });
+        isReady = true;
+        postMessage({ type: "ready" });
     } catch (err) {
-        postMessage({ type: 'error', content: `Failed to load Pyodide: ${err}` });
+        postMessage({ 
+            type: "error", 
+            content: `Failed to initialize Pyodide: ${err.toString()}` 
+        });
     }
 }
 
-loadPyodideAndPackages();
+/* ================= BOOTSTRAP PYTHON ENVIRONMENT ================= */
 
-// Execute code with timeout protection
-function executeWithTimeout(asyncFn, timeoutMs) {
-    return new Promise((resolve, reject) => {
-        const timeoutId = setTimeout(() => {
-            reject(new Error(`⏱️ Execution timed out after ${timeoutMs / 1000} seconds. Check for infinite loops!`));
-        }, timeoutMs);
-
-        asyncFn()
-            .then((result) => {
-                clearTimeout(timeoutId);
-                resolve(result);
-            })
-            .catch((error) => {
-                clearTimeout(timeoutId);
-                reject(error);
-            });
-    });
-}
-
-// Helper: Python Security & Cleanup Script
-// This mirrors services/ai/sandbox.py
 const BOOTSTRAP_SCRIPT = `
 import ast
 import sys
 
-# 1. Security Configuration
-BLOCKED_IMPORTS = {'os', 'sys', 'subprocess', 'shutil', 'importlib', 'socket', 'requests', 'urllib', 'http', 'ftplib'}
-BLOCKED_BUILTINS = {'exec', 'eval', 'compile', 'open', 'input'}
+# Blocked imports and builtins for security
+BLOCKED_IMPORTS = {
+    'os', 'sys', 'subprocess', 'shutil', 'socket', 
+    'requests', 'urllib', 'http', 'pathlib', 'glob'
+}
+
+BLOCKED_BUILTINS = {
+    'exec', 'eval', 'compile', 'open', '__import__'
+}
 
 class SecurityAnalyzer(ast.NodeVisitor):
+    """AST visitor to detect disallowed operations"""
     def __init__(self):
-        self.unsafe_found = []
+        self.errors = []
 
     def visit_Import(self, node):
         for alias in node.names:
-            if alias.name.split('.')[0] in BLOCKED_IMPORTS:
-                self.unsafe_found.append(f"Importing '{alias.name}' is not allowed.")
+            module_name = alias.name.split('.')[0]
+            if module_name in BLOCKED_IMPORTS:
+                self.errors.append(f"Import '{alias.name}' is not allowed")
         self.generic_visit(node)
 
     def visit_ImportFrom(self, node):
-        if node.module and node.module.split('.')[0] in BLOCKED_IMPORTS:
-            self.unsafe_found.append(f"Importing from '{node.module}' is not allowed.")
+        if node.module:
+            module_name = node.module.split('.')[0]
+            if module_name in BLOCKED_IMPORTS:
+                self.errors.append(f"Import from '{node.module}' is not allowed")
         self.generic_visit(node)
 
     def visit_Call(self, node):
         if isinstance(node.func, ast.Name):
             if node.func.id in BLOCKED_BUILTINS:
-                self.unsafe_found.append(f"Calling function '{node.func.id}' is not allowed.")
+                self.errors.append(f"Builtin '{node.func.id}()' is not allowed")
         self.generic_visit(node)
 
 def is_safe_code(code):
+    """Check if code is safe to execute"""
     try:
         tree = ast.parse(code)
         analyzer = SecurityAnalyzer()
         analyzer.visit(tree)
-        if analyzer.unsafe_found:
-            return False, "; ".join(analyzer.unsafe_found)
-        return True, None
+        
+        if analyzer.errors:
+            return False, "; ".join(analyzer.errors)
+        return True, ""
     except SyntaxError as e:
-        return False, f"Syntax Error: {e}"
+        return False, f"Syntax Error: {str(e)}"
+    except Exception as e:
+        return False, f"Parse Error: {str(e)}"
 
-# 2. State Management
-_INITIAL_GLOBALS = set(globals().keys())
+# Store initial global state
+_SAFE_GLOBALS = {
+    'is_safe_code': is_safe_code,
+    'ast': ast,
+    'sys': sys,
+    'BLOCKED_IMPORTS': BLOCKED_IMPORTS,
+    'BLOCKED_BUILTINS': BLOCKED_BUILTINS,
+    'SecurityAnalyzer': SecurityAnalyzer,
+    '_SAFE_GLOBALS': None  # Will be set after
+}
 
 def cleanup_globals():
-    current_keys = set(globals().keys())
-    # Keep initial globals + the cleanup function itself + security stuff
-    keep = _INITIAL_GLOBALS | {'cleanup_globals', 'is_safe_code', 'SecurityAnalyzer', 'BLOCKED_IMPORTS', 'BLOCKED_BUILTINS'} 
-    for key in current_keys:
-        if key not in keep and not key.startswith('_'):
-             del globals()[key]
+    """Clean up user-defined globals while preserving safe functions"""
+    current_globals = list(globals().keys())
+    for key in current_globals:
+        if key not in _SAFE_GLOBALS and not key.startswith('_'):
+            try:
+                del globals()[key]
+            except:
+                pass
+
+# Add cleanup to safe globals
+_SAFE_GLOBALS['cleanup_globals'] = cleanup_globals
+
+print("Python environment bootstrapped successfully")
 `;
+
+async function bootstrapPython() {
+    try {
+        await pyodide.runPythonAsync(BOOTSTRAP_SCRIPT);
+    } catch (err) {
+        throw new Error(`Bootstrap failed: ${err.toString()}`);
+    }
+}
+
+/* ================= TIMEOUT WRAPPER ================= */
+
+function executeWithTimeout(fn, timeoutMs) {
+    return new Promise((resolve, reject) => {
+        const timeoutId = setTimeout(() => {
+            reject(new Error(`⏱️ Execution timeout after ${timeoutMs / 1000}s`));
+        }, timeoutMs);
+
+        Promise.resolve(fn())
+            .then((result) => {
+                clearTimeout(timeoutId);
+                resolve(result);
+            })
+            .catch((err) => {
+                clearTimeout(timeoutId);
+                reject(err);
+            });
+    });
+}
+
+/* ================= SAFE CODE EXECUTION ================= */
+
+async function executeSafely(code, timeoutMs = EXECUTION_TIMEOUT) {
+    if (!pyodide || !isReady) {
+        throw new Error("Pyodide is not ready");
+    }
+
+    // Check code safety
+    const checkResult = await pyodide.runPythonAsync(`
+safe, msg = is_safe_code("""${code.replace(/"/g, '\\"')}""")
+(safe, msg)
+    `);
+    
+    const [isSafe, errorMsg] = checkResult.toJs();
+    
+    if (!isSafe) {
+        throw new Error(`🛡️ Security check failed: ${errorMsg}`);
+    }
+
+    // Clean previous execution state
+    await pyodide.runPythonAsync("cleanup_globals()");
+
+    // Execute code with timeout
+    return await executeWithTimeout(
+        () => pyodide.runPythonAsync(code),
+        timeoutMs
+    );
+}
+
+/* ================= MESSAGE HANDLER ================= */
 
 self.onmessage = async (event) => {
     const { type, code, testCode } = event.data;
 
-    if (type === 'run') {
-        if (!pyodide) {
-            postMessage({ type: 'error', content: "Pyodide is not ready yet." });
-            return;
-        }
+    if (!pyodide || !isReady) {
+        postMessage({ 
+            type: "error", 
+            content: "⚠️ Pyodide is not ready yet. Please wait..." 
+        });
+        return;
+    }
 
-        try {
-            // Buffer to capture stdout for tests
-            let stdoutBuffer = [];
-            pyodide.setStdout({
-                batched: (msg) => {
-                    stdoutBuffer.push(msg);
-                    postMessage({ type: 'log', content: msg });
-                }
-            });
-
-            // 1. Initialize Helper (Idempotent)
-            if (!self.isBootstrapped) {
-                await pyodide.runPythonAsync(BOOTSTRAP_SCRIPT);
-                self.isBootstrapped = true;
-            }
-
-            // 2. Security Check (Python AST)
-            // We escape the code to pass it safely as a string literal
-            // Using globals().get() to call safely
-            const checkSafe = pyodide.globals.get("is_safe_code");
-            const [isSafe, errorMsg] = checkSafe(code).toJs();
+    try {
+        switch (type) {
+            case "run":
+                await handleRun(code);
+                break;
             
-            if (!isSafe) {
-                 postMessage({ type: 'error', content: `🛡️ Security Violation: ${errorMsg}` });
-                 postMessage({ type: 'completed', passed: false });
-                 return;
-            }
-
-            // 3. Clean Slate (Cleanup from previous run)
-            const cleanup = pyodide.globals.get("cleanup_globals");
-            cleanup();
-
-            // 4. Run User Code
-            await executeWithTimeout(
-                () => pyodide.runPythonAsync(code),
-                EXECUTION_TIMEOUT
-            );
+            case "validate":
+                await handleValidate(code, testCode);
+                break;
             
-            // 5. Run Tests
-            if (testCode) {
-                try {
-                    // Set output BEFORE running test code (for check function definition)
-                    const currentOutput = stdoutBuffer.join("\n") || "";
-                    pyodide.globals.set("output", currentOutput);
-                    
-                    // Run test code (defines check function)
-                    await executeWithTimeout(
-                        () => pyodide.runPythonAsync(testCode),
-                        EXECUTION_TIMEOUT
-                    );
-                    
-                    // Update output AFTER test code runs (captures prints from function calls within test code)
-                    const finalOutput = stdoutBuffer.join("\n") || "";
-                    pyodide.globals.set("output", finalOutput);
-                    
-                    // Call check() with robust output handling
-                    // - Ensure output is in scope dict
-                    // - Fallback to empty string if check expects scope['output']
-                    await executeWithTimeout(
-                        () => pyodide.runPythonAsync(`
-if 'check' in globals() and callable(globals()['check']):
-    _output = output if 'output' in globals() else ''
-    _user_scope = {k: v for k, v in globals().items() if not k.startswith('_')}
-    _user_scope['output'] = _output
-    # Make output also available for tests that access it directly
-    globals()['output'] = _output
-    check(_user_scope)
-`),
-                        EXECUTION_TIMEOUT
-                    );
-                    
-                    postMessage({ type: 'success', content: "✅ Tests Passed!" });
-                    postMessage({ type: 'completed', passed: true });
-                } catch (testError) {
-                    postMessage({ type: 'error', content: `❌ Test Failed: ${testError.toString()}` });
-                    postMessage({ type: 'completed', passed: false });
-                }
-            } else {
-                postMessage({ type: 'log', content: "⚠️ No tests defined. Code ran successfully." });
-                postMessage({ type: 'completed', passed: false });
-            }
-        } catch (error) {
-            postMessage({ type: 'error', content: `❌ ${error.toString()}` });
-            postMessage({ type: 'completed', passed: false });
+            default:
+                postMessage({ 
+                    type: "error", 
+                    content: `Unknown message type: ${type}` 
+                });
         }
+    } catch (err) {
+        postMessage({ 
+            type: "error", 
+            content: err.message || err.toString() 
+        });
+        postMessage({ type: "completed", passed: false });
     }
 };
+
+/* ================= RUN MODE ================= */
+
+async function handleRun(code) {
+    try {
+        await executeSafely(code);
+        postMessage({ type: "completed", passed: true });
+    } catch (err) {
+        postMessage({ 
+            type: "error", 
+            content: err.message || err.toString() 
+        });
+        postMessage({ type: "completed", passed: false });
+    }
+}
+
+/* ================= VALIDATE MODE ================= */
+
+async function handleValidate(code, testCode) {
+    if (!testCode) {
+        postMessage({ 
+            type: "error", 
+            content: "No test code provided for validation" 
+        });
+        postMessage({ type: "completed", passed: false });
+        return;
+    }
+
+    try {
+        // Capture output from user code
+        let capturedOutput = [];
+        
+        pyodide.setStdout({
+            batched: (msg) => {
+                capturedOutput.push(msg);
+                postMessage({ type: "log", content: msg });
+            }
+        });
+
+        // Execute user code
+        await executeSafely(code);
+
+        // Store output for tests
+        const outputStr = capturedOutput.join("\n");
+        pyodide.globals.set("output", outputStr);
+
+        // Execute test code
+        await executeWithTimeout(
+            () => pyodide.runPythonAsync(testCode),
+            EXECUTION_TIMEOUT
+        );
+
+        // Run check function if it exists
+        const hasCheck = await pyodide.runPythonAsync(
+            "'check' in globals() and callable(check)"
+        );
+
+        if (hasCheck) {
+            await executeWithTimeout(
+                () => pyodide.runPythonAsync("check(globals())"),
+                EXECUTION_TIMEOUT
+            );
+        }
+
+        postMessage({ type: "success", content: "✅ All tests passed!" });
+        postMessage({ type: "completed", passed: true });
+
+    } catch (err) {
+        const errorMsg = err.message || err.toString();
+        postMessage({ 
+            type: "error", 
+            content: `❌ Test failed: ${errorMsg}` 
+        });
+        postMessage({ type: "completed", passed: false });
+    } finally {
+        // Restore stdout handler
+        pyodide.setStdout({
+            batched: (msg) => postMessage({ type: "log", content: msg })
+        });
+    }
+}
+
+/* ================= START INITIALIZATION ================= */
+
+initPyodide();
