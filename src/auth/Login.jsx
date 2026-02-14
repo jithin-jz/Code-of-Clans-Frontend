@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import useAuthStore from "../stores/useAuthStore";
-import { notify } from "../services/notification";
+import { toast } from "sonner";
 import { Sword, Shield, Crown, Sparkles } from "lucide-react";
 
 // SVG Icons for providers
@@ -69,27 +69,47 @@ const Login = () => {
 
   const handleSendOtp = async (e) => {
     e.preventDefault();
-    if (!email) return notify.error("Please enter your email");
+    if (!email) {
+      return toast.error("Email Required", {
+        description: "Please enter your email address to continue.",
+      });
+    }
 
     const success = await requestOtp(email);
     if (success) {
       setShowOtpInput(true);
-      notify.success("OTP sent to your email!");
+      toast.success("OTP Sent", {
+        description: "Please check your inbox for the verification code.",
+        action: {
+          label: "Resend",
+          onClick: () => handleSendOtp(e),
+        },
+      });
     } else {
-      notify.error("Failed to send OTP. Please try again.");
+      toast.error("Failed to send OTP", {
+        description: "Please check your connection and try again.",
+      });
     }
   };
 
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
-    if (!otp) return notify.error("Please enter the OTP");
+    if (!otp) {
+      return toast.error("OTP Required", {
+        description: "Please enter the 6-digit code sent to your email.",
+      });
+    }
 
     const success = await verifyOtp(email, otp);
     if (success) {
-      notify.success("Logged in successfully!");
+      toast.success("Welcome Back!", {
+        description: "You have been successfully logged in.",
+      });
       // Navigation handled by router based on auth state
     } else {
-      notify.error("Invalid OTP. Please check and try again.");
+      toast.error("Invalid OTP", {
+        description: "The code you entered is incorrect. Please try again.",
+      });
     }
   };
 

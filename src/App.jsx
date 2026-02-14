@@ -52,13 +52,13 @@ const AuthInitializer = ({ children }) => {
   return children;
 };
 
-import { NotificationContainer } from "./services/notification";
+import { Toaster } from "./components/ui/sonner";
 
 const AppContent = () => {
   return (
     <AuthInitializer>
       <ErrorBoundary>
-        <NotificationContainer />
+        <Toaster />
         <div className="min-h-screen">
           <main>
             <Suspense fallback={<Loader />}>

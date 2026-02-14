@@ -120,48 +120,6 @@
   animation: fade-in-down 0.3s ease-out;
 }
 
-/* Notification Stacking - Make them overlap on top of each other */
-[data-react-hot-toast] {
-  position: relative !important;
-}
-
-[data-react-hot-toast] > div {
-  position: absolute !important;
-  top: 0 !important;
-  left: 50% !important;
-  transform: translateX(-50%) !important;
-}
-
-/* First notification (newest) on top */
-[data-react-hot-toast] > div:nth-child(1) {
-  z-index: 100;
-  top: 0 !important;
-}
-
-[data-react-hot-toast] > div:nth-child(2) {
-  z-index: 99;
-  top: 8px !important;
-  opacity: 0.9;
-}
-
-[data-react-hot-toast] > div:nth-child(3) {
-  z-index: 98;
-  top: 16px !important;
-  opacity: 0.8;
-}
-
-[data-react-hot-toast] > div:nth-child(4) {
-  z-index: 97;
-  top: 24px !important;
-  opacity: 0.7;
-}
-
-[data-react-hot-toast] > div:nth-child(5) {
-  z-index: 96;
-  top: 32px !important;
-  opacity: 0.6;
-}
-
 /* Animations */
 @keyframes slide-in-right {
   from {
