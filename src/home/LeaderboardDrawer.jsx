@@ -151,13 +151,17 @@ const LeaderboardDrawer = ({ isLeaderboardOpen, setLeaderboardOpen }) => {
 
                   {/* Avatar */}
                   <div
-                    className={`w-9 h-9 rounded-full overflow-hidden ring-2 ${
+                    className={`w-9 h-9 rounded-full overflow-hidden ring-2 shrink-0 ${
                       isMe ? "ring-[#FFD700]/40" : "ring-white/10"
                     }`}
                   >
                     {rankUser.avatar ? (
                       <img
-                        src={`${import.meta.env.VITE_API_URL.replace("/api", "")}${rankUser.avatar}`}
+                        src={
+                          rankUser.avatar.startsWith("http")
+                            ? rankUser.avatar
+                            : `${import.meta.env.VITE_API_URL.replace("/api", "")}${rankUser.avatar}`
+                        }
                         alt={rankUser.username}
                         className="w-full h-full object-cover"
                       />
@@ -192,18 +196,25 @@ const LeaderboardDrawer = ({ isLeaderboardOpen, setLeaderboardOpen }) => {
                         </span>
                       )}
                     </div>
-                    <p className="text-[10px] text-gray-500">
-                      {rankUser.completed_levels} levels •{" "}
-                      {rankUser.xp?.toLocaleString() || 0} XP
-                    </p>
+                    <div className="flex items-center gap-1.5">
+                      <Zap size={10} className="text-amber-500" />
+                      <span className="text-xs font-bold text-amber-500">
+                        {rankUser.xp?.toLocaleString() || 0} XP
+                      </span>
+                      <span className="text-[10px] text-gray-600">•</span>
+                      <span className="text-[10px] text-gray-500">
+                        {rankUser.completed_levels} levels
+                      </span>
+                    </div>
                   </div>
 
-                  {/* XP Badge */}
-                  <div className="text-right">
-                    <span className="text-xs font-bold text-amber-500">
-                      {rankUser.xp?.toLocaleString() || 0}
-                    </span>
-                    <p className="text-[9px] text-gray-600">XP</p>
+                  {/* Rank Status Indicator (Optional/Visual) */}
+                  <div className="text-right shrink-0">
+                    <div
+                      className={`text-[10px] font-bold ${isTopThree ? "text-[#FFD700]" : "text-gray-500"}`}
+                    >
+                      #{index + 1}
+                    </div>
                   </div>
                 </Link>
               );

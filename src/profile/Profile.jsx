@@ -25,6 +25,7 @@ import { authAPI } from "../services/api";
 import ProfileSkeleton from "./ProfileSkeleton";
 import CreatePostDialog from "../posts/CreatePostDialog";
 import PostGrid from "../posts/PostGrid";
+import ContributionGraph from "./components/ContributionGraph";
 import {
   Card,
   CardContent,
@@ -84,6 +85,8 @@ const Profile = () => {
   const [isRedeeming, setIsRedeeming] = useState(false);
   const [createPostOpen, setCreatePostOpen] = useState(false);
   const [refreshPosts, setRefreshPosts] = useState(0);
+  const [contributionData, setContributionData] = useState([]);
+  const [loadingContributions, setLoadingContributions] = useState(false);
 
   const avatarInputRef = useRef(null);
   const bannerInputRef = useRef(null);
@@ -111,6 +114,19 @@ const Profile = () => {
     },
     [getUserProfile],
   );
+
+  const fetchContributions = useCallback(async (targetUsername) => {
+    setLoadingContributions(true);
+    try {
+      const { authAPI: api } = await import("../services/api");
+      const response = await api.getContributionHistory(targetUsername);
+      setContributionData(response.data);
+    } catch (error) {
+      console.error("Failed to fetch contributions", error);
+    } finally {
+      setLoadingContributions(false);
+    }
+  }, []);
 
   const fetchSuggestions = useCallback(async () => {
     try {
@@ -147,10 +163,21 @@ const Profile = () => {
       });
       setLoading(false);
       fetchSuggestions();
+      if (currentUser?.username) {
+        fetchContributions(currentUser.username);
+      }
     } else if (username) {
       fetchProfile(username);
+      fetchContributions(username);
     }
-  }, [username, currentUser, isOwnProfile, fetchProfile, fetchSuggestions]);
+  }, [
+    username,
+    currentUser,
+    isOwnProfile,
+    fetchProfile,
+    fetchSuggestions,
+    fetchContributions,
+  ]);
 
   const handleImageUpload = async (event, type) => {
     const file = event.target.files[0];
@@ -650,6 +677,12 @@ const Profile = () => {
                       </Button>
                     )}
                   </div>
+
+                  {/* Contribution Graph */}
+                  <ContributionGraph
+                    data={contributionData}
+                    loading={loadingContributions}
+                  />
 
                   {/* Posts Grid */}
                   <PostGrid

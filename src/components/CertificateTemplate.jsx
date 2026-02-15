@@ -11,7 +11,7 @@ const CertificateTemplate = forwardRef(
         day: "numeric",
         year: "numeric",
       }),
-      verificationUrl = "https://codeofclans.com/verify",
+      verificationUrl = "https://clashofcode.com/verify",
       isPreview = false,
     },
     ref,
@@ -117,12 +117,7 @@ const CertificateTemplate = forwardRef(
 
             {/* Signature */}
             <div className="text-center w-48">
-              <p
-                className="text-4xl text-[#1A1A1A] mb-0 pb-1"
-                style={{ fontFamily: '"Great Vibes", cursive' }}
-              >
-                Code of Clans
-              </p>
+              Clash of Code
               <div className="w-full h-[2px] bg-[#B48C45] mb-2"></div>
               <p className="text-sm text-[#666666] font-inter uppercase tracking-widest">
                 Platform

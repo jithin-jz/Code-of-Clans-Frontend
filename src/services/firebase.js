@@ -25,7 +25,8 @@ export const requestForToken = async () => {
     const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js', {
       scope: '/'
     });
-    console.log('Service Worker registered successfully:', registration.scope);
+    console.log('Service Worker registration state:', registration.active ? 'Active' : 'Pending/Waiting');
+    console.log('Registration details:', registration);
     
     const vapidKey = import.meta.env.VITE_FIREBASE_VAPID_KEY;
     if (!vapidKey) {
@@ -40,18 +41,26 @@ export const requestForToken = async () => {
     });
 
     if (currentToken) {
-      console.log('FCM Token generated successfully.');
+      console.log('FCM Token generated successfully:', currentToken.substring(0, 10) + '...');
       return currentToken;
     } else {
       console.warn('No registration token available. Request permission to generate one.');
+      // This can happen if the user denies permission after the prompt but before token generation
       return null;
     }
   } catch (err) {
-    console.error('An error occurred while retrieving token: ', err);
+    console.error('An error occurred while retrieving token: ', {
+      code: err.code,
+      message: err.message,
+      stack: err.stack
+    });
+    
     if (err.code === 'messaging/permission-blocked') {
         console.error('Notification permission was blocked by the browser.');
     } else if (err.code === 'messaging/invalid-vapid-key') {
-        console.error('The provided VAPID key is invalid.');
+        console.error('The provided VAPID key is invalid. Please verify VITE_FIREBASE_VAPID_KEY in your .env file.');
+    } else if (err.code === 'messaging/failed-serviceworker-registration') {
+        console.error('Service worker registration failed. Check if firebase-messaging-sw.js exists in the public directory.');
     }
     return null;
   }

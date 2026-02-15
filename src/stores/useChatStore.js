@@ -36,14 +36,27 @@ const useChatStore = create((set, get) => ({
         
         if (data.type === 'chat_message') {
             set((state) => {
+                console.log("Chat message received:", data.message, "from:", data.username);
                 // De-duplication check: if message with same ID or same content/user/timestamp exists
-                const isDuplicate = state.messages.some(msg => 
-                    (data.id && msg.id === data.id) || 
-                    (msg.message === data.message && msg.user_id === data.user_id && msg.timestamp === data.timestamp)
-                );
-                
-                if (isDuplicate) return state;
+                // We use a looser check for messages without IDs
+                const isDuplicate = state.messages.some(msg => {
+                    if (data.id && msg.id === data.id) return true;
+                    
+                    const msgTime = new Date(msg.timestamp).getTime();
+                    const dataTime = new Date(data.timestamp).getTime();
+                    const isTimeClose = Math.abs(msgTime - dataTime) < 1000;
 
+                    return msg.message === data.message && 
+                           msg.user_id === data.user_id && 
+                           isTimeClose;
+                });
+                
+                if (isDuplicate) {
+                    console.log("Duplicate message ignored:", data.message);
+                    return state;
+                }
+
+                console.log("Appending message to state:", data.message);
                 return {
                     messages: [...state.messages, data]
                 };

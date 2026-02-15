@@ -29,8 +29,56 @@ const useNotificationStore = create((set, get) => ({
     }
     
     console.log("Initializing FCM... Current permission:", Notification.permission);
-    if (Notification.permission === "granted") {
+    
+    if (Notification.permission === "default") {
+        console.log("Permission is default, showing interactive setup toast...");
+        // Avoid duplicate toasts if already shown this session
+        if (!get()._promptShown) {
+          notify.info("Enable Notifications", {
+            description: "Stay updated with real-time alerts. Click Allow to enable browser notifications.",
+            duration: Infinity, // Stay until interacted with
+            action: {
+              label: "Allow",
+              onClick: () => get().requestPermission()
+            },
+            cancel: {
+              label: "Not Now",
+              onClick: () => console.log("User chose not to enable notifications for now")
+            }
+          });
+          set({ _promptShown: true });
+        }
+    } else if (Notification.permission === "granted") {
         await get().registerFCM();
+    } else {
+        console.warn("Notification permission is denied. Real-time updates will not work.");
+        // Only show once per session to avoid annoyance
+        if (!get()._deniedWarned) {
+          notify.error("Notifications Blocked", { 
+            description: "Browser permissions are currently blocked. Please reset them in your address bar.",
+            duration: Infinity,
+            action: {
+              label: "Allow",
+              onClick: () => {
+                // If it's still denied, give specific guidance
+                if (Notification.permission === 'denied') {
+                  notify.warning("Still Blocked", { 
+                    description: "You must manually click the 🔒 lock icon in the address bar to unblock notifications first.",
+                    duration: 8000
+                  });
+                } else {
+                  set({ _deniedWarned: false });
+                  get().initFCM();
+                }
+              }
+            },
+            cancel: {
+              label: "Not Now",
+              onClick: () => console.log("User dismissed blocked notification info")
+            }
+          });
+          set({ _deniedWarned: true });
+        }
     }
 
     // Listen for foreground messages (only once)
@@ -76,7 +124,10 @@ const useNotificationStore = create((set, get) => ({
         console.log("Permission result:", permission);
         set({ permission });
         if (permission === 'granted') {
+            notify.success("Permission Granted!", { description: "Setting up real-time secure channel..." });
             await get().registerFCM();
+        } else if (permission === 'denied') {
+            notify.error("Permission Denied", { description: "You've blocked notifications. Please enable them in site settings." });
         }
         return permission;
     } catch (error) {
@@ -101,19 +152,19 @@ const useNotificationStore = create((set, get) => ({
 
         console.log("[FCM] Token received from Firebase. Current stored token:", get().fcmToken ? "Present" : "None");
         
+        // Force sync with backend on every login/re-init to be safe
+        console.log("[FCM] Syncing token with backend...");
+        const response = await notificationsAPI.registerFCMToken({
+            token: token,
+            device_id: navigator.userAgent
+        });
+        console.log("[FCM] Backend response status:", response.status);
+        
+        set({ fcmToken: token });
+        console.log("[FCM] Token successfully synced with backend.");
+        // Only show success toast if it's the first time or explicitly needed
         if (token !== get().fcmToken) {
-            console.log("[FCM] Syncing new token with backend...");
-            const response = await notificationsAPI.registerFCMToken({
-                token: token,
-                device_id: navigator.userAgent
-            });
-            console.log("[FCM] Backend response status:", response.status);
-            
-            set({ fcmToken: token });
-            console.log("[FCM] Token successfully synced with backend.");
             notify.success("Push notifications active! 🔔");
-        } else {
-            console.log("[FCM] Token is already synced with backend.");
         }
     } catch (error) {
         console.error("[FCM] Registration error details:", {
@@ -121,7 +172,11 @@ const useNotificationStore = create((set, get) => ({
             response: error.response?.data,
             status: error.response?.status
         });
-        notify.error("Failed to enable real-time notifications.");
+        const errorDetail = error.message || "Unknown error";
+        notify.error("Registration Failed", { 
+            description: `Could not sync with backend: ${errorDetail}`,
+            duration: 8000
+        });
     }
   },
 
@@ -267,6 +322,9 @@ const useNotificationStore = create((set, get) => ({
       unreadCount: 0,
       lastFetched: null,
       error: null,
+      fcmToken: null,
+      _deniedWarned: false,
+      _promptShown: false,
     });
   },
 }));

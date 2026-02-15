@@ -161,6 +161,7 @@ export const authAPI = {
     api.post("/profiles/user/redeem-referral/", { code }),
   deleteAccount: () => api.delete("/auth/user/delete/"),
   getSuggestedUsers: () => api.get("/profiles/users/suggestions/"),
+  getContributionHistory: (username) => api.get(`/profiles/users/${username}/stats/contributions/`),
 
   // Admin endpoints
   getUsers: () => api.get("/admin/users/"),

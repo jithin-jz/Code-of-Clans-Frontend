@@ -29,6 +29,10 @@ export const challengesApi = {
         const response = await api.post(`/challenges/${slug}/ai-hint/`, data);
         return response.data;
     },
+    aiAnalyze: async (slug, user_code) => {
+        const response = await api.post(`/challenges/${slug}/ai-analyze/`, { user_code });
+        return response.data;
+    },
     create: async (data) => {
         const response = await api.post('/challenges/', data);
         return response.data;

@@ -12,11 +12,14 @@ import {
 const NeuralLinkPane = ({
   onGetHint,
   onPurchase,
+  onDeepAnalysis, // Added
   hint,
   isHintLoading,
   hintLevel,
   ai_hints_purchased,
-  userXp, // Add userXp prop
+  userXp,
+  analysis, // Added
+  isAnalyzing, // Added
 }) => {
   const [hintHistory, setHintHistory] = React.useState([]);
 
@@ -167,21 +170,62 @@ const NeuralLinkPane = ({
             </div>
           )}
 
-          {!isHintLoading && hintHistory.length === 0 && (
-            <div className="h-full flex flex-col items-center justify-center opacity-40 py-20">
-              <Sparkles size={32} className="text-blue-500 mb-4" />
-              <p className="text-xs font-medium text-gray-400">
-                Ready to help when you need it!
-              </p>
-              <p className="text-[10px] text-gray-500 mt-1">
-                Unlock a hint to get started
-              </p>
+          {analysis && (
+            <div className="group animate-in fade-in slide-in-from-bottom-2 duration-500">
+              <div className="flex items-start gap-3 mb-1">
+                <div className="mt-1 w-5 h-5 rounded bg-amber-500/10 flex items-center justify-center border border-amber-500/20">
+                  <Sparkles size={10} className="text-amber-500" />
+                </div>
+                <div className="flex-1 bg-amber-500/5 border border-amber-500/10 rounded-lg p-4 group-hover:bg-amber-500/8 transition-colors relative overflow-hidden">
+                  <div className="absolute top-0 right-0 p-2 opacity-10">
+                    <Sparkles size={40} className="text-amber-500" />
+                  </div>
+                  <h4 className="text-[11px] font-bold text-amber-500 uppercase tracking-widest mb-2 flex items-center gap-2">
+                    <span className="w-1 h-1 bg-amber-500 rounded-full animate-pulse" />
+                    Senior Engineer Review
+                  </h4>
+                  <div
+                    className="prose prose-invert prose-sm max-w-none 
+                            prose-p:text-gray-300 prose-p:leading-relaxed prose-p:text-[13px]
+                            prose-strong:text-white prose-strong:font-semibold
+                            prose-pre:bg-[#050505] prose-pre:border prose-pre:border-white/5 prose-pre:rounded-lg prose-pre:p-0
+                            prose-code:text-amber-300 prose-code:bg-amber-900/20 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:font-mono prose-code:text-xs prose-code:before:content-none prose-code:after:content-none
+                        "
+                  >
+                    <ReactMarkdown>{analysis}</ReactMarkdown>
+                  </div>
+                </div>
+              </div>
             </div>
           )}
+
+          {isAnalyzing && (
+            <div className="flex items-start gap-3 animate-pulse">
+              <div className="mt-1 w-5 h-5 rounded bg-amber-500/20 flex items-center justify-center animate-spin">
+                <Loader2 size={10} className="text-amber-500" />
+              </div>
+              <div className="flex-1 bg-amber-500/5 border border-amber-500/10 rounded-lg p-3 h-32" />
+            </div>
+          )}
+
+          {!isHintLoading &&
+            !isAnalyzing &&
+            hintHistory.length === 0 &&
+            !analysis && (
+              <div className="h-full flex flex-col items-center justify-center opacity-40 py-20">
+                <Sparkles size={32} className="text-blue-500 mb-4" />
+                <p className="text-xs font-medium text-gray-400">
+                  Ready to help when you need it!
+                </p>
+                <p className="text-[10px] text-gray-500 mt-1">
+                  Unlock a hint or request a code review
+                </p>
+              </div>
+            )}
         </div>
 
         {/* Action Bar */}
-        <div className="p-4 border-t border-white/5 bg-[#0c0c0e]">
+        <div className="p-4 border-t border-white/5 bg-[#0c0c0e] space-y-3">
           {isMaxReached ? (
             <div>
               <Button
@@ -191,12 +235,9 @@ const NeuralLinkPane = ({
                 <Sparkles size={16} />
                 All Hints Used (3/3)
               </Button>
-              <p className="text-[10px] text-gray-400 text-center mt-2">
-                🎯 You've used all available hints for this challenge!
-              </p>
             </div>
           ) : isLocked ? (
-            <>
+            <div className="space-y-2">
               <Button
                 onClick={onPurchase}
                 disabled={
@@ -205,7 +246,7 @@ const NeuralLinkPane = ({
                 className={`w-full text-sm font-bold h-11 rounded-lg transition-all shadow-lg flex items-center justify-center gap-2 ${
                   userXp !== undefined && userXp < nextCost
                     ? "bg-red-500/20 border-2 border-red-500/40 text-red-300 cursor-not-allowed"
-                    : "bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white shadow-blue-900/30"
+                    : "bg-linear-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white shadow-blue-900/30"
                 }`}
               >
                 {isHintLoading ? (
@@ -215,24 +256,16 @@ const NeuralLinkPane = ({
                 )}
                 Get Hint <span className="opacity-50">•</span> {nextCost} XP
               </Button>
-              {userXp !== undefined && userXp < nextCost ? (
-                <p className="text-[11px] text-red-400 text-center mt-2.5 font-medium">
+              {userXp !== undefined && userXp < nextCost && (
+                <p className="text-[11px] text-red-400 text-center font-medium">
                   ❌ Need {nextCost - userXp} more XP
-                  <br />
-                  <span className="text-gray-500">
-                    🎯 Complete challenges to earn XP!
-                  </span>
-                </p>
-              ) : (
-                <p className="text-[10px] text-gray-400 text-center mt-2">
-                  💡 Hints cost XP but keep you moving forward
                 </p>
               )}
-            </>
+            </div>
           ) : (
             <Button
               onClick={onGetHint}
-              disabled={isHintLoading}
+              disabled={isHintLoading || isAnalyzing}
               className="w-full bg-white/5 hover:bg-white/10 text-gray-300 border border-white/10 text-xs font-bold h-10 rounded-lg transition-all flex items-center justify-center gap-2"
             >
               {isHintLoading ? (
@@ -243,12 +276,27 @@ const NeuralLinkPane = ({
               Receive Intelligence
             </Button>
           )}
+
+          {/* Always visible Deep Analysis button unless max hints used (optional choice, let's keep it always) */}
+          <Button
+            onClick={onDeepAnalysis}
+            disabled={isHintLoading || isAnalyzing}
+            className="w-full bg-amber-500/10 hover:bg-amber-500/20 text-amber-500 border border-amber-500/20 text-xs font-bold h-10 rounded-lg transition-all flex items-center justify-center gap-2"
+          >
+            {isAnalyzing ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <Sparkles size={14} className="fill-current" />
+            )}
+            {analysis ? "Re-Analyze Code" : "Request Deep Analysis"}
+          </Button>
+
           <p className="text-[10px] text-gray-600 text-center mt-3 uppercase tracking-tighter">
             AI Assistant Protocol v4.2 // Direct Logic Feed Only
           </p>
           {isLocked && !isMaxReached && (
             <p
-              className={`text-[10px] text-center mt-2 font-medium ${penaltyColor}`}
+              className={`text-[10px] text-center mt-1 font-medium ${penaltyColor}`}
             >
               {penaltyText}
             </p>

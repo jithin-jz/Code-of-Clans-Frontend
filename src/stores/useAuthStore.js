@@ -258,8 +258,10 @@ const useAuthStore = create((set) => ({
     localStorage.removeItem("access_token");
     localStorage.removeItem("refresh_token");
     
-    // Clear challenges cache
+    // Clear caches
     useChallengesStore.getState().clearCache();
+    const useNotificationStore = (await import("./useNotificationStore")).default;
+    useNotificationStore.getState().clearCache();
 
     set({
       user: null,

@@ -120,8 +120,7 @@ const CertificateVerification = () => {
             Certificate Authentication
           </h1>
           <p className="text-zinc-500 text-sm max-w-lg mx-auto">
-            This digital certificate has been verified as authentic and was
-            issued by the Code of Clans platform.
+            issued by the Clash of Code platform.
           </p>
         </div>
 
@@ -203,7 +202,7 @@ const CertificateVerification = () => {
 
         {/* Bottom Disclaimer */}
         <p className="mt-12 text-zinc-600 text-[11px] text-center max-w-md">
-          Code of Clans certificates are issued upon completion of the full
+          Clash of Code certificates are issued upon completion of the full
           Python curriculum. This digital record serves as proof of achievement.
           For inquiries, contact support.
         </p>

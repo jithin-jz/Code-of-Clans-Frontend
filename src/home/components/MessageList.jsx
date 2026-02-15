@@ -31,7 +31,37 @@ const ChatAvatar = ({ isOwn, avatarUrl, username }) => {
   );
 };
 
-const MessageList = ({ user, messages, setChatOpen, messagesEndRef }) => {
+const MessageList = ({ user, messages, setChatOpen }) => {
+  const scrollRef = React.useRef(null);
+  const [shouldScrollToBottom, setShouldScrollToBottom] = useState(true);
+
+  // Auto-scroll logic
+  const scrollToBottom = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  };
+
+  React.useEffect(() => {
+    if (shouldScrollToBottom) {
+      scrollToBottom();
+    }
+  }, [messages, shouldScrollToBottom]);
+
+  // Initial scroll when component mounts or user changes
+  React.useEffect(() => {
+    scrollToBottom();
+    // Second attempt to catch any layout shifts
+    const timer = setTimeout(scrollToBottom, 100);
+    return () => clearTimeout(timer);
+  }, [user]);
+
+  const handleScroll = (e) => {
+    const { scrollTop, scrollHeight, clientHeight } = e.target;
+    // If user is within 100px of bottom, auto-scroll remains active
+    const isAtBottom = scrollHeight - scrollTop - clientHeight < 100;
+    setShouldScrollToBottom(isAtBottom);
+  };
   // Create a map of user_id -> latest metadata (username, avatar_url)
   const userMetadata = useMemo(() => {
     const map = {};
@@ -74,7 +104,11 @@ const MessageList = ({ user, messages, setChatOpen, messagesEndRef }) => {
   }
 
   return (
-    <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+    <div
+      ref={scrollRef}
+      onScroll={handleScroll}
+      className="flex-1 overflow-y-auto px-4 py-4 space-y-3 no-scrollbar"
+    >
       {messages.length === 0 && (
         <div className="flex flex-col items-center justify-center h-full text-center">
           <div className="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center mb-4 border border-white/5">
@@ -112,9 +146,18 @@ const MessageList = ({ user, messages, setChatOpen, messagesEndRef }) => {
             >
               <ChatAvatar
                 isOwn={isOwn}
-                avatarUrl={
-                  isOwn ? user?.profile?.avatar_url : metadata.avatar_url
-                }
+                avatarUrl={(() => {
+                  const rawUrl = isOwn
+                    ? user?.profile?.avatar_url
+                    : metadata.avatar_url;
+                  if (!rawUrl) return null;
+                  if (rawUrl.startsWith("http")) return rawUrl;
+
+                  const apiURL =
+                    import.meta.env.VITE_API_URL || "http://localhost/api";
+                  const baseUrl = apiURL.replace("/api", "");
+                  return `${baseUrl}${rawUrl}`;
+                })()}
                 username={metadata.username}
               />
             </Link>
@@ -143,7 +186,7 @@ const MessageList = ({ user, messages, setChatOpen, messagesEndRef }) => {
                                 ${
                                   isOwn
                                     ? "bg-linear-to-br from-[#FFD700]/15 to-[#FFD700]/5 border border-[#FFD700]/20 text-white rounded-2xl rounded-tr-md"
-                                    : "bg-white/[0.03] border border-white/5 text-gray-300 rounded-2xl rounded-tl-md group-hover:bg-white/[0.05] group-hover:border-white/10"
+                                    : "bg-white/3 border border-white/5 text-gray-300 rounded-2xl rounded-tl-md group-hover:bg-white/5 group-hover:border-white/10"
                                 }
                                 ${msg.message?.startsWith("IMAGE:") ? "p-1.5" : ""}
                             `}
@@ -182,7 +225,7 @@ const MessageList = ({ user, messages, setChatOpen, messagesEndRef }) => {
                     );
                   })()
                 ) : (
-                  <p className="break-words">{msg.message}</p>
+                  <p className="wrap-break-word">{msg.message}</p>
                 )}
 
                 {/* Timestamp */}
@@ -204,7 +247,7 @@ const MessageList = ({ user, messages, setChatOpen, messagesEndRef }) => {
           </div>
         );
       })}
-      <div ref={messagesEndRef} />
+      <div className="h-2 w-full shrink-0" />
     </div>
   );
 };

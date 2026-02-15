@@ -12,7 +12,6 @@ import MessageList from "./components/MessageList";
 const ChatDrawer = ({ isChatOpen, setChatOpen, user }) => {
   // ... refs and state ...
   const inputRef = useRef(null);
-  const messagesEndRef = useRef(null);
   const pickerRef = useRef(null);
   const emojiButtonRef = useRef(null);
 
@@ -58,10 +57,7 @@ const ChatDrawer = ({ isChatOpen, setChatOpen, user }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [showPicker]);
 
-  /* ----------------------------- scroll logic ----------------------------- */
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  /* --------------------------- websocket connect --------------------------- */
 
   /* --------------------------- websocket connect --------------------------- */
   useEffect(() => {
@@ -176,7 +172,6 @@ const ChatDrawer = ({ isChatOpen, setChatOpen, user }) => {
           user={user}
           messages={messages}
           setChatOpen={setChatOpen}
-          messagesEndRef={messagesEndRef}
         />
 
         {/* Input Area */}

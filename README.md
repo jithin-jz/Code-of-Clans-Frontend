@@ -1,6 +1,6 @@
-# 🎮 Code of Clans - Frontend
+# 🎮 Clash of Code - Frontend
 
-The **Code of Clans Frontend** is a modern, interactive web application built with **React** and **Vite**. It provides a gamified experience where users can solve coding challenges, manage their profiles, and interact with the community.
+The **Clash of Code Frontend** is a modern, interactive web application built with **React** and **Vite**. It provides a gamified experience where users can solve coding challenges, manage their profiles, and interact with the community.
 
 ## 🚀 Tech Stack
 

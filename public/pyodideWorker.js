@@ -221,7 +221,7 @@ self.onmessage = async (event) => {
 async function handleRun(code) {
     try {
         await executeSafely(code);
-        postMessage({ type: "completed", passed: true });
+        postMessage({ type: "completed", passed: false }); // 'run' shouldn't complete challenges
     } catch (err) {
         postMessage({ 
             type: "error", 
@@ -244,6 +244,7 @@ async function handleValidate(code, testCode) {
     }
 
     try {
+        console.log("Validation started: Executing user code...");
         // Capture output from user code
         let capturedOutput = [];
         
@@ -261,11 +262,19 @@ async function handleValidate(code, testCode) {
         const outputStr = capturedOutput.join("\n");
         pyodide.globals.set("output", outputStr);
 
+        console.log("Validation: Executing test suite...");
         // Execute test code
-        await executeWithTimeout(
-            () => pyodide.runPythonAsync(testCode),
-            EXECUTION_TIMEOUT
-        );
+        try {
+            await executeWithTimeout(
+                () => pyodide.runPythonAsync(testCode),
+                EXECUTION_TIMEOUT
+            );
+        } catch (testErr) {
+            // Specific handling for AssertionErrors
+            const errorMsg = testErr.message || testErr.toString();
+            console.error("Test execution failed:", errorMsg);
+            throw new Error(errorMsg);
+        }
 
         // Run check function if it exists
         const hasCheck = await pyodide.runPythonAsync(
@@ -279,14 +288,22 @@ async function handleValidate(code, testCode) {
             );
         }
 
+        console.log("Validation: SUCCESS");
         postMessage({ type: "success", content: "✅ All tests passed!" });
         postMessage({ type: "completed", passed: true });
 
     } catch (err) {
         const errorMsg = err.message || err.toString();
+        // Categorize error type
+        const isSecurityError = errorMsg.includes("🛡️");
+        const isTimeout = errorMsg.includes("⏱️");
+        
+        const displayMsg = isSecurityError ? errorMsg : `❌ Test failed: ${errorMsg}`;
+        
+        console.warn("Validation: FAILED", displayMsg);
         postMessage({ 
             type: "error", 
-            content: `❌ Test failed: ${errorMsg}` 
+            content: displayMsg 
         });
         postMessage({ type: "completed", passed: false });
     } finally {

@@ -47,6 +47,38 @@ const CodeArena = () => {
   const [isHintLoading, setIsHintLoading] = useState(false);
   const [hintLevel, setHintLevel] = useState(1);
 
+  // AI Analysis State
+  const [analysis, setAnalysis] = useState("");
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+
+  const handleDeepAnalysis = async () => {
+    if (!challenge || !code) return;
+    setIsAnalyzing(true);
+    setAnalysis(""); // Reset previous
+    try {
+      const { challengesApi } = await import("../services/challengesApi");
+      const data = await challengesApi.aiAnalyze(challenge.slug, code);
+      setAnalysis(data.analysis);
+      setActiveTab("ai"); // Switch to AI tab to show result
+      toast.success("Code Analysis Complete!", {
+        description: "Review the deep analysis in the AI Assistant tab.",
+      });
+    } catch (err) {
+      console.error("Analysis Error:", err);
+      const errorMsg =
+        err.response?.data?.error || "AI Analysis is currently unavailable.";
+      setOutput((prev) => [
+        ...prev,
+        { type: "error", content: `🔬 AI Analyzer: ${errorMsg}` },
+      ]);
+      toast.error("Analysis Failed", {
+        description: errorMsg,
+      });
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
+
   const handleGetHint = async () => {
     if (!challenge || !code) return;
     setIsHintLoading(true);
@@ -259,89 +291,90 @@ const CodeArena = () => {
 
   const workerRef = useRef(null);
 
-  // Initialize Worker (Only Once)
-  useEffect(() => {
-    // Cache-busting to ensure latest worker version is loaded
-    const worker = new Worker(`/pyodideWorker.js?v=${Date.now()}`);
-    workerRef.current = worker;
+  const onWorkerMessage = useCallback(async (event) => {
+    const { type, content, passed } = event.data;
 
-    worker.onmessage = async (event) => {
-      const { type, content, passed } = event.data;
+    if (type === "ready") {
+      setPyodideReady(true);
+      console.log("Pyodide Worker Ready");
+    } else if (type === "log") {
+      setOutput((prev) => [...prev, { type: "log", content }]);
+    } else if (type === "error") {
+      setOutput((prev) => [...prev, { type: "error", content }]);
+    } else if (type === "success") {
+      setOutput((prev) => [...prev, { type: "success", content }]);
+    } else if (type === "completed") {
+      setIsRunning(false);
+      console.log("Execution Completed:", { passed });
+      if (passed) {
+        try {
+          const currentId = idRef.current;
+          console.log("Submitting completion for slug:", currentId);
+          const { challengesApi } = await import("../services/challengesApi");
+          const result = await challengesApi.submit(currentId, {
+            passed: true,
+          });
 
-      if (type === "ready") {
-        setPyodideReady(true);
-        console.log("Pyodide Worker Ready");
-      } else if (type === "log") {
-        setOutput((prev) => [...prev, { type: "log", content }]);
-      } else if (type === "error") {
-        setOutput((prev) => [...prev, { type: "error", content }]);
-      } else if (type === "success") {
-        setOutput((prev) => [...prev, { type: "success", content }]);
-      } else if (type === "completed") {
-        setIsRunning(false);
-        if (passed) {
-          // Logic for completion
-          try {
-            // Use ref to get current ID
-            const currentId = idRef.current;
-            const { challengesApi } = await import("../services/challengesApi");
-            const result = await challengesApi.submit(currentId, {
-              passed: true,
-            });
-
-            // Update User XP if earned
-            if (result.xp_earned && result.xp_earned > 0) {
-              const { setUser } = useAuthStore.getState();
-              const currentUser = useAuthStore.getState().user;
-              if (currentUser) {
-                setUser({
-                  ...currentUser,
-                  profile: {
-                    ...currentUser.profile,
-                    xp: (currentUser.profile.xp || 0) + result.xp_earned,
-                  },
-                });
-              }
+          if (result.xp_earned && result.xp_earned > 0) {
+            const { setUser } = useAuthStore.getState();
+            const currentUser = useAuthStore.getState().user;
+            if (currentUser) {
+              setUser({
+                ...currentUser,
+                profile: {
+                  ...currentUser.profile,
+                  xp: (currentUser.profile.xp || 0) + result.xp_earned,
+                },
+              });
             }
+          }
 
-            // We can't easily call the callback if it depends on state,
-            // but we can duplicate the simple logic or use a ref for the handler too.
-            // Let's rely on standard promise chain or calling a simplified function.
-
-            if (
-              result.status === "completed" ||
-              result.status === "already_completed"
-            ) {
-              const starText = "⭐".repeat(result.stars || 0);
-
-              setOutput([
+          if (
+            result.status === "completed" ||
+            result.status === "already_completed"
+          ) {
+            const starText = "⭐".repeat(result.stars || 0);
+            setOutput([
+              {
+                type: "success",
+                content: `🎉 Challenge Completed! ${starText}`,
+              },
+            ]);
+            if (result.xp_earned > 0) {
+              setOutput((prev) => [
+                ...prev,
                 {
                   type: "success",
-                  content: `🎉 Challenge Completed! ${starText}`,
+                  content: `💪 XP Earned: +${result.xp_earned}`,
                 },
               ]);
-              if (result.xp_earned > 0) {
-                setOutput((prev) => [
-                  ...prev,
-                  {
-                    type: "success",
-                    content: `💪 XP Earned: +${result.xp_earned}`,
-                  },
-                ]);
-              }
-              setCompletionData(result);
             }
-          } catch (err) {
-            console.error("Submission error:", err);
+            setCompletionData(result);
           }
+        } catch (err) {
+          console.error("Submission error:", err);
         }
       }
-    };
+    }
+  }, []);
 
+  const initWorker = useCallback(() => {
+    if (workerRef.current) {
+      workerRef.current.terminate();
+    }
+    const worker = new Worker(`/pyodideWorker.js?v=${Date.now()}`);
+    worker.onmessage = onWorkerMessage;
+    workerRef.current = worker;
+    setPyodideReady(false);
+  }, [onWorkerMessage]);
+
+  // Initialize Worker
+  useEffect(() => {
+    initWorker();
     return () => {
-      worker.terminate();
+      if (workerRef.current) workerRef.current.terminate();
     };
-  }, []); // Empty dependency array = Persistent Worker
+  }, [initWorker]);
 
   const handleEditorDidMount = useCallback(
     (editor, monaco) => {
@@ -512,39 +545,22 @@ const CodeArena = () => {
 
     setIsRunning(true);
     setOutput([]);
+    // Send validate type to ensure tests are run
     workerRef.current.postMessage({
-      type: "run",
+      type: "validate",
       code,
       testCode: challenge?.test_code,
     });
   }, [code, challenge, isRunning]);
 
   const stopCode = useCallback(() => {
-    if (workerRef.current) {
-      workerRef.current.terminate();
-      workerRef.current = new Worker("/pyodideWorker.js"); // Restart
-      // Re-attach listeners
-      workerRef.current.onmessage = (event) => {
-        const { type } = event.data;
-        if (type === "ready") setPyodideReady(true);
-      };
-    }
+    initWorker();
     setIsRunning(false);
     setOutput((prev) => [
       ...prev,
       { type: "error", content: "⛔ Execution Terminated by User" },
     ]);
-    // Re-init worker
-    const newWorker = new Worker("/pyodideWorker.js");
-    newWorker.onmessage = (event) => {
-      const { type } = event.data;
-      if (type === "ready") setPyodideReady(true);
-    };
-    workerRef.current = newWorker;
-    // Optimization: The effect above handles cleanup, but we invoke init manually here.
-    // Let's rely on a helper if possible or just duplicate specific listener for now.
-    // Ideally we need to attach the SAME listener as the Effect.
-  }, []);
+  }, [initWorker]);
 
   // Re-bind listener for restart (fix for above)
   // We can wrap the listener in a ref or useCallback to share it.
@@ -702,11 +718,14 @@ const CodeArena = () => {
               <NeuralLinkPane
                 onGetHint={handleGetHint}
                 onPurchase={handlePurchaseAIAssist}
+                onDeepAnalysis={handleDeepAnalysis}
                 hint={hint}
                 isHintLoading={isHintLoading}
                 hintLevel={hintLevel}
                 ai_hints_purchased={challenge?.ai_hints_purchased || 0}
                 userXp={user?.profile?.xp}
+                analysis={analysis}
+                isAnalyzing={isAnalyzing}
               />
             )}
             {activeTab === "console" && (

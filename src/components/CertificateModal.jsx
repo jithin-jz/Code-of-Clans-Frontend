@@ -22,7 +22,7 @@ const CertificateModal = ({ isOpen, onClose, certificate }) => {
 
       const link = document.createElement("a");
       link.href = dataUrl;
-      link.download = `Certificate_${certificate.username || "CodeOfClans"}.png`;
+      link.download = `Certificate_${certificate.username || "ClashOfCode"}.png`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -223,7 +223,7 @@ const CertificateModal = ({ isOpen, onClose, certificate }) => {
                       if (navigator.share) {
                         navigator.share({
                           title: "Python Mastery Certificate",
-                          text: `I just earned my Python Mastery Certificate on Code of Clans! Verification ID: #${certificate.certificate_id?.substring(0, 8).toUpperCase()}`,
+                          text: `I just earned my Python Mastery Certificate on Clash of Code! Verification ID: #${certificate.certificate_id?.substring(0, 8).toUpperCase()}`,
                           url: verificationUrl,
                         });
                       } else {
