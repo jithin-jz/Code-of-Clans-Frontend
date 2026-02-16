@@ -60,7 +60,7 @@ const RightSideUI = ({
 
   // Glass button style matches the previous design
   const glassButtonClass =
-    "h-14 w-14 p-0 bg-[#18181b]/80 backdrop-blur-xl border border-white/5 rounded-2xl hover:border-yellow-500/30 hover:bg-[#27272a] transition-all text-white shadow-xl active:scale-95";
+    "h-10 w-10 p-0 bg-[#18181b]/80 backdrop-blur-xl border border-white/5 rounded-2xl hover:border-yellow-500/30 hover:bg-[#27272a] transition-all text-white shadow-xl active:scale-95";
 
   return (
     <div className="fixed right-6 top-6 z-30 flex flex-col gap-4 items-end animate-slide-in-right">
@@ -106,7 +106,7 @@ const RightSideUI = ({
               settingsOpen ? "rotate-90 text-yellow-500" : "rotate-0",
             )}
           >
-            <Settings size={24} />
+            <Settings size={18} />
           </span>
         </Button>
 
@@ -162,7 +162,7 @@ const RightSideUI = ({
           className={glassButtonClass}
           onClick={() => setLeaderboardOpen((prev) => !prev)}
         >
-          <Trophy size={24} className="text-[#FFD700]" />
+          <Trophy size={18} className="text-[#FFD700]" />
         </Button>
 
         {/* Notifications */}
@@ -188,7 +188,7 @@ const RightSideUI = ({
             transition={{ duration: 0.5 }}
           >
             <Bell
-              size={24}
+              size={18}
               className={cn(
                 "transition-colors duration-300",
                 unreadCount > 0 ? "text-blue-400" : "text-gray-400",
@@ -230,7 +230,7 @@ const RightSideUI = ({
           onClick={() => setCheckInOpen(true)}
           className={cn(glassButtonClass, "relative")}
         >
-          <Calendar size={24} />
+          <Calendar size={18} />
           {hasUnclaimedReward && (
             <div className="absolute top-3 right-3 w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-lg shadow-red-500/50"></div>
           )}

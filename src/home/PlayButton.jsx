@@ -40,8 +40,8 @@ const PlayButton = ({ levels, user, className }) => {
 
         {/* Button Content */}
         <div className="relative bg-[#09090b] border border-white/10 group-hover:border-yellow-500/50 rounded-full p-2 flex items-center justify-center transition-all hover:scale-105 active:scale-95 shadow-2xl">
-          <div className="w-16 h-16 bg-yellow-500 rounded-full flex items-center justify-center text-black shadow-lg shadow-yellow-900/20">
-            <Play size={32} fill="currentColor" className="ml-1" />
+          <div className="w-12 h-12 bg-yellow-500 rounded-full flex items-center justify-center text-black shadow-lg shadow-yellow-900/20">
+            <Play size={24} fill="currentColor" className="ml-1" />
           </div>
         </div>
       </button>

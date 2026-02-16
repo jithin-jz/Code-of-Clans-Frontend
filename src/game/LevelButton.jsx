@@ -21,7 +21,7 @@ const LevelButton = ({ level, isCurrentLevel, onClick }) => {
 
   const renderIcon = (icon, isUnlocked) => {
     if (!icon) return null;
-    const size = isCertificate ? 32 : 28;
+    const size = isCertificate ? 24 : 20;
 
     if (React.isValidElement(icon)) {
       return React.cloneElement(icon, {
@@ -42,7 +42,7 @@ const LevelButton = ({ level, isCurrentLevel, onClick }) => {
       whileTap={level.unlocked ? { scale: 0.95, y: 1 } : {}}
     >
       <div
-        className={`w-14 h-14 rounded-xl flex items-center justify-center relative transition-all duration-300
+        className={`w-10 h-10 rounded-xl flex items-center justify-center relative transition-all duration-300
                 ${isCurrentLevel ? "ring-2 ring-yellow-400 ring-offset-4 ring-offset-[#09090b] shadow-[0_0_20px_rgba(250,204,21,0.2)]" : ""}
                 ${isCertificate ? "bg-linear-to-br from-yellow-600 to-yellow-900 border-2 border-[#FFD700] shadow-[0_0_20px_rgba(255,215,0,0.3)]" : ""}
                 ${!level.unlocked ? "opacity-60 grayscale" : ""}
@@ -57,7 +57,7 @@ const LevelButton = ({ level, isCurrentLevel, onClick }) => {
             <div className="drop-shadow-lg">
               {isCertificate ? (
                 <Trophy
-                  size={24}
+                  size={18}
                   className="text-yellow-100"
                   fill="currentColor"
                 />
@@ -68,9 +68,9 @@ const LevelButton = ({ level, isCurrentLevel, onClick }) => {
           ) : (
             <div className="opacity-40">
               {isCertificate ? (
-                <Trophy size={22} className="text-zinc-500" />
+                <Trophy size={16} className="text-zinc-500" />
               ) : (
-                <Lock size={18} className="text-zinc-500" />
+                <Lock size={14} className="text-zinc-500" />
               )}
             </div>
           )}
@@ -82,9 +82,9 @@ const LevelButton = ({ level, isCurrentLevel, onClick }) => {
             {[1, 2, 3].map((star) => (
               <Star
                 key={star}
-                size={8}
-                strokeWidth={2}
-                className={`${star <= (level.stars || 0) ? "text-yellow-400 fill-yellow-400" : "text-zinc-700 fill-zinc-800"}`}
+                size={10}
+                strokeWidth={2.5}
+                className={`${star <= (level.stars || 0) ? "text-yellow-400 fill-yellow-400" : "text-zinc-800 fill-zinc-900"}`}
               />
             ))}
           </div>
@@ -94,12 +94,12 @@ const LevelButton = ({ level, isCurrentLevel, onClick }) => {
       {/* Label */}
       <div className="mt-2 transition-transform duration-300 group-hover:scale-110">
         <p
-          className={`text-[10px] font-black font-mono tracking-tighter ${
+          className={`text-[11px] font-bold tracking-wider ${
             isCertificate
-              ? "text-[#FFD700]"
+              ? "text-[#FFD700] drop-shadow-[0_0_8px_rgba(255,215,0,0.5)]"
               : level.unlocked
-                ? "text-yellow-500"
-                : "text-zinc-700"
+                ? "text-zinc-100 shadow-sm"
+                : "text-zinc-500/80"
           }`}
         >
           {isCertificate ? "BADGE" : `L${level.order || level.id}`}

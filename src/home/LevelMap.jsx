@@ -15,7 +15,7 @@ const LevelMap = ({
   // Standard Grid Layout
   return (
     <div
-      className="w-full h-screen relative overflow-y-auto bg-[#09090b] flex flex-col items-center pt-32 pb-32 custom-scrollbar"
+      className="w-full h-screen relative overflow-hidden bg-[#09090b] flex flex-col items-center justify-center custom-scrollbar"
       style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
     >
       {!user && (
@@ -66,9 +66,9 @@ const LevelMap = ({
 
       {/* Added left and right padding to prevent overlap with fixed UI buttons */}
       <div
-        className={`w-full max-w-7xl px-20 transition-all duration-700 ${!user ? "blur-sm opacity-30 grayscale pointer-events-none select-none" : ""}`}
+        className={`w-full max-w-5xl px-10 transition-all duration-700 ${!user ? "blur-sm opacity-30 grayscale pointer-events-none select-none" : ""}`}
       >
-        <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-7 lg:grid-cols-9 gap-x-12 gap-y-14 justify-items-center">
+        <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-7 lg:grid-cols-9 gap-x-10 gap-y-12 justify-items-center">
           {levels.map((level, index) => {
             const isCurrentLevel =
               level.unlocked && !levels[index + 1]?.unlocked;
@@ -79,7 +79,7 @@ const LevelMap = ({
                 initial={{ opacity: 0, scale: 0.5 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: index * 0.01 }}
-                className="relative group h-14 w-14"
+                className="relative group h-10 w-10"
               >
                 {/* Active Pulse */}
                 {isCurrentLevel && (
