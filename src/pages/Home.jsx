@@ -7,10 +7,8 @@ import useChallengesStore from "../stores/useChallengesStore";
 // Components
 import HomeSkeleton from "./HomeSkeleton";
 import LevelModal from "../game/LevelModal";
-import ProfilePanel from "../home/ProfilePanel";
 import ChatDrawer from "../home/ChatDrawer";
 import LeaderboardDrawer from "../home/LeaderboardDrawer";
-import ShopButton from "../home/ShopButton";
 import RightSideUI from "../home/RightSideUI";
 import NotificationDrawer from "../home/NotificationDrawer";
 
@@ -217,7 +215,7 @@ const Home = () => {
   };
 
   return (
-    <div className="h-screen relative select-none overflow-hidden text-white bg-[#1a1a1a]">
+    <div className="h-screen relative select-none overflow-hidden text-white bg-[#0b1119]">
       <AnimatePresence mode="wait">
         {isLoading ? (
           <motion.div
@@ -238,10 +236,19 @@ const Home = () => {
             transition={{ duration: 0.5 }}
             className="h-full w-full relative"
           >
-            <div className="absolute inset-0 pointer-events-none bg-[#1a1a1a]" />
-            <div className="absolute inset-0 pointer-events-none bg-[#262626]/50" />
+            <div className="absolute inset-0 pointer-events-none bg-[#0b1119]" />
+            <div className="absolute inset-0 pointer-events-none bg-linear-to-b from-[#101928] via-[#0d141f] to-[#0a0f17]" />
+            <div
+              className="absolute inset-0 pointer-events-none opacity-[0.06]"
+              style={{
+                backgroundImage:
+                  "linear-gradient(rgba(148,163,184,0.35) 1px, transparent 1px), linear-gradient(90deg, rgba(148,163,184,0.35) 1px, transparent 1px)",
+                backgroundSize: "52px 52px",
+              }}
+            />
+            <div className="absolute top-0 left-[8%] w-[32rem] h-[32rem] rounded-full bg-[#2563eb]/10 blur-3xl pointer-events-none" />
+            <div className="absolute bottom-[-8rem] right-[10%] w-[28rem] h-[28rem] rounded-full bg-[#0ea5e9]/10 blur-3xl pointer-events-none" />
 
-            <ProfilePanel user={user} />
             <ChatDrawer
               isChatOpen={isChatOpen}
               setChatOpen={setChatOpen}
@@ -255,10 +262,12 @@ const Home = () => {
               isOpen={isNotificationOpen}
               onClose={() => setNotificationOpen(false)}
             />
-            <ShopButton />
             <RightSideUI
               user={user}
+              levels={levels}
               handleLogout={handleLogout}
+              setChatOpen={setChatOpen}
+              isChatOpen={isChatOpen}
               settingsOpen={settingsOpen}
               setSettingsOpen={setSettingsOpen}
               checkInOpen={checkInOpen}

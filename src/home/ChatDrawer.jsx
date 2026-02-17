@@ -1,8 +1,7 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import useChatStore from "../stores/useChatStore";
 import useAuthStore from "../stores/useAuthStore";
-import { MessageSquare, ChevronLeft, Users } from "lucide-react";
-import { Button } from "../components/ui/button";
+import { MessageSquare, Users } from "lucide-react";
 import { motion } from "framer-motion";
 
 // Subcomponents
@@ -172,30 +171,6 @@ const ChatDrawer = ({ isChatOpen, setChatOpen, user }) => {
         />
       </div>
 
-      {/* Toggle Button - Outside inner container */}
-      <Button
-        onClick={() => setChatOpen(!isChatOpen)}
-        className="absolute top-1/2 -right-6 -mt-6 w-12 h-12 bg-[#262626] border border-[#444444] rounded-full flex items-center justify-center shadow-xl pointer-events-auto hover:bg-[#313131] hover:border-[#ffa116]/70 transition-all duration-300 group z-50"
-        style={{
-          boxShadow: "0 8px 22px -8px rgba(0, 0, 0, 0.75)",
-        }}
-      >
-        <div className="relative flex items-center justify-center">
-          {isChatOpen ? (
-            <ChevronLeft
-              className="text-[#ffa116] group-hover:scale-110 transition-transform duration-200"
-              size={22}
-              strokeWidth={2.5}
-            />
-          ) : (
-            <MessageSquare
-              className="text-[#00af9b] group-hover:scale-110 transition-transform duration-200"
-              size={19}
-              strokeWidth={2.5}
-            />
-          )}
-        </div>
-      </Button>
     </motion.div>
   );
 };

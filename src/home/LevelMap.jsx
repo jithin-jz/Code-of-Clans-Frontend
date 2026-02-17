@@ -1,94 +1,239 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { motion } from "framer-motion";
-import LevelButton from "../game/LevelButton";
-import PlayButton from "./PlayButton";
 import { useNavigate } from "react-router-dom";
+import {
+  CheckCircle2,
+  Lock,
+  BarChart3,
+  Target,
+  Sparkles,
+} from "lucide-react";
+import LevelButton from "../game/LevelButton";
+import { getTrackMeta } from "../utils/challengeMeta";
 
-const LevelMap = ({
-  levels,
-  handleLevelClick,
-  user,
-  isLeaderboardOpen,
-  isNotificationOpen,
-}) => {
+const TRACK_ORDER = [
+  "Python Basics",
+  "Data Structures",
+  "Control Flow",
+  "Functions & Patterns",
+  "Standard Library",
+  "OOP Mastery",
+];
+
+const LevelMap = ({ levels, handleLevelClick, user }) => {
   const navigate = useNavigate();
-  // Standard Grid Layout
+
+  const {
+    challengeLevels,
+    certificateLevel,
+    solvedCount,
+    unlockedCount,
+    grouped,
+    totalStars,
+    maxStars,
+    trackProgress,
+    completionPercent,
+  } = useMemo(() => {
+    const sorted = [...levels].sort((a, b) => (a.order || 0) - (b.order || 0));
+    const cert = sorted.find((l) => l.order === 54) || null;
+    const normal = sorted.filter((l) => l.order !== 54);
+
+    const groupsMap = {};
+    normal.forEach((level) => {
+      const track = getTrackMeta(level.order).label;
+      if (!groupsMap[track]) groupsMap[track] = [];
+      groupsMap[track].push(level);
+    });
+
+    const stars = normal.reduce((sum, level) => sum + (level.stars || 0), 0);
+    const progress = {};
+
+    Object.entries(groupsMap).forEach(([trackName, trackLevels]) => {
+      const solved = trackLevels.filter((l) => l.completed).length;
+      progress[trackName] = {
+        solved,
+        total: trackLevels.length,
+        percent: trackLevels.length
+          ? Math.round((solved / trackLevels.length) * 100)
+          : 0,
+      };
+    });
+
+    const completion = normal.length
+      ? Math.round((normal.filter((l) => l.completed).length / normal.length) * 100)
+      : 0;
+
+    return {
+      challengeLevels: normal,
+      certificateLevel: cert,
+      solvedCount: normal.filter((l) => l.completed).length,
+      unlockedCount: normal.filter((l) => l.unlocked).length,
+      grouped: groupsMap,
+      totalStars: stars,
+      maxStars: normal.length * 3,
+      trackProgress: progress,
+      completionPercent: completion,
+    };
+  }, [levels]);
+
   return (
     <div
-      className="w-full h-screen relative overflow-hidden flex flex-col items-center justify-center custom-scrollbar"
+      className="w-full h-screen relative overflow-hidden flex flex-col items-center justify-center"
       style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
     >
       {!user && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-6 text-center">
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            initial={{ opacity: 0, scale: 0.96, y: 16 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            className="flex flex-col items-center pointer-events-auto"
+            className="pointer-events-auto max-w-2xl"
           >
-            {/* Game Title */}
-            <h1 className="text-5xl font-bold text-white mb-4 tracking-tight">
-              Clash of <span className="text-[#ffa116]">Code</span>
+            <p className="inline-flex items-center gap-2 rounded-full border border-[#2a3648] bg-[#121b2a]/80 px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-slate-400 mb-5">
+              <Sparkles size={12} className="text-[#60a5fa]" />
+              Professional Python Track
+            </p>
+            <h1 className="text-5xl sm:text-6xl font-black tracking-tight text-white leading-[1.05]">
+              Build Interview-Ready
+              <span className="block text-[#60a5fa]">Python Skills</span>
             </h1>
-
-            {/* Brief Description */}
-            <p className="text-slate-300 text-sm mb-10 max-w-sm leading-relaxed px-4 font-medium">
-              A professional learn-by-doing platform. Build your legacy through
-              hands-on challenges and master your craft one line at a time.
+            <p className="text-slate-300 text-base mt-5 mb-10 max-w-xl mx-auto leading-relaxed">
+              Structured challenge roadmap with verified progression, clean code
+              practice, and milestone-based learning.
             </p>
-
-            <div className="w-full max-w-[220px]">
-              <button
-                onClick={() => navigate("/login")}
-                className="w-full py-4 px-8 bg-gradient-to-r from-[#111111] to-[#1f2937] border-2 border-[#2f2f2f] text-white font-black uppercase tracking-widest rounded-2xl transition-all duration-300 hover:from-[#ffa116] hover:to-[#ff8f00] hover:border-[#ffa116] hover:text-black active:scale-95 text-xs shadow-lg"
-              >
-                Launch Experience
-              </button>
-            </div>
+            <button
+              onClick={() => navigate("/login")}
+              className="h-12 px-8 rounded-xl bg-[#ef4444] hover:bg-[#dc2626] text-white font-bold text-sm tracking-wide transition-colors"
+            >
+              Login To Start Solving
+            </button>
           </motion.div>
-
-          {/* Simple Footer - Bottom Positioned */}
-          <div className="absolute bottom-10 left-0 right-0 opacity-40 pointer-events-none">
-            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-[0.25em]">
-              Where practice meets mastery
-            </p>
-          </div>
         </div>
       )}
 
-      {/* Play Button - Fixed */}
-      {!isLeaderboardOpen && !isNotificationOpen && (
-        <PlayButton
-          user={user}
-          levels={levels}
-          className="fixed bottom-6 right-6 z-50 scale-90 origin-bottom-right"
-        />
-      )}
-
-      {/* Level icons directly on home background */}
       <div
-        className={`w-full max-w-[min(1400px,calc(100vw-180px))] h-[calc(100vh-180px)] mt-14 mb-12 px-8 sm:px-10 py-6 transition-all duration-700 ${!user ? "blur-sm opacity-30 grayscale pointer-events-none select-none" : ""}`}
+        className={`w-full h-[calc(100vh-92px)] mt-16 mb-2 px-3 sm:px-5 lg:px-6 py-3 transition-all duration-700 ${
+          !user ? "blur-sm opacity-25 grayscale pointer-events-none select-none" : ""
+        }`}
       >
-        <div className="h-full grid grid-cols-4 sm:grid-cols-6 md:grid-cols-7 lg:grid-cols-9 gap-x-8 gap-y-8 md:gap-x-10 md:gap-y-10 justify-items-center content-start">
-          {levels.map((level, index) => {
-            const isCurrentLevel =
-              level.unlocked && !levels[index + 1]?.unlocked;
+        <div className="h-full overflow-y-auto pr-1 pb-4 space-y-4 custom-scrollbar">
+          <section className="w-full rounded-2xl border border-white/12 bg-linear-to-br from-white/[0.12] via-white/[0.07] to-white/[0.03] backdrop-blur-xl p-4 sm:p-5 shadow-[0_22px_60px_rgba(0,0,0,0.3)]">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
+              <div className="rounded-2xl border border-white/15 bg-[#101a29]/65 backdrop-blur-md p-4">
+                <div className="flex items-center gap-2 text-slate-300">
+                  <CheckCircle2 size={14} className="text-emerald-400" />
+                  <span className="text-[11px] uppercase tracking-[0.16em] font-semibold">
+                    Solved
+                  </span>
+                </div>
+                <p className="text-3xl font-bold text-white mt-2">
+                  {solvedCount}
+                  <span className="text-slate-500 text-base font-semibold">
+                    /{challengeLevels.length}
+                  </span>
+                </p>
+              </div>
+
+              <div className="rounded-2xl border border-white/15 bg-[#101a29]/65 backdrop-blur-md p-4">
+                <div className="flex items-center gap-2 text-slate-300">
+                  <Lock size={14} className="text-sky-300" />
+                  <span className="text-[11px] uppercase tracking-[0.16em] font-semibold">
+                    Unlocked
+                  </span>
+                </div>
+                <p className="text-3xl font-bold text-white mt-2">
+                  {unlockedCount}
+                  <span className="text-slate-500 text-base font-semibold">
+                    /{challengeLevels.length}
+                  </span>
+                </p>
+              </div>
+
+              <div className="rounded-2xl border border-white/15 bg-[#101a29]/65 backdrop-blur-md p-4">
+                <div className="flex items-center gap-2 text-slate-300">
+                  <Target size={14} className="text-amber-300" />
+                  <span className="text-[11px] uppercase tracking-[0.16em] font-semibold">
+                    Star Score
+                  </span>
+                </div>
+                <p className="text-3xl font-bold text-white mt-2">
+                  {totalStars}
+                  <span className="text-slate-500 text-base font-semibold">
+                    /{maxStars}
+                  </span>
+                </p>
+              </div>
+
+              <div className="rounded-2xl border border-white/15 bg-[#101a29]/65 backdrop-blur-md p-4">
+                <div className="flex items-center gap-2 text-slate-300">
+                  <BarChart3 size={14} className="text-violet-300" />
+                  <span className="text-[11px] uppercase tracking-[0.16em] font-semibold">
+                    Completion
+                  </span>
+                </div>
+                <p className="text-3xl font-bold text-white mt-2">
+                  {completionPercent}
+                  <span className="text-slate-500 text-base font-semibold">%</span>
+                </p>
+              </div>
+            </div>
+          </section>
+
+          {TRACK_ORDER.map((track) => {
+            const trackLevels = grouped[track] || [];
+            if (!trackLevels.length) return null;
 
             return (
-              <motion.div
-                key={level.id}
-                initial={{ opacity: 0, scale: 0.5 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: index * 0.01 }}
-                className="relative group h-10 w-10"
-              >
-                <LevelButton
-                  level={level}
-                  isCurrentLevel={isCurrentLevel}
-                  onClick={() => handleLevelClick(level)}
-                />
-              </motion.div>
+              <section key={track} className="w-full rounded-2xl border border-white/12 bg-[#0f1827]/64 backdrop-blur-xl p-4 sm:p-5">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <h3 className="text-lg font-bold text-white tracking-wide">{track}</h3>
+                    <p className="text-xs text-slate-400 mt-0.5">
+                      {trackProgress[track]?.solved || 0}/{trackLevels.length} solved
+                    </p>
+                  </div>
+                  <div className="w-36">
+                    <div className="h-2 rounded-full bg-[#1d2736] overflow-hidden">
+                      <div
+                        className="h-full rounded-full bg-linear-to-r from-[#3b82f6] to-[#38bdf8]"
+                        style={{ width: `${trackProgress[track]?.percent || 0}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3">
+                  {trackLevels.map((level, index) => {
+                    const next = trackLevels[index + 1];
+                    const isCurrentLevel = level.unlocked && !next?.unlocked;
+
+                    return (
+                      <LevelButton
+                        key={level.id}
+                        level={level}
+                        isCurrentLevel={isCurrentLevel}
+                        onClick={() => handleLevelClick(level)}
+                      />
+                    );
+                  })}
+                </div>
+              </section>
             );
           })}
+
+          {certificateLevel && (
+            <section className="w-full rounded-2xl border border-[#f1d39b]/25 bg-[#2a2216]/62 backdrop-blur-xl p-4 sm:p-5">
+              <h3 className="text-sm font-bold text-[#f8d08b] uppercase tracking-[0.16em] mb-3">
+                Certification
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+                <LevelButton
+                  level={certificateLevel}
+                  isCurrentLevel={false}
+                  onClick={() => handleLevelClick(certificateLevel)}
+                />
+              </div>
+            </section>
+          )}
         </div>
       </div>
     </div>

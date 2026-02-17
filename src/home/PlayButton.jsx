@@ -1,5 +1,5 @@
 import React from "react";
-import { Play } from "lucide-react";
+import { Play, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 
@@ -26,6 +26,7 @@ const PlayButton = ({ levels, user, className }) => {
       transition={{ type: "spring", damping: 20, stiffness: 100, delay: 0.1 }}
     >
       <button
+        type="button"
         onClick={() => {
           if (!user) {
             navigate("/login");
@@ -33,14 +34,21 @@ const PlayButton = ({ levels, user, className }) => {
           }
           navigate(`/level/${currentLevel.slug}`);
         }}
-        className="group relative"
+        className="group rounded-2xl border border-[#ef4444]/40 bg-[#ef4444] hover:bg-[#dc2626] text-white px-4 py-3 flex items-center gap-3 transition-all shadow-lg shadow-[#ef4444]/20"
       >
-        {/* Button Content */}
-        <div className="relative bg-[#262626] border border-[#3a3a3a] group-hover:border-[#ffa116] rounded-full p-2 flex items-center justify-center transition-all hover:scale-105 active:scale-95">
-          <div className="w-14 h-14 bg-gradient-to-br from-[#ffb84d] via-[#ffa116] to-[#d97706] rounded-full flex items-center justify-center text-black">
-            <Play size={28} fill="currentColor" className="ml-1" />
-          </div>
+        <div className="w-9 h-9 rounded-xl bg-black/20 border border-white/20 flex items-center justify-center">
+          <Play size={18} fill="currentColor" className="ml-0.5" />
         </div>
+        <div className="text-left leading-tight">
+          <p className="text-[11px] uppercase tracking-wider text-white/80 font-semibold">
+            Continue
+          </p>
+          <p className="text-sm font-bold">Run Next Challenge</p>
+        </div>
+        <ChevronRight
+          size={16}
+          className="text-white/80 group-hover:translate-x-0.5 transition-transform"
+        />
       </button>
     </motion.div>
   );
