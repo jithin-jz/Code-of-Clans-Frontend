@@ -15,7 +15,7 @@ const LevelMap = ({
   // Standard Grid Layout
   return (
     <div
-      className="w-full h-screen relative overflow-hidden bg-[#09090b] flex flex-col items-center justify-center custom-scrollbar"
+      className="w-full h-screen relative overflow-hidden flex flex-col items-center justify-center custom-scrollbar"
       style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
     >
       {!user && (
@@ -27,11 +27,11 @@ const LevelMap = ({
           >
             {/* Game Title */}
             <h1 className="text-5xl font-bold text-white mb-4 tracking-tight">
-              Clash of <span className="text-[#FFD700]">Code</span>
+              Clash of <span className="text-[#ffa116]">Code</span>
             </h1>
 
             {/* Brief Description */}
-            <p className="text-zinc-500 text-sm mb-10 max-w-sm leading-relaxed px-4 font-medium">
+            <p className="text-slate-300 text-sm mb-10 max-w-sm leading-relaxed px-4 font-medium">
               A professional learn-by-doing platform. Build your legacy through
               hands-on challenges and master your craft one line at a time.
             </p>
@@ -39,7 +39,7 @@ const LevelMap = ({
             <div className="w-full max-w-[220px]">
               <button
                 onClick={() => navigate("/login")}
-                className="w-full py-4 px-8 bg-transparent border-2 border-[#FFD700] text-[#FFD700] font-black uppercase tracking-widest rounded-none transition-all duration-500 hover:bg-[#FFD700] hover:text-black hover:shadow-[0_0_30px_rgba(255,215,0,0.4)] active:scale-95 text-xs"
+                className="w-full py-4 px-8 bg-gradient-to-r from-[#111111] to-[#1f2937] border-2 border-[#2f2f2f] text-white font-black uppercase tracking-widest rounded-2xl transition-all duration-300 hover:from-[#ffa116] hover:to-[#ff8f00] hover:border-[#ffa116] hover:text-black active:scale-95 text-xs shadow-lg"
               >
                 Launch Experience
               </button>
@@ -48,7 +48,7 @@ const LevelMap = ({
 
           {/* Simple Footer - Bottom Positioned */}
           <div className="absolute bottom-10 left-0 right-0 opacity-40 pointer-events-none">
-            <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-[0.25em]">
+            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-[0.25em]">
               Where practice meets mastery
             </p>
           </div>
@@ -64,11 +64,11 @@ const LevelMap = ({
         />
       )}
 
-      {/* Added left and right padding to prevent overlap with fixed UI buttons */}
+      {/* Level icons directly on home background */}
       <div
-        className={`w-full max-w-5xl px-10 transition-all duration-700 ${!user ? "blur-sm opacity-30 grayscale pointer-events-none select-none" : ""}`}
+        className={`w-full max-w-[min(1400px,calc(100vw-180px))] h-[calc(100vh-180px)] mt-14 mb-12 px-8 sm:px-10 py-6 transition-all duration-700 ${!user ? "blur-sm opacity-30 grayscale pointer-events-none select-none" : ""}`}
       >
-        <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-7 lg:grid-cols-9 gap-x-10 gap-y-12 justify-items-center">
+        <div className="h-full grid grid-cols-4 sm:grid-cols-6 md:grid-cols-7 lg:grid-cols-9 gap-x-8 gap-y-8 md:gap-x-10 md:gap-y-10 justify-items-center content-start">
           {levels.map((level, index) => {
             const isCurrentLevel =
               level.unlocked && !levels[index + 1]?.unlocked;
@@ -83,7 +83,7 @@ const LevelMap = ({
               >
                 {/* Active Pulse */}
                 {isCurrentLevel && (
-                  <div className="absolute -inset-2 bg-yellow-400/10 rounded-2xl blur-xl animate-pulse"></div>
+                  <div className="absolute -inset-2 bg-[#ffa116]/25 rounded-2xl blur-xl animate-pulse"></div>
                 )}
 
                 <LevelButton

@@ -12,9 +12,11 @@ import { formatDistanceToNow } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import { cn } from "../lib/utils";
 import useNotificationStore from "../stores/useNotificationStore";
+import useAuthStore from "../stores/useAuthStore";
 
 const NotificationDropdown = ({ className }) => {
   const navigate = useNavigate();
+  const user = useAuthStore((state) => state.user);
   const [isOpen, setIsOpen] = useState(false);
   const [hasNewNotification, setHasNewNotification] = useState(false);
   const prevUnreadCountRef = useRef(0);
@@ -28,12 +30,13 @@ const NotificationDropdown = ({ className }) => {
     clearAll,
   } = useNotificationStore();
 
-  // Poll for notifications every 30 seconds
+  // Poll only while dropdown is open and user is authenticated
   useEffect(() => {
-    fetchNotifications();
-    const interval = setInterval(() => fetchNotifications(), 30000);
+    if (!isOpen || !user) return;
+    fetchNotifications(true);
+    const interval = setInterval(() => fetchNotifications(), 60000);
     return () => clearInterval(interval);
-  }, [fetchNotifications]);
+  }, [isOpen, user, fetchNotifications]);
 
   // Detect new notifications and trigger animation
   useEffect(() => {
@@ -78,7 +81,7 @@ const NotificationDropdown = ({ className }) => {
       open={isOpen}
       onOpenChange={(open) => {
         setIsOpen(open);
-        if (open) fetchNotifications();
+        if (open && user) fetchNotifications(true);
       }}
     >
       <DropdownMenuTrigger asChild>
@@ -123,7 +126,7 @@ const NotificationDropdown = ({ className }) => {
                 className={cn(
                   "absolute -top-1 -right-1 min-w-[18px] h-[18px] rounded-full flex items-center justify-center text-[10px] font-bold shadow-lg",
                   hasNewNotification
-                    ? "bg-gradient-to-r from-red-500 to-pink-500 ring-2 ring-red-400 ring-offset-1 ring-offset-transparent animate-pulse"
+                    ? "bg-gradient-to-r from-red-500 to-[#ff8f00] ring-2 ring-red-400 ring-offset-1 ring-offset-transparent animate-pulse"
                     : "bg-red-500",
                 )}
               >
@@ -139,7 +142,7 @@ const NotificationDropdown = ({ className }) => {
                       transition={{ duration: 1, repeat: 2 }}
                     />
                     <motion.div
-                      className="absolute inset-0 rounded-full bg-pink-400"
+                      className="absolute inset-0 rounded-full bg-[#ffb84d]"
                       initial={{ scale: 1, opacity: 0.5 }}
                       animate={{ scale: 2.5, opacity: 0 }}
                       transition={{ duration: 1, delay: 0.2, repeat: 2 }}
@@ -169,7 +172,7 @@ const NotificationDropdown = ({ className }) => {
             {unreadCount > 0 && (
               <button
                 onClick={handleMarkAllRead}
-                className="text-xs text-blue-400 hover:text-blue-300 transition-colors"
+                className="text-xs text-[#00af9b] hover:text-[#66d1c3] transition-colors"
               >
                 Mark read
               </button>
@@ -242,7 +245,7 @@ const NotificationDropdown = ({ className }) => {
                 {/* Unread Indicator */}
                 {!notification.is_read && (
                   <div className="self-center">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full" />
+                    <div className="w-2 h-2 bg-[#00af9b] rounded-full" />
                   </div>
                 )}
               </DropdownMenuItem>

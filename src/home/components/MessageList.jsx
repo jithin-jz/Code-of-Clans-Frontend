@@ -20,8 +20,8 @@ const ChatAvatar = ({ isOwn, avatarUrl, username }) => {
         <div
           className={`w-full h-full flex items-center justify-center text-xs font-bold ${
             isOwn
-              ? "bg-linear-to-br from-[#FFD700]/30 to-[#FFD700]/10 text-[#FFD700]"
-              : "bg-linear-to-br from-blue-500/30 to-purple-500/20 text-blue-400"
+              ? "bg-linear-to-br from-[#00af9b]/30 to-[#00af9b]/10 text-[#00af9b]"
+              : "bg-linear-to-br from-[#ffa116]/30 to-[#ffa116]/10 text-[#ffa116]"
           }`}
         >
           {username?.charAt(0).toUpperCase() || "?"}
@@ -82,10 +82,10 @@ const MessageList = ({ user, messages, setChatOpen }) => {
     return (
       <div className="h-full flex flex-col items-center justify-center text-center p-8">
         <div className="relative">
-          <div className="w-20 h-20 bg-linear-to-br from-[#FFD700]/20 to-[#FFD700]/5 rounded-2xl flex items-center justify-center mb-6 border border-[#FFD700]/20">
-            <Lock size={28} className="text-[#FFD700]" />
+          <div className="w-20 h-20 bg-linear-to-br from-[#00af9b]/20 to-[#00af9b]/5 rounded-2xl flex items-center justify-center mb-6 border border-[#00af9b]/20">
+            <Lock size={28} className="text-[#00af9b]" />
           </div>
-          <div className="absolute -inset-4 bg-[#FFD700]/5 rounded-3xl blur-xl -z-10" />
+          <div className="absolute -inset-4 bg-[#00af9b]/10 rounded-3xl blur-xl -z-10" />
         </div>
         <p className="text-white font-bold text-lg mb-2">
           Join the Conversation
@@ -95,7 +95,7 @@ const MessageList = ({ user, messages, setChatOpen }) => {
         </p>
         <Link
           to="/login"
-          className="px-6 py-3 bg-linear-to-r from-[#FFD700] to-[#FDB931] hover:from-[#FDB931] hover:to-[#FFD700] text-black rounded-xl font-bold text-sm transition-all hover:scale-105 active:scale-95 shadow-lg shadow-yellow-900/30"
+          className="px-6 py-3 bg-linear-to-r from-[#00af9b] to-[#008f7a] hover:from-[#008f7a] hover:to-[#00af9b] text-white rounded-xl font-bold text-sm transition-all hover:scale-105 active:scale-95 shadow-lg shadow-[#008f7a]/30"
         >
           Sign In to Chat
         </Link>
@@ -140,7 +140,7 @@ const MessageList = ({ user, messages, setChatOpen }) => {
               onClick={() => setChatOpen(false)}
               className={`relative shrink-0 w-8 h-8 rounded-full overflow-hidden ring-2 transition-all duration-200 cursor-pointer hover:scale-110 ${
                 isOwn
-                  ? "ring-[#FFD700]/30 hover:ring-[#FFD700]"
+                  ? "ring-[#00af9b]/30 hover:ring-[#00af9b]"
                   : "ring-white/10 hover:ring-white/30"
               }`}
             >
@@ -172,8 +172,8 @@ const MessageList = ({ user, messages, setChatOpen }) => {
                 onClick={() => setChatOpen(false)}
                 className={`text-[11px] font-semibold tracking-wide hover:underline cursor-pointer transition-colors px-1 ${
                   isOwn
-                    ? "text-[#FFD700]/80 hover:text-[#FFD700]"
-                    : "text-blue-400/80 hover:text-blue-400"
+                    ? "text-[#00af9b]/80 hover:text-[#00af9b]"
+                    : "text-[#ffa116]/80 hover:text-[#ffa116]"
                 }`}
               >
                 {isOwn ? "You" : metadata.username}
@@ -185,8 +185,8 @@ const MessageList = ({ user, messages, setChatOpen }) => {
                                 px-3.5 py-2.5 text-[13px] leading-relaxed transition-all duration-200
                                 ${
                                   isOwn
-                                    ? "bg-linear-to-br from-[#FFD700]/15 to-[#FFD700]/5 border border-[#FFD700]/20 text-white rounded-2xl rounded-tr-md"
-                                    : "bg-white/3 border border-white/5 text-gray-300 rounded-2xl rounded-tl-md group-hover:bg-white/5 group-hover:border-white/10"
+                                    ? "bg-linear-to-br from-[#00af9b]/20 to-[#00af9b]/5 border border-[#00af9b]/25 text-white rounded-2xl rounded-tr-md"
+                                    : "bg-[#2b2b2b]/70 border border-[#3a3a3a] text-slate-200 rounded-2xl rounded-tl-md group-hover:bg-[#313131] group-hover:border-[#444444]"
                                 }
                                 ${msg.message?.startsWith("IMAGE:") ? "p-1.5" : ""}
                             `}
@@ -216,7 +216,7 @@ const MessageList = ({ user, messages, setChatOpen }) => {
                           <Link
                             to={`/profile/${ownerUsername}`}
                             onClick={() => setChatOpen(false)}
-                            className="text-[10px] text-[#FFD700] hover:underline font-medium"
+                            className="text-[10px] text-[#00af9b] hover:underline font-medium"
                           >
                             View Profile
                           </Link>
@@ -232,7 +232,7 @@ const MessageList = ({ user, messages, setChatOpen }) => {
                 {msg.timestamp && (
                   <div
                     className={`text-[9px] font-medium mt-1.5 ${
-                      isOwn ? "text-[#FFD700]/50" : "text-gray-600"
+                      isOwn ? "text-[#00af9b]/60" : "text-slate-400"
                     }`}
                   >
                     {new Date(msg.timestamp).toLocaleTimeString("en-US", {

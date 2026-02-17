@@ -1,7 +1,13 @@
 import React, { memo } from "react";
 import Editor from "@monaco-editor/react";
 
-const EditorPane = ({ code, setCode, handleEditorDidMount, loading }) => {
+const EditorPane = ({
+  code,
+  setCode,
+  handleEditorDidMount,
+  loading,
+  editorFontFamily,
+}) => {
   if (loading) {
     return (
       <div className="flex-1 border-r border-white/10 flex flex-col p-4 animate-pulse">
@@ -36,7 +42,6 @@ const EditorPane = ({ code, setCode, handleEditorDidMount, loading }) => {
             padding: { top: 16, bottom: 16 },
             scrollBeyondLastLine: false,
             fontLigatures: true,
-            fontFamily: "'Fira Code', 'JetBrains Mono', Consolas, monospace",
             smoothScrolling: true,
             cursorBlinking: "smooth",
             cursorSmoothCaretAnimation: true,
@@ -44,6 +49,9 @@ const EditorPane = ({ code, setCode, handleEditorDidMount, loading }) => {
             lineNumbersMinChars: 3,
             glyphMargin: false,
             folding: true,
+            fontFamily:
+              editorFontFamily ||
+              "'Fira Code', 'JetBrains Mono', Consolas, monospace",
             scrollbar: {
               vertical: "visible",
               horizontal: "visible",

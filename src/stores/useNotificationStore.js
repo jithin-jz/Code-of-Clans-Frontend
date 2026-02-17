@@ -18,6 +18,7 @@ const useNotificationStore = create((set, get) => ({
   fcmToken: null,
   permission: typeof Notification !== 'undefined' ? Notification.permission : 'default',
   _listenerSetup: false,
+  _fetchPromise: null,
 
   /**
    * Initialize FCM notifications.
@@ -28,10 +29,7 @@ const useNotificationStore = create((set, get) => ({
         return;
     }
     
-    console.log("Initializing FCM... Current permission:", Notification.permission);
-    
     if (Notification.permission === "default") {
-        console.log("Permission is default, showing interactive setup toast...");
         // Avoid duplicate toasts if already shown this session
         if (!get()._promptShown) {
           notify.info("Enable Notifications", {
@@ -43,7 +41,7 @@ const useNotificationStore = create((set, get) => ({
             },
             cancel: {
               label: "Not Now",
-              onClick: () => console.log("User chose not to enable notifications for now")
+              onClick: () => {}
             }
           });
           set({ _promptShown: true });
@@ -74,7 +72,7 @@ const useNotificationStore = create((set, get) => ({
             },
             cancel: {
               label: "Not Now",
-              onClick: () => console.log("User dismissed blocked notification info")
+              onClick: () => {}
             }
           });
           set({ _deniedWarned: true });
@@ -87,8 +85,6 @@ const useNotificationStore = create((set, get) => ({
     try {
         const { onMessageListener } = await import("../services/firebase");
         onMessageListener((payload) => {
-            console.log("Foreground message received (FULL):", JSON.stringify(payload, null, 2));
-            
             // Show toast notification - try accessing data if notification is missing
             const title = payload.notification?.title || payload.data?.title || "New Notification";
             const body = payload.notification?.body || payload.data?.body || "You have a new message.";
@@ -117,11 +113,8 @@ const useNotificationStore = create((set, get) => ({
    */
   requestPermission: async () => {
     if (typeof Notification === 'undefined') return 'default';
-    
-    console.log("Requesting notification permission...");
     try {
         const permission = await Notification.requestPermission();
-        console.log("Permission result:", permission);
         set({ permission });
         if (permission === 'granted') {
             notify.success("Permission Granted!", { description: "Setting up real-time secure channel..." });
@@ -140,7 +133,6 @@ const useNotificationStore = create((set, get) => ({
    * Register FCM token with backend.
    */
   registerFCM: async () => {
-    console.log("[FCM] registration process started...");
     try {
         const { requestForToken } = await import("../services/firebase");
         const token = await requestForToken();
@@ -150,18 +142,14 @@ const useNotificationStore = create((set, get) => ({
             return;
         }
 
-        console.log("[FCM] Token received from Firebase. Current stored token:", get().fcmToken ? "Present" : "None");
-        
         // Force sync with backend on every login/re-init to be safe
-        console.log("[FCM] Syncing token with backend...");
         const response = await notificationsAPI.registerFCMToken({
             token: token,
             device_id: navigator.userAgent
         });
-        console.log("[FCM] Backend response status:", response.status);
         
         set({ fcmToken: token });
-        console.log("[FCM] Token successfully synced with backend.");
+        void response;
         // Only show success toast if it's the first time or explicitly needed
         if (token !== get().fcmToken) {
             notify.success("Push notifications active! 🔔");
@@ -194,6 +182,11 @@ const useNotificationStore = create((set, get) => ({
     const state = get();
     const now = Date.now();
 
+    // De-duplicate concurrent calls from multiple mounted components
+    if (state._fetchPromise) {
+      return state._fetchPromise;
+    }
+
     // Use cache if valid
     if (
       !force &&
@@ -204,32 +197,39 @@ const useNotificationStore = create((set, get) => ({
       return state.notifications;
     }
 
-    set({ isLoading: true, error: null });
+    const fetchPromise = (async () => {
+      set({ isLoading: true, error: null });
 
-    try {
-      const response = await notificationsAPI.getNotifications();
-      const notifications = response.data;
+      try {
+        const response = await notificationsAPI.getNotifications();
+        const notifications = response.data;
 
-      // Calculate unread count
-      const unreadCount = notifications.filter((n) => !n.is_read).length;
+        // Calculate unread count
+        const unreadCount = notifications.filter((n) => !n.is_read).length;
 
-      set({
-        notifications,
-        unreadCount,
-        isLoading: false,
-        lastFetched: now,
-        error: null,
-      });
+        set({
+          notifications,
+          unreadCount,
+          isLoading: false,
+          lastFetched: Date.now(),
+          error: null,
+        });
 
-      return notifications;
-    } catch (error) {
-      console.error("Failed to fetch notifications:", error);
-      set({
-        isLoading: false,
-        error: error.response?.data?.error || "Failed to load notifications",
-      });
-      return [];
-    }
+        return notifications;
+      } catch (error) {
+        console.error("Failed to fetch notifications:", error);
+        set({
+          isLoading: false,
+          error: error.response?.data?.error || "Failed to load notifications",
+        });
+        return [];
+      } finally {
+        set({ _fetchPromise: null });
+      }
+    })();
+
+    set({ _fetchPromise: fetchPromise });
+    return fetchPromise;
   },
 
   /**
@@ -325,6 +325,7 @@ const useNotificationStore = create((set, get) => ({
       fcmToken: null,
       _deniedWarned: false,
       _promptShown: false,
+      _fetchPromise: null,
     });
   },
 }));

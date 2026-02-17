@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import useChatStore from "../stores/useChatStore";
 import useAuthStore from "../stores/useAuthStore";
-import { MessageSquare, ChevronLeft, Users, Zap } from "lucide-react";
+import { MessageSquare, ChevronLeft, Users } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { motion } from "framer-motion";
 
@@ -100,45 +100,37 @@ const ChatDrawer = ({ isChatOpen, setChatOpen, user }) => {
 
   return (
     <motion.div
-      className="fixed top-0 left-0 h-full z-40 w-[380px]"
+      className="fixed top-0 left-0 h-full z-40 w-[390px]"
       initial={{ x: "-100%" }}
       animate={{ x: isChatOpen ? 0 : "-100%" }}
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
     >
-      <div className="w-full h-full bg-linear-to-b from-[#0d0d0d] via-[#0a0a0a] to-[#080808] backdrop-blur-3xl border-r border-white/5 flex flex-col pointer-events-auto shadow-2xl shadow-black/50 relative">
+      <div className="w-full h-full bg-linear-to-b from-[#1f1f1f] via-[#1a1a1a] to-[#171717] backdrop-blur-3xl border-r border-[#3a3a3a] flex flex-col pointer-events-auto shadow-2xl shadow-black/50 relative">
         {/* Decorative gradient orb */}
-        <div className="absolute -top-20 -left-20 w-40 h-40 bg-[#FFD700]/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute top-1/2 -right-10 w-32 h-32 bg-purple-500/5 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -top-20 -left-20 w-44 h-44 bg-[#ffa116]/8 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-1/2 -right-12 w-36 h-36 bg-[#00af9b]/8 rounded-full blur-3xl pointer-events-none" />
 
         {/* Header */}
-        <div className="relative h-16 border-b border-white/5 flex items-center justify-between px-5 bg-linear-to-r from-[#0f0f0f] to-[#141414]">
+        <div className="relative h-14 border-b border-[#3a3a3a] flex items-center justify-between px-5 bg-linear-to-r from-[#262626] to-[#1f1f1f]">
           {/* Header glow line */}
-          <div className="absolute bottom-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-[#FFD700]/30 to-transparent" />
+          <div className="absolute bottom-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-[#444444] to-transparent" />
 
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-linear-to-br from-[#FFD700]/20 to-[#FFD700]/5 border border-[#FFD700]/20 flex items-center justify-center">
-              <MessageSquare size={16} className="text-[#FFD700]" />
+            <div className="w-8 h-8 rounded-lg bg-[#2d2d2d] border border-[#444444] flex items-center justify-center">
+              <MessageSquare size={15} className="text-[#00af9b]" />
             </div>
-            <div>
-              <span className="text-white font-bold text-base tracking-tight block leading-tight">
-                Global Chat
-              </span>
-              <div className="flex items-center gap-1">
-                <Zap size={10} className="text-[#FFD700]" />
-                <span className="text-[10px] text-gray-500 uppercase tracking-wider">
-                  Live
-                </span>
-              </div>
-            </div>
+            <span className="text-white font-semibold text-sm tracking-wide">
+              Chat
+            </span>
           </div>
 
-          <div className="flex items-center gap-1.5 px-2.5 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-lg">
+          <div className="flex items-center gap-1.5 px-2.5 py-1 bg-[#2d2d2d] border border-[#444444] rounded-lg">
             <div className="relative">
-              <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full" />
-              <div className="absolute inset-0 w-1.5 h-1.5 bg-emerald-400 rounded-full animate-ping" />
+              <div className="w-1.5 h-1.5 bg-[#00af9b] rounded-full" />
+              <div className="absolute inset-0 w-1.5 h-1.5 bg-[#00af9b] rounded-full animate-ping" />
             </div>
-            <Users size={12} className="text-emerald-400" />
-            <span className="text-emerald-400 text-xs font-semibold">
+            <Users size={12} className="text-slate-200" />
+            <span className="text-slate-200 text-xs font-semibold">
               {onlineCount}
             </span>
           </div>
@@ -146,9 +138,9 @@ const ChatDrawer = ({ isChatOpen, setChatOpen, user }) => {
 
         {/* Connection Status */}
         {!isConnected && !error && (
-          <div className="px-4 py-2 bg-yellow-500/10 border-b border-yellow-500/20 flex items-center gap-2">
-            <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse" />
-            <span className="text-yellow-400 text-xs font-medium">
+          <div className="px-4 py-2 bg-[#ffa116]/10 border-b border-[#ffa116]/20 flex items-center gap-2">
+            <div className="w-2 h-2 bg-[#ffa116] rounded-full animate-pulse" />
+            <span className="text-[#ffa116] text-xs font-medium">
               Connecting...
             </span>
           </div>
@@ -183,27 +175,24 @@ const ChatDrawer = ({ isChatOpen, setChatOpen, user }) => {
       {/* Toggle Button - Outside inner container */}
       <Button
         onClick={() => setChatOpen(!isChatOpen)}
-        className="absolute top-1/2 -right-10 -mt-7 w-10 h-14 bg-[#0a0a0a] border border-[#FFD700]/30 rounded-r-xl flex items-center justify-center shadow-xl pointer-events-auto hover:bg-[#111] hover:border-[#FFD700]/50 transition-all duration-300 group z-50"
+        className="absolute top-1/2 -right-6 -mt-6 w-12 h-12 bg-[#262626] border border-[#444444] rounded-full flex items-center justify-center shadow-xl pointer-events-auto hover:bg-[#313131] hover:border-[#ffa116]/70 transition-all duration-300 group z-50"
         style={{
-          boxShadow: "0 6px 15px -3px rgba(255, 215, 0, 0.3)",
-          borderLeft: "none",
+          boxShadow: "0 8px 22px -8px rgba(0, 0, 0, 0.75)",
         }}
       >
         <div className="relative flex items-center justify-center">
           {isChatOpen ? (
             <ChevronLeft
-              className="text-[#FFD700] group-hover:scale-110 transition-transform duration-200"
-              size={24}
+              className="text-[#ffa116] group-hover:scale-110 transition-transform duration-200"
+              size={22}
               strokeWidth={2.5}
             />
           ) : (
-            <>
-              <MessageSquare
-                className="text-[#FFD700] group-hover:scale-110 transition-transform duration-200"
-                size={20}
-                strokeWidth={2.5}
-              />
-            </>
+            <MessageSquare
+              className="text-[#00af9b] group-hover:scale-110 transition-transform duration-200"
+              size={19}
+              strokeWidth={2.5}
+            />
           )}
         </div>
       </Button>

@@ -60,30 +60,30 @@ const RightSideUI = ({
 
   // Glass button style matches the previous design
   const glassButtonClass =
-    "h-10 w-10 p-0 bg-[#18181b]/80 backdrop-blur-xl border border-white/5 rounded-2xl hover:border-yellow-500/30 hover:bg-[#27272a] transition-all text-white shadow-xl active:scale-95";
+    "h-10 w-10 p-0 bg-[#262626] backdrop-blur-xl border border-[#3a3a3a] rounded-2xl hover:border-[#ffa116]/60 hover:bg-[#313131] transition-all text-white shadow-lg active:scale-95";
 
   return (
     <div className="fixed right-6 top-6 z-30 flex flex-col gap-4 items-end animate-slide-in-right">
       {/* XP Bar - Link to Shop */}
       <div
         onClick={() => navigate("/shop")}
-        className="bg-[#18181b]/80 backdrop-blur-xl border border-white/5 rounded-full pl-4 pr-6 py-2.5 flex items-center gap-4 shadow-xl cursor-pointer hover:border-yellow-500/30 transition-all active:scale-95 group"
+        className="bg-[#262626] border border-[#3a3a3a] rounded-full pl-4 pr-6 py-2.5 flex items-center gap-4 shadow-lg cursor-pointer hover:border-[#ffa116]/60 transition-all active:scale-95 group"
       >
-        <div className="w-10 h-10 rounded-full bg-linear-to-br from-yellow-400 to-yellow-600 flex items-center justify-center text-black shadow-lg">
+        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#ffb84d] via-[#ffa116] to-[#d97706] flex items-center justify-center text-black shadow-lg">
           <Star fill="currentColor" size={18} />
         </div>
         <div>
           <div className="flex justify-between items-end mb-1">
-            <span className="text-zinc-500 text-[10px] font-bold uppercase tracking-wider">
+            <span className="text-slate-300 text-[10px] font-bold uppercase tracking-wider">
               XP Progress
             </span>
             <span className="text-white text-xs font-bold font-mono">
               {user?.profile?.xp?.toLocaleString() || 0}
             </span>
           </div>
-          <div className="w-32 h-2 bg-zinc-800 rounded-full overflow-hidden">
+          <div className="w-32 h-2 bg-[#3a3a3a] rounded-full overflow-hidden">
             <div
-              className="h-full bg-linear-to-r from-yellow-400 to-yellow-600 rounded-full transition-width"
+              className="h-full bg-gradient-to-r from-[#ff8f00] via-[#ffa116] to-[#ffd166] rounded-full transition-width"
               style={{ width: `${((user?.profile?.xp || 0) % 1000) / 10}%` }}
             />
           </div>
@@ -103,15 +103,18 @@ const RightSideUI = ({
           <span
             className={cn(
               "block transition-transform duration-300",
-              settingsOpen ? "rotate-90 text-yellow-500" : "rotate-0",
+              settingsOpen ? "rotate-90" : "rotate-0",
             )}
           >
-            <Settings size={18} />
+            <Settings
+              size={18}
+              className={settingsOpen ? "text-[#ffa116]" : "text-[#7dd3fc]"}
+            />
           </span>
         </Button>
 
         {settingsOpen && (
-          <div className="absolute right-full top-0 mr-4 w-44 rounded-2xl overflow-hidden z-40 bg-[#18181b] border border-white/5 shadow-2xl backdrop-blur-3xl animate-in fade-in zoom-in-95 slide-in-from-right-2 duration-200">
+          <div className="absolute right-full top-0 mr-4 w-44 rounded-2xl overflow-hidden z-40 bg-[#262626] border border-[#3a3a3a] shadow-2xl backdrop-blur-3xl animate-in fade-in zoom-in-95 slide-in-from-right-2 duration-200">
             <div className="p-1">
               {/* Menu Items */}
               <div className="space-y-1">
@@ -119,7 +122,7 @@ const RightSideUI = ({
                   <>
                     <Link
                       to="/profile"
-                      className="w-full px-3 py-2 rounded-xl hover:bg-white/5 text-gray-300 hover:text-white flex items-center justify-between group transition-colors"
+                      className="w-full px-3 py-2 rounded-xl hover:bg-[#373737] text-slate-300 hover:text-white flex items-center justify-between group transition-colors"
                     >
                       <div className="flex items-center gap-2">
                         <User size={14} />{" "}
@@ -132,7 +135,7 @@ const RightSideUI = ({
                     </Link>
                     <button
                       onClick={handleLogout}
-                      className="w-full px-3 py-2 rounded-xl hover:bg-red-500/10 text-red-400 hover:text-red-300 flex items-center gap-2 transition-colors text-xs font-medium text-left"
+                      className="w-full px-3 py-2 rounded-xl hover:bg-[#373737] text-[#ffa116] hover:text-[#ff8f00] flex items-center gap-2 transition-colors text-xs font-medium text-left"
                     >
                       <LogOut size={14} /> Logout
                     </button>
@@ -140,7 +143,7 @@ const RightSideUI = ({
                 ) : (
                   <Link
                     to="/login"
-                    className="w-full px-3 py-2 rounded-xl hover:bg-[#FFD700]/10 text-[#FFD700] flex items-center justify-between group transition-colors"
+                    className="w-full px-3 py-2 rounded-xl hover:bg-[#373737] text-[#ffa116] flex items-center justify-between group transition-colors"
                   >
                     <div className="flex items-center gap-2">
                       <User size={14} />{" "}
@@ -162,7 +165,7 @@ const RightSideUI = ({
           className={glassButtonClass}
           onClick={() => setLeaderboardOpen((prev) => !prev)}
         >
-          <Trophy size={18} className="text-[#FFD700]" />
+          <Trophy size={18} className="text-[#ffb84d]" />
         </Button>
 
         {/* Notifications */}
@@ -191,7 +194,7 @@ const RightSideUI = ({
               size={18}
               className={cn(
                 "transition-colors duration-300",
-                unreadCount > 0 ? "text-blue-400" : "text-gray-400",
+                unreadCount > 0 ? "text-[#ffa116]" : "text-[#7dd3fc]",
               )}
             />
           </motion.div>
@@ -206,14 +209,14 @@ const RightSideUI = ({
                 className="absolute top-3.5 right-3.5"
               >
                 <div className="relative">
-                  <div className="w-2.5 h-2.5 bg-red-500 rounded-full shadow-[0_0_8px_rgba(239,68,68,0.8)]" />
+                  <div className="w-2.5 h-2.5 bg-[#ffa116] rounded-full shadow-[0_0_8px_rgba(255,95,115,0.8)]" />
                   {/* Pulse Effect */}
-                  <div className="absolute inset-0 w-2.5 h-2.5 bg-red-500 rounded-full animate-ping opacity-75" />
+                  <div className="absolute inset-0 w-2.5 h-2.5 bg-[#ffa116] rounded-full animate-ping opacity-75" />
 
                   {/* Secondary intense ripple on NEW notification */}
                   {hasNewNotification && (
                     <motion.div
-                      className="absolute inset-0 rounded-full bg-red-400"
+                      className="absolute inset-0 rounded-full bg-black"
                       initial={{ scale: 1, opacity: 1 }}
                       animate={{ scale: 3, opacity: 0 }}
                       transition={{ duration: 0.8, repeat: 3 }}
@@ -230,9 +233,9 @@ const RightSideUI = ({
           onClick={() => setCheckInOpen(true)}
           className={cn(glassButtonClass, "relative")}
         >
-          <Calendar size={18} />
+          <Calendar size={18} className="text-[#86efac]" />
           {hasUnclaimedReward && (
-            <div className="absolute top-3 right-3 w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-lg shadow-red-500/50"></div>
+            <div className="absolute top-3 right-3 w-2 h-2 bg-[#ffa116] rounded-full animate-pulse shadow-lg shadow-[#ffa116]/50"></div>
           )}
         </Button>
       </div>

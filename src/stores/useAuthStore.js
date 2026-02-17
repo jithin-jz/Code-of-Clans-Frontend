@@ -24,7 +24,9 @@ const generateState = () => {
   return Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("");
 };
 
-const useAuthStore = create((set) => ({
+const getOAuthStateKey = (provider) => `oauth_state_${provider}`;
+
+const useAuthStore = create((set, get) => ({
   // State
   user: null,
   isAuthenticated: false,
@@ -36,6 +38,12 @@ const useAuthStore = create((set) => ({
   otp: "",
   showOtpInput: false,
   isOtpLoading: false,
+  isOAuthLoading: false,
+  oauthCooldownUntil: 0,
+  otpCooldownUntil: 0,
+  lastOtpEmail: "",
+  lastAuthCheck: null,
+  authCheckPromise: null,
 
   // Actions
   setLoading: (loading) => set({ loading }),
@@ -48,57 +56,118 @@ const useAuthStore = create((set) => ({
   // Set User (Used by useUserStore to update profile data)
   setUser: (user) => set({ user }),
 
-  checkAuth: async () => {
-    try {
-      const response = await authAPI.getCurrentUser();
-      set({
-        user: response.data,
-        isAuthenticated: true,
-        loading: false,
-        error: null,
-        isInitialized: true,
-      });
-    } catch {
-      set({
-        user: null,
-        isAuthenticated: false,
-        loading: false,
-        isInitialized: true,
-      });
+  checkAuth: async (force = false) => {
+    const state = get();
+    const now = Date.now();
+
+    // De-duplicate concurrent auth checks across components.
+    if (state.authCheckPromise) {
+      return state.authCheckPromise;
     }
+
+    // Reuse recent auth state to reduce request spam.
+    if (
+      !force &&
+      state.isInitialized &&
+      state.lastAuthCheck &&
+      now - state.lastAuthCheck < 30000
+    ) {
+      return state.user;
+    }
+
+    const authPromise = (async () => {
+      try {
+        const response = await authAPI.getCurrentUser();
+        set({
+          user: response.data,
+          isAuthenticated: true,
+          loading: false,
+          error: null,
+          isInitialized: true,
+        });
+        return response.data;
+      } catch {
+        set({
+          user: null,
+          isAuthenticated: false,
+          loading: false,
+          isInitialized: true,
+        });
+        return null;
+      } finally {
+        set({
+          authCheckPromise: null,
+          lastAuthCheck: Date.now(),
+        });
+      }
+    })();
+
+    set({ authCheckPromise: authPromise });
+    return authPromise;
   },
 
   // Open OAuth in popup
   openOAuthPopup: async (provider) => {
-    set({ loading: true, error: null });
+    const now = Date.now();
+    const storeState = get();
+    if (storeState.isOAuthLoading) return null;
+    if (storeState.oauthCooldownUntil && now < storeState.oauthCooldownUntil) {
+      const seconds = Math.ceil((storeState.oauthCooldownUntil - now) / 1000);
+      set({ error: `Please wait ${seconds}s before trying ${provider} login again.` });
+      return null;
+    }
+
+    // Open popup immediately inside user gesture to avoid browser popup blocking.
+    const popupName = provider === "google" ? "Google Login" : "GitHub Login";
+    const popup = openOAuthPopup("about:blank", popupName);
+    if (!popup) {
+      set({
+        loading: false,
+        isOAuthLoading: false,
+        error: "Popup blocked by browser. Please allow popups and try again.",
+      });
+      return null;
+    }
+
+    set({ loading: true, isOAuthLoading: true, error: null });
 
     try {
-      const state = generateState();
-      sessionStorage.setItem("oauth_state", state);
+      const oauthState = generateState();
+      // Use localStorage so popup and opener can both read it.
+      // Keep sessionStorage fallback for backward compatibility.
+      localStorage.setItem(getOAuthStateKey(provider), oauthState);
+      sessionStorage.setItem(getOAuthStateKey(provider), oauthState);
 
       let response;
-      let popupName;
 
       switch (provider) {
         case "github":
-          response = await authAPI.getGithubAuthUrl(state);
-          popupName = "GitHub Login";
+          response = await authAPI.getGithubAuthUrl(oauthState);
           break;
         case "google":
-          response = await authAPI.getGoogleAuthUrl(state);
-          popupName = "Google Login";
+          response = await authAPI.getGoogleAuthUrl(oauthState);
           break;
         default:
           throw new Error("Unknown provider");
       }
 
-      const popup = openOAuthPopup(response.data.url, popupName);
-      set({ oauthPopup: popup, loading: false });
+      popup.location.href = response.data.url;
+      set({
+        oauthPopup: popup,
+        loading: false,
+        isOAuthLoading: false,
+        oauthCooldownUntil: Date.now() + 5000,
+      });
 
       return popup;
     } catch (error) {
+      if (popup && !popup.closed) {
+        popup.close();
+      }
       set({
         loading: false,
+        isOAuthLoading: false,
+        oauthCooldownUntil: Date.now() + 5000,
         error: error.response?.data?.error || `Failed to get ${provider} auth URL`,
       });
       return null;
@@ -109,8 +178,16 @@ const useAuthStore = create((set) => ({
     set({ loading: true, error: null });
 
     // Verify State
-    const savedState = sessionStorage.getItem("oauth_state");
-    sessionStorage.removeItem("oauth_state"); // Clear immediately after use
+    const stateKey = getOAuthStateKey(provider);
+    const savedState =
+      localStorage.getItem(stateKey) ||
+      sessionStorage.getItem(stateKey) ||
+      localStorage.getItem("oauth_state") ||
+      sessionStorage.getItem("oauth_state");
+    localStorage.removeItem(stateKey);
+    sessionStorage.removeItem(stateKey);
+    localStorage.removeItem("oauth_state");
+    sessionStorage.removeItem("oauth_state");
 
     if (!savedState || savedState !== returnedState) {
          set({
@@ -189,15 +266,41 @@ const useAuthStore = create((set) => ({
   },
 
   requestOtp: async (email) => {
+    const state = get();
+    const now = Date.now();
+
+    if (state.isOtpLoading) return false;
+
+    if (
+      state.lastOtpEmail === email &&
+      state.otpCooldownUntil &&
+      now < state.otpCooldownUntil
+    ) {
+      const seconds = Math.ceil((state.otpCooldownUntil - now) / 1000);
+      set({
+        error: `Please wait ${seconds}s before requesting another code.`,
+      });
+      return false;
+    }
+
     set({ isOtpLoading: true, error: null });
     try {
       await authAPI.requestOtp(email);
-      set({ isOtpLoading: false });
+      set({
+        isOtpLoading: false,
+        otpCooldownUntil: Date.now() + 60000,
+        lastOtpEmail: email,
+      });
       return true;
     } catch (error) {
+      const retryAfter = Number(error.response?.headers?.["retry-after"]);
+      const cooldownMs =
+        Number.isFinite(retryAfter) && retryAfter > 0 ? retryAfter * 1000 : 60000;
       set({ 
         isOtpLoading: false, 
-        error: error.response?.data?.error || "Failed to send OTP" 
+        error: error.response?.data?.error || "Failed to send OTP",
+        otpCooldownUntil: Date.now() + cooldownMs,
+        lastOtpEmail: email,
       });
       return false;
     }
@@ -246,6 +349,12 @@ const useAuthStore = create((set) => ({
       email: "",
       otp: "",
       showOtpInput: false,
+      isOAuthLoading: false,
+      oauthCooldownUntil: 0,
+      otpCooldownUntil: 0,
+      lastOtpEmail: "",
+      lastAuthCheck: null,
+      authCheckPromise: null,
     });
   },
 
@@ -264,6 +373,12 @@ const useAuthStore = create((set) => ({
         email: "",
         otp: "",
         showOtpInput: false,
+        isOAuthLoading: false,
+        oauthCooldownUntil: 0,
+        otpCooldownUntil: 0,
+        lastOtpEmail: "",
+        lastAuthCheck: null,
+        authCheckPromise: null,
       });
 
       return true;

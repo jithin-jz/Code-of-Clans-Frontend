@@ -37,7 +37,7 @@ const ProblemPane = ({ challenge, loading }) => {
             className="prose prose-invert prose-sm max-w-none 
                         prose-headings:text-white prose-headings:font-semibold
                         prose-p:text-gray-400 prose-p:leading-relaxed
-                        prose-code:text-sky-300 prose-code:bg-sky-900/10 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-md prose-code:font-mono prose-code:text-[13px]
+                        prose-code:text-[#66d1c3] prose-code:bg-[#1f1f1f]/10 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-md prose-code:font-mono prose-code:text-[13px]
                         prose-strong:text-white prose-strong:font-semibold
                         prose-ul:text-gray-400 prose-li:marker:text-gray-600
                     "

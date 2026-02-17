@@ -53,7 +53,7 @@ const IdentityCard = ({
             className="w-full h-full object-cover opacity-50 transition-transform duration-700 hover:scale-110"
           />
         ) : (
-          <div className="w-full h-full bg-linear-to-br from-indigo-900/40 via-purple-900/40 to-[#121212]"></div>
+          <div className="w-full h-full bg-linear-to-br from-[#1f1f1f]/40 via-[#1a1a1a]/40 to-[#121212]"></div>
         )}
         <div className="absolute inset-0 bg-linear-to-t from-[#121212] via-[#121212]/80 to-transparent"></div>
       </div>
@@ -126,7 +126,7 @@ const IdentityCard = ({
 
           {/* Level Badge */}
           <div className="absolute -bottom-2 -right-2 bg-[#121212] p-1 rounded-xl">
-            <div className="bg-[#FFD700] w-8 h-8 rounded-lg flex items-center justify-center font-black text-black text-xs shadow-lg shadow-[#FFD700]/20">
+            <div className="bg-[#ffa116] w-8 h-8 rounded-lg flex items-center justify-center font-black text-black text-xs shadow-lg shadow-[#ffa116]/20">
               {Math.floor((profileUser.profile?.xp || 0) / 1000) + 1}
             </div>
           </div>
@@ -136,7 +136,7 @@ const IdentityCard = ({
         <div className="mb-6">
           <h1 className="text-xl font-bold text-white mb-1 flex items-center justify-center gap-2">
             {profileUser.first_name || profileUser.username}
-            <Shield size={16} className="text-[#FFD700] fill-[#FFD700]/20" />
+            <Shield size={16} className="text-[#ffa116] fill-[#ffa116]/20" />
           </h1>
         </div>
 
@@ -146,7 +146,7 @@ const IdentityCard = ({
             onClick={() => fetchUserList("followers")}
             className="p-3 hover:bg-white/5 transition-colors text-center group"
           >
-            <div className="text-lg font-bold text-white group-hover:text-[#FFD700] transition-colors">
+            <div className="text-lg font-bold text-white group-hover:text-[#ffa116] transition-colors">
               {profileUser.followers_count || 0}
             </div>
             <div className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">
@@ -157,7 +157,7 @@ const IdentityCard = ({
             onClick={() => fetchUserList("following")}
             className="p-3 hover:bg-white/5 transition-colors text-center group"
           >
-            <div className="text-lg font-bold text-white group-hover:text-[#FFD700] transition-colors">
+            <div className="text-lg font-bold text-white group-hover:text-[#ffa116] transition-colors">
               {profileUser.following_count || 0}
             </div>
             <div className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">
@@ -184,7 +184,7 @@ const IdentityCard = ({
                 "w-full py-3 rounded-xl font-bold text-sm transition-all shadow-lg flex items-center justify-center gap-2",
                 isEditing
                   ? "bg-white/5 text-white hover:bg-white/10 border border-white/10"
-                  : "bg-[#FFD700] text-black hover:bg-[#FDB931]"
+                  : "bg-[#ffa116] text-black hover:bg-[#ff8f00]"
               )}
             >
               {isEditing ? (
@@ -204,7 +204,7 @@ const IdentityCard = ({
                 "w-full py-3 rounded-xl font-bold text-sm transition-all shadow-lg flex items-center justify-center gap-2",
                 profileUser.is_following
                   ? "bg-zinc-800 text-gray-300 hover:bg-zinc-700"
-                  : "bg-indigo-600 text-white hover:bg-indigo-500"
+                  : "bg-[#ffa116] text-white hover:bg-[#ff8f00]"
               )}
             >
               {profileUser.is_following ? "Unfollow" : "Follow"}

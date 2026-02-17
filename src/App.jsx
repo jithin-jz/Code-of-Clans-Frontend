@@ -1,4 +1,4 @@
-import React, { useEffect, lazy, Suspense } from "react";
+import React, { useEffect, useRef, lazy, Suspense } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -38,8 +38,11 @@ import useNotificationStore from "./stores/useNotificationStore";
 const AuthInitializer = ({ children }) => {
   const { checkAuth, user } = useAuthStore();
   const { initFCM } = useNotificationStore();
+  const authInitRef = useRef(false);
 
   useEffect(() => {
+    if (authInitRef.current) return;
+    authInitRef.current = true;
     checkAuth();
   }, [checkAuth]);
 

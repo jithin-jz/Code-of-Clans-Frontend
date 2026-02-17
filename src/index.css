@@ -1,39 +1,55 @@
-@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Sora:wght@400;500;600;700&family=Fira+Code:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&family=Source+Code+Pro:wght@300;400;500;600;700&family=Victor+Mono:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@300;400;500;600;700&family=Roboto+Mono:wght@300;400;500;600;700&family=Comic+Neue:wght@300;400;700&display=swap');
 @import "tailwindcss";
 
 @layer base {
   :root {
-    /* Zinc/Gray Theme - Better contrast and user-friendliness */
-    --background: 240 10% 4%;     /* #09090b (Zinc 950) */
-    --foreground: 0 0% 98%;       /* #fafafa (Zinc 50) */
-    --card: 240 10% 4%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 10% 4%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 217 91% 60%;       /* Clean Blue */
-    --primary-foreground: 222 47% 11%;
-    --secondary: 240 6% 10%;      /* #18181b (Zinc 900) */
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 6% 10%;
-    --muted-foreground: 240 5% 65%; /* Zinc 400 */
-    --accent: 240 6% 15%;         /* Zinc 800 */
-    --accent-foreground: 0 0% 98%;
+    --app-bg: #1a1a1a;
+    --app-bg-elevated: #262626;
+    --background: 0 0% 10%;
+    --foreground: 0 0% 96%;
+    --card: 0 0% 15%;
+    --card-foreground: 0 0% 96%;
+    --popover: 0 0% 15%;
+    --popover-foreground: 0 0% 96%;
+    --primary: 36 100% 53%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 20%;
+    --secondary-foreground: 0 0% 96%;
+    --muted: 0 0% 20%;
+    --muted-foreground: 0 0% 65%;
+    --accent: 36 100% 53%;
+    --accent-foreground: 0 0% 100%;
     --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 6% 10%;         /* Zinc 900 */
-    --input: 240 6% 10%;
-    --ring: 217 91% 60%;
-    --radius: 0rem;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 24%;
+    --input: 0 0% 24%;
+    --ring: 36 100% 53%;
+    --radius: 0.9rem;
   }
 
-  /* Prevent white flash on page load */
   html,
   body,
   #root {
-    background-color: #09090b; /* Zinc 950 */
-    color: #fafafa;
-    min-height: 100vh;
-    font-family: 'Inter', system-ui, sans-serif;
+    background-color: var(--app-bg);
+    color: #f5f5f5;
+    height: 100vh;
+    font-family: "Outfit", "Sora", sans-serif;
+    overflow: hidden;
+  }
+
+  body {
+    background: var(--app-bg);
+  }
+
+  * {
+    scrollbar-width: none !important;
+    -ms-overflow-style: none;
+  }
+
+  *::-webkit-scrollbar {
+    width: 0 !important;
+    height: 0 !important;
+    display: none !important;
   }
 }
 
@@ -72,35 +88,14 @@
 }
 
 @layer utilities {
-  /* Custom Scrollbar - Sleek and modern */
-  .custom-scrollbar::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-  }
-  .custom-scrollbar::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.05);
-  }
-  .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.4); /* High contrast for visibility */
-    border-radius: 10px;
-    border: 2px solid transparent;
-    background-clip: content-box;
-  }
-  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.6);
-    border: 1px solid transparent;
-    background-clip: content-box;
-  }
-
-  /* Clean Glass - subtle and professional */
   .bg-glass {
-    background: rgba(9, 9, 11, 0.7);
+    background: rgba(38, 38, 38, 0.85);
     -webkit-backdrop-filter: blur(12px);
     backdrop-filter: blur(12px);
   }
 
   .border-glass {
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
   }
 
   .no-scrollbar::-webkit-scrollbar {
@@ -113,18 +108,15 @@
 
   .custom-scrollbar {
     -webkit-overflow-scrolling: touch;
-    touch-action: pan-y; /* Explicitly allow vertical panning */
-    scrollbar-width: thin; 
-    scrollbar-color: rgba(255, 255, 255, 0.4) transparent;
+    touch-action: pan-y;
+    scrollbar-width: none;
   }
 
-  /* Force Monaco font consistency - Fixes "font changes when typing" */
-  .monaco-editor, 
-  .monaco-editor .view-line, 
-  .monaco-editor .view-lines,
-  .monaco-editor .inputarea {
-    font-family: 'Fira Code', 'JetBrains Mono', monospace !important;
-    font-variant-ligatures: contextual !important;
+  .app-surface {
+    background: #262626;
+    border: 1px solid #3a3a3a;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(14px);
   }
 }
 
@@ -179,9 +171,9 @@
 /* Daily Check-In Styles */
 .check-in-container {
   padding: 2rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #ffffff;
   border-radius: 12px;
-  color: white;
+  color: #111111;
   max-width: 600px;
   margin: 0 auto;
 }
@@ -195,7 +187,7 @@
 .check-in-loading {
   text-align: center;
   padding: 2rem;
-  color: white;
+  color: #111111;
 }
 
 .streak-display {
@@ -203,7 +195,7 @@
   font-size: 1.3rem;
   margin-bottom: 2rem;
   padding: 1rem;
-  background: rgba(255, 255, 255, 0.1);
+  background: #f3f4f6;
   border-radius: 8px;
 }
 
@@ -213,7 +205,7 @@
 
 .streak-value {
   font-weight: bold;
-  color: #ffd700;
+  color: #ffa116;
 }
 
 .reward-calendar {
@@ -232,7 +224,7 @@
 }
 
 .calendar-day {
-  background: rgba(255, 255, 255, 0.15);
+  background: #ffffff;
   border-radius: 8px;
   padding: 0.8rem;
   text-align: center;
@@ -245,7 +237,7 @@
 }
 
 .calendar-day.completed {
-  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+  background: #f3f4f6;
 }
 
 .calendar-day.claimable {
@@ -281,7 +273,7 @@
   top: 4px;
   right: 4px;
   font-size: 1.2rem;
-  color: white;
+  color: #ffa116;
 }
 
 .claim-indicator {
@@ -291,13 +283,13 @@
   transform: translateX(-50%);
   font-size: 0.65rem;
   font-weight: bold;
-  color: #ffd700;
+  color: #ffa116;
   animation: bounce 1s ease-in-out infinite;
 }
 
 .recent-checkins {
   margin-top: 2rem;
-  background: rgba(255, 255, 255, 0.1);
+  background: #ffffff;
   padding: 1rem;
   border-radius: 8px;
 }
@@ -315,7 +307,7 @@
 .recent-checkins li {
   padding: 0.5rem;
   margin-bottom: 0.3rem;
-  background: rgba(0, 0, 0, 0.2);
+  background: #f3f4f6;
   border-radius: 4px;
   font-size: 0.9rem;
 }

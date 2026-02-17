@@ -96,7 +96,14 @@ const BuyXPPage = () => {
       rzp1.open();
     } catch (error) {
       console.error(error);
-      toast.error("Failed to initiate payment");
+      const backendError =
+        error?.response?.data?.error ||
+        (typeof error?.response?.data === "string"
+          ? error.response.data
+          : null);
+      const serializerError =
+        error?.response?.data?.amount?.[0] || error?.response?.data?.detail;
+      toast.error(backendError || serializerError || "Failed to initiate payment");
     } finally {
       setPurchasing(null);
     }
@@ -121,10 +128,10 @@ const BuyXPPage = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.3 }}
-          className="h-screen bg-[#09090b] text-white flex flex-col overflow-hidden"
+          className="h-screen bg-[#1a1a1a] text-white flex flex-col overflow-hidden"
         >
           {/* Header */}
-          <header className="bg-[#09090b] border-b border-white/5">
+          <header className="bg-[#262626] border-b border-white/5">
             <div className="max-w-6xl mx-auto px-4 sm:px-6">
               <div className="h-14 flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -143,7 +150,7 @@ const BuyXPPage = () => {
 
                 {/* Current Balance */}
                 <div className="flex items-center gap-2 px-3 py-1.5 bg-zinc-800/50 rounded-lg border border-white/5">
-                  <Zap size={14} className="text-amber-400" />
+                  <Zap size={14} className="text-[#ffa116]" />
                   <span className="text-sm font-medium text-white">
                     {user?.profile?.xp?.toLocaleString() || 0}
                   </span>
@@ -167,8 +174,8 @@ const BuyXPPage = () => {
                       key={pkg.amount}
                       className={`
                         bg-zinc-900/50 border-white/5 hover:border-white/10 transition-all relative
-                        ${pkg.popular ? "ring-1 ring-amber-500/30" : ""}
-                        ${pkg.bestValue ? "ring-1 ring-emerald-500/30" : ""}
+                        ${pkg.popular ? "ring-1 ring-[#ffa116]/30" : ""}
+                        ${pkg.bestValue ? "ring-1 ring-[#00af9b]/30" : ""}
                       `}
                     >
                       {/* Badge */}
@@ -177,8 +184,8 @@ const BuyXPPage = () => {
                           <Badge
                             className={`text-[9px] px-1.5 py-0 ${
                               pkg.popular
-                                ? "bg-amber-500/10 text-amber-400 border-amber-500/20"
-                                : "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
+                                ? "bg-[#ffa116]/10 text-[#ffa116] border-[#ffa116]/20"
+                                : "bg-[#00af9b]/10 text-[#00af9b] border-[#00af9b]/20"
                             }`}
                           >
                             {pkg.popular ? "Popular" : "Best Value"}
@@ -191,9 +198,9 @@ const BuyXPPage = () => {
                         <div
                           className={`w-10 h-10 rounded-lg flex items-center justify-center mb-4 ${
                             pkg.popular
-                              ? "bg-amber-500/10"
+                              ? "bg-[#ffa116]/10"
                               : pkg.bestValue
-                                ? "bg-emerald-500/10"
+                                ? "bg-[#00af9b]/10"
                                 : "bg-white/5"
                           }`}
                         >
@@ -201,9 +208,9 @@ const BuyXPPage = () => {
                             size={20}
                             className={
                               pkg.popular
-                                ? "text-amber-400"
+                                ? "text-[#ffa116]"
                                 : pkg.bestValue
-                                  ? "text-emerald-400"
+                                  ? "text-[#00af9b]"
                                   : "text-zinc-400"
                             }
                           />
@@ -228,8 +235,8 @@ const BuyXPPage = () => {
                         {/* Bonus indicator */}
                         {pkg.xp > pkg.amount && (
                           <div className="flex items-center gap-1 mb-4">
-                            <Check size={12} className="text-emerald-400" />
-                            <span className="text-xs text-emerald-400">
+                            <Check size={12} className="text-[#00af9b]" />
+                            <span className="text-xs text-[#00af9b]">
                               +{Math.round((pkg.xp / pkg.amount - 1) * 100)}%
                               bonus
                             </span>
@@ -243,9 +250,9 @@ const BuyXPPage = () => {
                             w-full h-10 text-sm font-medium
                             ${
                               pkg.popular
-                                ? "bg-amber-500 hover:bg-amber-600 text-black"
+                                ? "bg-[#ffa116] hover:bg-[#cc8400] text-black"
                                 : pkg.bestValue
-                                  ? "bg-emerald-500 hover:bg-emerald-600 text-black"
+                                  ? "bg-[#00af9b] hover:bg-emerald-600 text-black"
                                   : "bg-white text-black hover:bg-zinc-200"
                             }
                           `}

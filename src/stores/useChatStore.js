@@ -39,7 +39,6 @@ const useChatStore = create((set, get) => ({
         
         if (data.type === 'chat_message') {
             set((state) => {
-                console.log("Chat message received:", data.message, "from:", data.username);
                 // De-duplication check: if message with same ID or same content/user/timestamp exists
                 // We use a looser check for messages without IDs
                 const isDuplicate = state.messages.some(msg => {
@@ -55,11 +54,9 @@ const useChatStore = create((set, get) => ({
                 });
                 
                 if (isDuplicate) {
-                    console.log("Duplicate message ignored:", data.message);
                     return state;
                 }
 
-                console.log("Appending message to state:", data.message);
                 return {
                     messages: [...state.messages, data]
                 };
@@ -78,7 +75,6 @@ const useChatStore = create((set, get) => ({
     };
 
     socket.onclose = (event) => {
-      console.log("WS Close:", event.code, event.reason);
       set({ isConnected: false, socket: null });
       if (event.code === 1008) {
           set({ error: "Authentication failed" });

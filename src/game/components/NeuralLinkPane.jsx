@@ -64,7 +64,7 @@ const NeuralLinkPane = ({
     <Card className="flex-1 flex flex-col bg-[#18181b] border-none rounded-none overflow-hidden m-0">
       <CardHeader className="border-b border-white/5 px-4 py-2 flex flex-row items-center justify-between space-y-0 bg-[#09090b]">
         <div className="flex items-center gap-2">
-          <Sparkles size={14} className="text-blue-500" />
+          <Sparkles size={14} className="text-[#00af9b]" />
           <CardTitle className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest font-sans">
             Assistant
           </CardTitle>
@@ -72,10 +72,10 @@ const NeuralLinkPane = ({
         <div className="flex items-center gap-3">
           {userXp !== undefined && (
             <div className="flex items-center gap-1">
-              <span className="text-yellow-500 text-[10px] font-bold">
+              <span className="text-[#ffa116] text-[10px] font-bold">
                 {userXp}
               </span>
-              <span className="text-[8px] text-yellow-600 font-bold">XP</span>
+              <span className="text-[8px] text-[#cc8400] font-bold">XP</span>
             </div>
           )}
         </div>
@@ -97,8 +97,8 @@ const NeuralLinkPane = ({
                   className="flex-none w-full h-full snap-start p-4 flex flex-col"
                 >
                   <div className="flex items-center gap-2 mb-3">
-                    <div className="w-4 h-4 rounded-none bg-blue-500/10 flex items-center justify-center border border-blue-500/20">
-                      <span className="text-[9px] font-bold text-blue-500">
+                    <div className="w-4 h-4 rounded-none bg-[#00af9b]/10 flex items-center justify-center border border-[#00af9b]/20">
+                      <span className="text-[9px] font-bold text-[#00af9b]">
                         {i + 1}
                       </span>
                     </div>
@@ -113,7 +113,7 @@ const NeuralLinkPane = ({
                               prose-p:text-gray-400 prose-p:leading-relaxed prose-p:text-[12px]
                               prose-strong:text-white prose-strong:font-semibold
                               prose-pre:bg-black prose-pre:border prose-pre:border-white/5 prose-pre:rounded-none prose-pre:p-0
-                              prose-code:text-blue-400 prose-code:bg-blue-900/10 prose-code:px-1 prose-code:py-0.5 prose-code:rounded-none prose-code:font-mono prose-code:text-[11px] prose-code:before:content-none prose-code:after:content-none
+                              prose-code:text-[#00af9b] prose-code:bg-[#1f1f1f]/10 prose-code:px-1 prose-code:py-0.5 prose-code:rounded-none prose-code:font-mono prose-code:text-[11px] prose-code:before:content-none prose-code:after:content-none
                           "
                     >
                       <ReactMarkdown
@@ -157,8 +157,8 @@ const NeuralLinkPane = ({
             {isHintLoading && (
               <div className="flex-none w-full h-full snap-start p-4 flex flex-col">
                 <div className="flex items-center gap-2 mb-3">
-                  <Loader2 size={10} className="text-blue-500 animate-spin" />
-                  <span className="text-[10px] font-bold text-blue-500/50 uppercase tracking-widest">
+                  <Loader2 size={10} className="text-[#00af9b] animate-spin" />
+                  <span className="text-[10px] font-bold text-[#00af9b]/50 uppercase tracking-widest">
                     Generating...
                   </span>
                 </div>
@@ -166,7 +166,7 @@ const NeuralLinkPane = ({
                   <div className="absolute inset-0 flex items-center justify-center">
                     <Sparkles
                       size={20}
-                      className="text-blue-500/20 animate-pulse"
+                      className="text-[#00af9b]/20 animate-pulse"
                     />
                   </div>
                 </div>
@@ -184,7 +184,7 @@ const NeuralLinkPane = ({
                     key={i}
                     className={`w-1 h-1 transition-all duration-300 ${
                       i === activeIndex
-                        ? "bg-blue-500 scale-125 shadow-[0_0_8px_rgba(59,130,246,0.5)]"
+                        ? "bg-[#00af9b] scale-125 shadow-[0_0_8px_rgba(59,130,246,0.5)]"
                         : "bg-white/10"
                     }`}
                   />

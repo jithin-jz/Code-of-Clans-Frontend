@@ -161,7 +161,7 @@ const CreatePostDialog = ({ open, onOpenChange, onPostCreated }) => {
           {isCropping ? (
             <Button
               variant="ghost"
-              className="text-blue-500 font-semibold hover:text-blue-400 hover:bg-transparent px-0"
+              className="text-[#00af9b] font-semibold hover:text-[#00af9b] hover:bg-transparent px-0"
               onClick={handleCreateCroppedImage}
             >
               Next
@@ -190,7 +190,7 @@ const CreatePostDialog = ({ open, onOpenChange, onPostCreated }) => {
               <p className="text-xl font-light">Drag photos and videos here</p>
               <Button
                 onClick={() => fileInputRef.current?.click()}
-                className="bg-blue-500 hover:bg-blue-600 font-semibold px-6"
+                className="bg-[#00af9b] hover:bg-[#008f7a] font-semibold px-6"
               >
                 Select from computer
               </Button>
@@ -234,7 +234,7 @@ const CreatePostDialog = ({ open, onOpenChange, onPostCreated }) => {
                 <Button
                   onClick={handleSubmit}
                   disabled={loading}
-                  className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-8"
+                  className="bg-[#00af9b] hover:bg-[#008f7a] text-white font-semibold px-8"
                 >
                   {loading ? (
                     <Loader2 className="w-4 h-4 animate-spin" />

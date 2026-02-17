@@ -33,12 +33,12 @@ const LeaderboardDrawer = ({ isLeaderboardOpen, setLeaderboardOpen }) => {
     switch (index) {
       case 0:
         return (
-          <Crown size={14} className="text-yellow-500 fill-yellow-500/30" />
+          <Crown size={14} className="text-[#ffa116] fill-[#ffa116]/30" />
         );
       case 1:
         return <Medal size={14} className="text-gray-400 fill-gray-400/30" />;
       case 2:
-        return <Medal size={14} className="text-amber-700 fill-amber-700/30" />;
+        return <Medal size={14} className="text-[#996200] fill-[#996200]/30" />;
       default:
         return null;
     }
@@ -51,15 +51,15 @@ const LeaderboardDrawer = ({ isLeaderboardOpen, setLeaderboardOpen }) => {
       animate={{ x: isLeaderboardOpen ? 0 : "100%" }}
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
     >
-      <div className="w-full h-full bg-[#09090b] backdrop-blur-3xl border-l border-white/5 flex flex-col pointer-events-auto shadow-2xl shadow-black/50 relative">
+      <div className="w-full h-full bg-linear-to-b from-[#1a1a1a] via-[#262626] to-[#1a1a1a] backdrop-blur-3xl border-l border-[#3a3a3a] flex flex-col pointer-events-auto shadow-2xl shadow-black/50 relative">
         {/* Decorative gradient orb */}
-        <div className="absolute -top-20 -right-20 w-40 h-40 bg-[#FFD700]/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -top-20 -right-20 w-40 h-40 bg-[#ffa116]/10 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute top-1/2 -left-10 w-32 h-32 bg-zinc-500/5 rounded-full blur-3xl pointer-events-none" />
 
         {/* Header */}
-        <div className="relative h-16 border-b border-white/5 flex items-center justify-between px-5 bg-[#18181b]">
+        <div className="relative h-16 border-b border-[#3a3a3a] flex items-center justify-between px-5 bg-[#262626]">
           {/* Header glow line */}
-          <div className="absolute bottom-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-[#FFD700]/30 to-transparent" />
+          <div className="absolute bottom-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-[#ffa116]/30 to-transparent" />
 
           <div className="flex items-center gap-3">
             {/* Close Button */}
@@ -70,15 +70,15 @@ const LeaderboardDrawer = ({ isLeaderboardOpen, setLeaderboardOpen }) => {
             >
               <X size={18} />
             </button>
-            <div className="w-9 h-9 rounded-xl bg-linear-to-br from-[#FFD700]/20 to-[#FFD700]/5 border border-[#FFD700]/20 flex items-center justify-center">
-              <Trophy size={16} className="text-[#FFD700]" />
+            <div className="w-9 h-9 rounded-xl bg-linear-to-br from-[#ffa116]/20 to-[#ffa116]/5 border border-[#ffa116]/20 flex items-center justify-center">
+              <Trophy size={16} className="text-[#ffa116]" />
             </div>
             <div>
               <span className="text-white font-bold text-base tracking-tight block leading-tight font-sans">
                 Leaderboard
               </span>
               <div className="flex items-center gap-1">
-                <Users size={10} className="text-[#FFD700]" />
+                <Users size={10} className="text-[#ffa116]" />
                 <span className="text-[10px] text-zinc-500 uppercase tracking-wider font-sans">
                   Top Players
                 </span>
@@ -130,7 +130,7 @@ const LeaderboardDrawer = ({ isLeaderboardOpen, setLeaderboardOpen }) => {
                   onClick={() => setLeaderboardOpen(false)}
                   className={`flex items-center gap-3 p-3 rounded-none transition-all duration-200 group ${
                     isMe
-                      ? "bg-[#FFD700]/10 border border-[#FFD700]/20 hover:bg-[#FFD700]/15"
+                      ? "bg-[#ffa116]/10 border border-[#ffa116]/20 hover:bg-[#ffa116]/15"
                       : "bg-white/2 border border-white/5 hover:bg-white/5 hover:border-white/10"
                   }`}
                 >
@@ -138,7 +138,7 @@ const LeaderboardDrawer = ({ isLeaderboardOpen, setLeaderboardOpen }) => {
                   <div
                     className={`w-8 h-8 rounded-none flex items-center justify-center ${
                       isTopThree
-                        ? "bg-linear-to-br from-[#FFD700]/20 to-[#FFD700]/5"
+                        ? "bg-linear-to-br from-[#ffa116]/20 to-[#ffa116]/5"
                         : "bg-white/5"
                     }`}
                   >
@@ -152,7 +152,7 @@ const LeaderboardDrawer = ({ isLeaderboardOpen, setLeaderboardOpen }) => {
                   {/* Avatar */}
                   <div
                     className={`w-9 h-9 rounded-full overflow-hidden ring-2 shrink-0 ${
-                      isMe ? "ring-[#FFD700]/40" : "ring-white/10"
+                      isMe ? "ring-[#ffa116]/40" : "ring-white/10"
                     }`}
                   >
                     {rankUser.avatar ? (
@@ -166,7 +166,7 @@ const LeaderboardDrawer = ({ isLeaderboardOpen, setLeaderboardOpen }) => {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <div className="w-full h-full bg-linear-to-br from-blue-500/30 to-purple-500/20 flex items-center justify-center text-xs font-bold text-blue-400">
+                      <div className="w-full h-full bg-linear-to-br from-[#00af9b]/30 to-[#ffa116]/20 flex items-center justify-center text-xs font-bold text-[#00af9b]">
                         {rankUser.username?.[0]?.toUpperCase() || "?"}
                       </div>
                     )}
@@ -177,7 +177,7 @@ const LeaderboardDrawer = ({ isLeaderboardOpen, setLeaderboardOpen }) => {
                     <div className="flex items-center gap-2">
                       <span
                         className={`text-sm font-semibold truncate ${
-                          isMe ? "text-[#FFD700]" : "text-white"
+                          isMe ? "text-[#ffa116]" : "text-white"
                         }`}
                       >
                         {isMe ? "You" : rankUser.username}
@@ -186,10 +186,10 @@ const LeaderboardDrawer = ({ isLeaderboardOpen, setLeaderboardOpen }) => {
                         <span
                           className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${
                             index === 0
-                              ? "bg-yellow-500/20 text-yellow-500"
+                              ? "bg-[#ffa116]/20 text-[#ffa116]"
                               : index === 1
                                 ? "bg-gray-400/20 text-gray-400"
-                                : "bg-amber-700/20 text-amber-600"
+                                : "bg-[#996200]/20 text-[#cc8400]"
                           }`}
                         >
                           {index === 0 ? "1ST" : index === 1 ? "2ND" : "3RD"}
@@ -197,8 +197,8 @@ const LeaderboardDrawer = ({ isLeaderboardOpen, setLeaderboardOpen }) => {
                       )}
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <Zap size={10} className="text-amber-500" />
-                      <span className="text-xs font-bold text-amber-500">
+                      <Zap size={10} className="text-[#ffa116]" />
+                      <span className="text-xs font-bold text-[#ffa116]">
                         {rankUser.xp?.toLocaleString() || 0} XP
                       </span>
                       <span className="text-[10px] text-gray-600">•</span>
@@ -211,7 +211,7 @@ const LeaderboardDrawer = ({ isLeaderboardOpen, setLeaderboardOpen }) => {
                   {/* Rank Status Indicator (Optional/Visual) */}
                   <div className="text-right shrink-0">
                     <div
-                      className={`text-[10px] font-bold ${isTopThree ? "text-[#FFD700]" : "text-gray-500"}`}
+                      className={`text-[10px] font-bold ${isTopThree ? "text-[#ffa116]" : "text-gray-500"}`}
                     >
                       #{index + 1}
                     </div>
@@ -223,7 +223,7 @@ const LeaderboardDrawer = ({ isLeaderboardOpen, setLeaderboardOpen }) => {
         </div>
 
         {/* Footer with shortcut hint */}
-        <div className="p-3 border-t border-white/5 bg-linear-to-t from-[#0a0a0a] to-transparent">
+        <div className="p-3 border-t border-[#3a3a3a] bg-linear-to-t from-[#1a1a1a] to-transparent">
           <p className="text-center text-[9px] text-gray-600">
             Press{" "}
             <kbd className="px-1 py-0.5 bg-white/5 rounded text-gray-500 font-mono">

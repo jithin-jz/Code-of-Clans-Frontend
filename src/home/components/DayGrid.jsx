@@ -34,7 +34,7 @@ const DayGrid = ({
                       onClick={() => isClaimable ? handleCheckIn(day) : null}
                       className={cn(
                         "relative transition-all border-2",
-                        isCompleted && "bg-linear-to-br from-green-500/20 to-emerald-500/20 border-green-500/30 cursor-default",
+                        isCompleted && "bg-linear-to-br from-green-500/20 to-[#00af9b]/20 border-green-500/30 cursor-default",
                         isClaimable && "bg-linear-to-br from-primary/20 to-orange-500/20 border-primary/50 cursor-pointer hover:scale-105 animate-pulse",
                         isMissed && "bg-red-500/10 border-red-500/20 opacity-70 cursor-not-allowed",
                         !isCompleted && !isClaimable && !isMissed && "bg-[#1a1a1a] border-white/5 opacity-50 cursor-not-allowed",

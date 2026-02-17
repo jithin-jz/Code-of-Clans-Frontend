@@ -311,7 +311,7 @@ const Profile = () => {
 
   if (userNotFound) {
     return (
-      <div className="h-screen w-full bg-[#09090b] text-white flex flex-col items-center justify-center gap-6">
+      <div className="h-screen w-full bg-[#1a1a1a] text-white flex flex-col items-center justify-center gap-6">
         <div className="text-center">
           <div className="w-20 h-20 rounded-xl bg-zinc-800 flex items-center justify-center mx-auto mb-6">
             <Users size={40} className="text-zinc-600" />
@@ -332,13 +332,13 @@ const Profile = () => {
   }
 
   return loading ? (
-    <div className="h-screen w-full bg-[#09090b]">
+    <div className="h-screen w-full bg-[#1a1a1a]">
       <ProfileSkeleton />
     </div>
   ) : (
-    <div className="h-screen bg-[#09090b] text-white flex flex-col overflow-hidden">
+    <div className="h-screen bg-[#1a1a1a] text-white flex flex-col overflow-hidden">
       {/* Header */}
-      <header className="bg-[#09090b] border-b border-white/5">
+      <header className="bg-[#262626] border-b border-white/5">
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
           <div className="h-14 flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -397,7 +397,7 @@ const Profile = () => {
                   )}
                   {/* Avatar (Absolute positioned) */}
                   <div className="absolute -bottom-12 left-1/2 transform -translate-x-1/2">
-                    <Avatar className="w-24 h-24 border-4 border-[#09090b]">
+                    <Avatar className="w-24 h-24 border-4 border-[#1a1a1a]">
                       <AvatarImage
                         src={profileUser?.profile?.avatar_url}
                         alt={profileUser?.username}
@@ -512,7 +512,7 @@ const Profile = () => {
                         className="p-1.5 hover:bg-white/10 rounded transition-colors text-zinc-400 hover:text-white"
                       >
                         {copied ? (
-                          <Check size={14} className="text-emerald-400" />
+                          <Check size={14} className="text-[#00af9b]" />
                         ) : (
                           <Copy size={14} />
                         )}
@@ -718,7 +718,7 @@ const Profile = () => {
                             </AvatarFallback>
                           </Avatar>
                           <div className="truncate">
-                            <div className="text-sm font-semibold text-white truncate group-hover:text-blue-400 transition-colors">
+                            <div className="text-sm font-semibold text-white truncate group-hover:text-[#00af9b] transition-colors">
                               {user.username}
                             </div>
                             <div className="text-xs text-zinc-500 truncate">
@@ -732,7 +732,7 @@ const Profile = () => {
                             handleFollowSuggested(user.username);
                           }}
                           variant="ghost"
-                          className="text-xs font-medium text-blue-400 hover:text-white hover:bg-blue-500/10 h-8 px-3 rounded-lg"
+                          className="text-xs font-medium text-[#00af9b] hover:text-white hover:bg-[#00af9b]/10 h-8 px-3 rounded-lg"
                         >
                           Follow
                         </Button>

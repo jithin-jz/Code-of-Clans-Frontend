@@ -47,7 +47,7 @@ const TestResultsPane = ({
             onClick={() => setActiveTab("results")}
             className={`flex items-center rounded-none border-b-2 text-[11px] font-bold h-11 transition-all ${
               activeTab === "results"
-                ? "text-white border-emerald-500"
+                ? "text-white border-[#00af9b]"
                 : "border-transparent text-gray-500 hover:text-gray-300"
             }`}
           >
@@ -58,7 +58,7 @@ const TestResultsPane = ({
             onClick={() => setActiveTab("input")}
             className={`flex items-center rounded-none border-b-2 text-[11px] font-bold h-11 transition-all ${
               activeTab === "input"
-                ? "text-white border-blue-500"
+                ? "text-white border-[#00af9b]"
                 : "border-transparent text-gray-500 hover:text-gray-300"
             }`}
           >
@@ -67,7 +67,7 @@ const TestResultsPane = ({
           </button>
         </div>
         {isRunning && (
-          <span className="text-[10px] font-black text-blue-500 animate-pulse uppercase tracking-[0.2em]">
+          <span className="text-[10px] font-black text-[#00af9b] animate-pulse uppercase tracking-[0.2em]">
             Running...
           </span>
         )}
@@ -94,12 +94,12 @@ const TestResultsPane = ({
                       onClick={() => setExpandedCase(idx)}
                       className={`w-full px-5 py-3 flex items-center gap-3 border-b border-white/5 transition-all ${
                         expandedCase === idx
-                          ? "bg-white/5 border-r-2 border-r-emerald-500 text-white"
+                          ? "bg-white/5 border-r-2 border-r-[#00af9b] text-white"
                           : "text-gray-500 hover:text-gray-300 hover:bg-white/2"
                       }`}
                     >
                       {res.passed ? (
-                        <CheckCircle2 size={12} className="text-emerald-500" />
+                        <CheckCircle2 size={12} className="text-[#00af9b]" />
                       ) : (
                         <XCircle size={12} className="text-rose-500" />
                       )}
@@ -121,7 +121,7 @@ const TestResultsPane = ({
                         <span
                           className={`text-[10px] font-black px-2 py-0.5 rounded border uppercase tracking-widest ${
                             results[expandedCase].passed
-                              ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
+                              ? "bg-[#00af9b]/10 text-[#00af9b] border-[#00af9b]/20"
                               : "bg-rose-500/10 text-rose-400 border-rose-500/20"
                           }`}
                         >
@@ -148,14 +148,14 @@ const TestResultsPane = ({
                             Expected Output
                           </div>
                           {results[expandedCase].is_sample ? (
-                            <pre className="text-[13px] font-mono text-emerald-400 bg-emerald-500/5 p-4 rounded-lg border border-emerald-500/10 overflow-x-auto whitespace-pre">
+                            <pre className="text-[13px] font-mono text-[#00af9b] bg-[#00af9b]/5 p-4 rounded-lg border border-[#00af9b]/10 overflow-x-auto whitespace-pre">
                               {results[expandedCase].expected || "(no output)"}
                             </pre>
                           ) : (
                             <div className="bg-white/1 border border-white/5 p-4 rounded-lg text-xs text-gray-500 flex items-center gap-3 italic">
                               <Lock
                                 size={14}
-                                className="opacity-40 text-blue-400"
+                                className="opacity-40 text-[#00af9b]"
                               />
                               Output hidden for secret test cases
                             </div>
@@ -197,7 +197,7 @@ const TestResultsPane = ({
             <div className="flex items-center justify-between">
               <div className="space-y-1">
                 <h4 className="text-xs font-black text-white flex items-center gap-2 tracking-[0.2em]">
-                  <Keyboard size={16} className="text-blue-500" />
+                  <Keyboard size={16} className="text-[#00af9b]" />
                   CUSTOM INPUT
                 </h4>
                 <p className="text-[10px] text-gray-600 uppercase tracking-tighter">
@@ -207,7 +207,7 @@ const TestResultsPane = ({
               <button
                 className={`h-8 px-4 text-[10px] font-black uppercase transition-all rounded-lg border ${
                   isCustomInputMode
-                    ? "bg-blue-600 hover:bg-blue-500 border-none text-white shadow-lg shadow-blue-900/30"
+                    ? "bg-[#008f7a] hover:bg-[#00af9b] border-none text-white shadow-lg shadow-[#1f1f1f]/30"
                     : "border-white/10 text-gray-500 hover:bg-white/5"
                 }`}
                 onClick={() => setIsCustomInputMode(!isCustomInputMode)}
@@ -219,7 +219,7 @@ const TestResultsPane = ({
             <textarea
               className={`w-full h-48 bg-black/60 border rounded-xl p-6 font-mono text-sm resize-none focus:outline-none transition-all ${
                 isCustomInputMode
-                  ? "border-blue-500/40 text-blue-50 shadow-inner"
+                  ? "border-[#00af9b]/40 text-blue-50 shadow-inner"
                   : "border-white/5 text-gray-800 opacity-40 cursor-not-allowed"
               }`}
               placeholder="Enter test input data here..."

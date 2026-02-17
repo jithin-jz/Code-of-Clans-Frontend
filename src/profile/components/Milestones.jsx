@@ -42,12 +42,12 @@ const Milestones = ({ profileUser, loading }) => {
         {completedLevels.map((level) => (
           <div
             key={level.id}
-            className="bg-[#121212] border border-white/5 rounded-xl p-2 flex flex-col items-center gap-1.5 text-center transition-all hover:border-[#FFD700]/30 hover:-translate-y-1 group"
+            className="bg-[#121212] border border-white/5 rounded-xl p-2 flex flex-col items-center gap-1.5 text-center transition-all hover:border-[#ffa116]/30 hover:-translate-y-1 group"
           >
-            <div className="w-8 h-8 rounded-lg bg-black/50 flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform text-white/50 group-hover:text-[#FFD700]">
+            <div className="w-8 h-8 rounded-lg bg-black/50 flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform text-white/50 group-hover:text-[#ffa116]">
               {level.icon && React.cloneElement(level.icon, { size: 14 })}
             </div>
-            <div className="text-[9px] font-bold text-[#FFD700] uppercase tracking-wider">
+            <div className="text-[9px] font-bold text-[#ffa116] uppercase tracking-wider">
               LEVEL {level.id}
             </div>
           </div>

@@ -30,19 +30,19 @@ const StatsGrid = ({ profileUser, isOwnProfile, loading }) => {
           label: "Level",
           value: Math.floor((profileUser.profile?.xp || 0) / 1000) + 1,
           icon: Crown,
-          color: "text-purple-400",
+          color: "text-[#ffb84d]",
         },
         {
           label: "Total XP",
           value: profileUser.profile?.xp?.toLocaleString() || 0,
           icon: Star,
-          color: "text-[#FFD700]",
+          color: "text-[#ffa116]",
         },
         {
           label: "Followers",
           value: profileUser.followers_count || 0,
           icon: Users,
-          color: "text-blue-400",
+          color: "text-[#00af9b]",
         },
         {
           label: "Following",
@@ -67,7 +67,7 @@ const StatsGrid = ({ profileUser, isOwnProfile, loading }) => {
           {stat.label === "Total XP" && isOwnProfile && (
             <button
               onClick={() => navigate("/shop")}
-              className="ml-auto p-1.5 bg-[#FFD700]/10 hover:bg-[#FFD700]/20 rounded-lg text-[#FFD700] transition-colors"
+              className="ml-auto p-1.5 bg-[#ffa116]/10 hover:bg-[#ffa116]/20 rounded-lg text-[#ffa116] transition-colors"
               title="Buy XP"
             >
               <Sparkles size={14} />

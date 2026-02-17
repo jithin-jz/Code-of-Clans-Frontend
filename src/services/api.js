@@ -16,6 +16,8 @@ const api = axios.create({
 // Queue for storing requests that failed while token was refreshing
 let isRefreshing = false;
 let failedQueue = [];
+let refreshBlockedUntil = 0;
+let lastRateLimitNoticeAt = 0;
 
 const processQueue = (error, token = null) => {
   failedQueue.forEach((prom) => {
@@ -36,11 +38,15 @@ api.interceptors.response.use(
 
     // Handle rate limiting (429 Too Many Requests)
     if (error.response?.status === 429) {
-      const retryAfter = error.response.headers['retry-after'];
-      const message = retryAfter 
-        ? `Too many requests. Please wait ${retryAfter} seconds.`
-        : "Too many requests. Please slow down.";
-      notify.error(message, { duration: 4000 });
+      const now = Date.now();
+      if (now - lastRateLimitNoticeAt > 3000) {
+        const retryAfter = error.response.headers['retry-after'];
+        const message = retryAfter 
+          ? `Too many requests. Please wait ${retryAfter} seconds.`
+          : "Too many requests. Please slow down.";
+        notify.error(message, { duration: 4000 });
+        lastRateLimitNoticeAt = now;
+      }
       return Promise.reject(error);
     }
 
@@ -61,7 +67,19 @@ api.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    const isRefreshRequest = originalRequest?.url?.includes("/auth/refresh/");
+    const isCurrentUserProbe = originalRequest?.url?.includes("/profiles/user/");
+    if (error.response?.status === 401 && !originalRequest._retry && !isRefreshRequest) {
+      // /profiles/user/ is often used as a session probe; avoid forcing refresh loops.
+      if (isCurrentUserProbe) {
+        return Promise.reject(error);
+      }
+
+      // Avoid repeated refresh storms when no valid session exists.
+      if (Date.now() < refreshBlockedUntil) {
+        return Promise.reject(error);
+      }
+
       if (isRefreshing) {
         return new Promise(function (resolve, reject) {
           failedQueue.push({ resolve, reject });
@@ -79,11 +97,15 @@ api.interceptors.response.use(
 
       try {
         await api.post(`/auth/refresh/`, {});
+        refreshBlockedUntil = 0;
         processQueue(null, true);
         return api(originalRequest);
       } catch (err) {
+        refreshBlockedUntil = Date.now() + 30000;
         processQueue(err, null);
-        window.location.href = "/login";
+        if (window.location.pathname !== "/login") {
+          window.location.href = "/login";
+        }
         return Promise.reject(err);
       } finally {
         isRefreshing = false;

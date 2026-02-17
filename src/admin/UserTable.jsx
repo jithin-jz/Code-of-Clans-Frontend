@@ -132,7 +132,7 @@ const UserTable = ({
                           Admin
                         </div>
                       ) : usr.is_staff ? (
-                        <div className="px-2 py-0.5 rounded-md bg-amber-500/5 text-amber-500 border border-amber-500/10 text-[10px] font-medium uppercase tracking-wider">
+                        <div className="px-2 py-0.5 rounded-md bg-[#ffa116]/5 text-[#ffa116] border border-[#ffa116]/10 text-[10px] font-medium uppercase tracking-wider">
                           Staff
                         </div>
                       ) : (
@@ -144,8 +144,8 @@ const UserTable = ({
                   </TableCell>
                   <TableCell className="py-3 text-[11px] font-medium">
                     {usr.is_active ? (
-                      <div className="flex items-center gap-1.5 text-emerald-500">
-                        <div className="w-1 h-1 rounded-full bg-emerald-500" />
+                      <div className="flex items-center gap-1.5 text-[#00af9b]">
+                        <div className="w-1 h-1 rounded-full bg-[#00af9b]" />
                         Active
                       </div>
                     ) : (
@@ -176,7 +176,7 @@ const UserTable = ({
                         className={`h-8 px-2 text-[10px] font-semibold uppercase tracking-wider rounded-md transition-colors ${
                           usr.is_active
                             ? "text-zinc-400 hover:text-red-500 hover:bg-red-500/5"
-                            : "text-emerald-500 hover:bg-emerald-500/5"
+                            : "text-[#00af9b] hover:bg-[#00af9b]/5"
                         }`}
                       >
                         {usr.is_active ? "Block" : "Unblock"}

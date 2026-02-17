@@ -26,7 +26,7 @@ class ErrorBoundary extends React.Component {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900">
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-[#1a1a1a] to-gray-900">
           <div className="max-w-md w-full mx-4">
             <div className="bg-gray-800/50 backdrop-blur-sm border border-red-500/30 rounded-lg p-8 shadow-2xl">
               <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-red-500/20 rounded-full">
@@ -70,7 +70,7 @@ class ErrorBoundary extends React.Component {
               <div className="flex gap-3">
                 <button
                   onClick={() => (window.location.href = "/")}
-                  className="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors"
+                  className="flex-1 bg-[#ffa116] hover:bg-[#ff8f00] text-white font-semibold py-3 px-4 rounded-lg transition-colors"
                 >
                   Go Home
                 </button>

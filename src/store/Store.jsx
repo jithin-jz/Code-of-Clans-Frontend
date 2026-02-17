@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
@@ -22,8 +22,8 @@ import {
   CardHeader,
   CardTitle,
 } from "../components/ui/card";
-import { storeAPI } from "../services/api";
 import useAuthStore from "../stores/useAuthStore";
+import useStoreStore from "../stores/useStoreStore";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import StoreSkeleton from "./StoreSkeleton";
@@ -37,63 +37,84 @@ const CATEGORIES = [
 
 const Store = () => {
   const navigate = useNavigate();
-  const { user, checkAuth } = useAuthStore();
-  const [items, setItems] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [purchasing, setPurchasing] = useState(null);
+  const { user, checkAuth, setUser } = useAuthStore();
+  const {
+    items,
+    isLoading,
+    isMutating,
+    activeMutationItemId,
+    error,
+    fetchItems,
+    purchaseItem,
+    equipItem,
+    unequipCategory,
+  } = useStoreStore();
   const [activeCategory, setActiveCategory] = useState("THEME");
 
   useEffect(() => {
-    const fetchItems = async () => {
-      try {
-        const response = await storeAPI.getItems();
-        setItems(response.data);
-      } catch (error) {
-        console.error("Failed to fetch store items", error);
-        toast.error("Failed to load store items.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchItems();
-  }, []);
+  }, [fetchItems]);
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+    }
+  }, [error]);
 
   const handleBuy = async (item) => {
     if (!user || user.profile.xp < item.cost) return;
 
-    setPurchasing(item.id);
-    try {
-      const response = await storeAPI.buyItem(item.id);
-      toast.success(response.data.message);
+    const result = await purchaseItem(item.id);
+    if (result.success) {
+      toast.success(result.data.message || "Purchase successful.");
       await checkAuth();
-      setItems((prev) =>
-        prev.map((i) => (i.id === item.id ? { ...i, is_owned: true } : i)),
-      );
-    } catch (error) {
-      toast.error(error.response?.data?.error || "Purchase failed.");
-    } finally {
-      setPurchasing(null);
+    } else {
+      toast.error(result.error || "Purchase failed.");
     }
   };
 
   const handleEquip = async (item) => {
-    try {
-      const res = await storeAPI.equipItem(item.id);
-      toast.success(res.data.message);
+    const result = await equipItem(item.id);
+    if (result.success) {
+      const data = result.data || {};
+      if (user?.profile) {
+        setUser({
+          ...user,
+          profile: {
+            ...user.profile,
+            ...(data.active_theme ? { active_theme: data.active_theme } : {}),
+            ...(data.active_font ? { active_font: data.active_font } : {}),
+            ...(data.active_effect ? { active_effect: data.active_effect } : {}),
+            ...(data.active_victory ? { active_victory: data.active_victory } : {}),
+          },
+        });
+      }
+      toast.success(result.data.message || "Equipped successfully.");
       await checkAuth();
-    } catch {
-      toast.error("Failed to equip");
+    } else {
+      toast.error(result.error || "Failed to equip.");
     }
   };
 
   const handleUnequip = async (item) => {
-    try {
-      const res = await storeAPI.unequipItem(item.category);
-      toast.success(res.data.message);
+    const result = await unequipCategory(item.category);
+    if (result.success) {
+      if (user?.profile) {
+        setUser({
+          ...user,
+          profile: {
+            ...user.profile,
+            ...(item.category === "THEME" ? { active_theme: "vs-dark" } : {}),
+            ...(item.category === "FONT" ? { active_font: "Fira Code" } : {}),
+            ...(item.category === "EFFECT" ? { active_effect: null } : {}),
+            ...(item.category === "VICTORY" ? { active_victory: "default" } : {}),
+          },
+        });
+      }
+      toast.success(result.data.message || "Unequipped successfully.");
       await checkAuth();
-    } catch {
-      toast.error("Failed to unequip");
+    } else {
+      toast.error(result.error || "Failed to unequip.");
     }
   };
 
@@ -104,9 +125,15 @@ const Store = () => {
     if (item.category === "FONT")
       return user.profile.active_font === item.item_data?.font_family;
     if (item.category === "EFFECT")
-      return user.profile.active_effect === item.item_data?.effect_key;
+      return (
+        user.profile.active_effect === item.item_data?.effect_key ||
+        user.profile.active_effect === item.item_data?.effect_type
+      );
     if (item.category === "VICTORY")
-      return user.profile.active_victory === item.item_data?.victory_key;
+      return (
+        user.profile.active_victory === item.item_data?.victory_key ||
+        user.profile.active_victory === item.item_data?.animation_type
+      );
     return false;
   };
 
@@ -115,13 +142,14 @@ const Store = () => {
     return <Icon className="w-8 h-8" />;
   };
 
-  const filteredItems = items.filter(
-    (item) => item.category === activeCategory,
+  const filteredItems = useMemo(
+    () => items.filter((item) => item.category === activeCategory),
+    [items, activeCategory],
   );
 
   return (
     <AnimatePresence mode="wait">
-      {loading ? (
+      {isLoading && items.length === 0 ? (
         <motion.div
           key="skeleton"
           initial={{ opacity: 0 }}
@@ -138,10 +166,10 @@ const Store = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.3 }}
-          className="min-h-screen bg-[#09090b] text-white overflow-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+          className="min-h-screen bg-[#1a1a1a] text-white overflow-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
         >
           {/* Minimal Header */}
-          <header className="sticky top-0 z-50 bg-[#09090b]/95 backdrop-blur-sm border-b border-white/5">
+          <header className="sticky top-0 z-50 bg-[#262626]/95 backdrop-blur-sm border-b border-white/5">
             <div className="max-w-6xl mx-auto px-4 sm:px-6">
               <div className="h-14 flex items-center justify-between">
                 {/* Left: Back + Title */}
@@ -164,7 +192,7 @@ const Store = () => {
                   onClick={() => navigate("/buy-xp")}
                   className="flex items-center gap-2 px-3 py-1.5 bg-zinc-800/50 rounded-lg border border-white/5 hover:bg-zinc-700/50 hover:border-white/10 transition-all cursor-pointer"
                 >
-                  <Zap size={14} className="text-amber-400" />
+                  <Zap size={14} className="text-[#ffa116]" />
                   <span className="text-sm font-medium text-white">
                     {user?.profile?.xp?.toLocaleString() || 0}
                   </span>
@@ -175,7 +203,7 @@ const Store = () => {
           </header>
 
           {/* Category Tabs */}
-          <div className="border-b border-white/5 bg-[#09090b]">
+          <div className="border-b border-white/5 bg-[#262626]">
             <div className="max-w-6xl mx-auto px-4 sm:px-6">
               <div className="flex items-center gap-1 overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] py-2">
                 {CATEGORIES.map((cat) => {
@@ -309,10 +337,15 @@ const Store = () => {
                                       : "bg-zinc-800 text-zinc-500 cursor-not-allowed"
                                   }
                                 `}
-                                disabled={!canAfford || purchasing === item.id}
+                                disabled={
+                                  !canAfford ||
+                                  (isMutating &&
+                                    activeMutationItemId === item.id)
+                                }
                                 onClick={() => handleBuy(item)}
                               >
-                                {purchasing === item.id ? (
+                                {isMutating &&
+                                activeMutationItemId === item.id ? (
                                   <Loader2 className="animate-spin w-3 h-3" />
                                 ) : (
                                   <span className="flex items-center gap-1">

@@ -75,8 +75,8 @@ const Home = () => {
       try {
         const eligibility = await challengesApi.checkCertificateEligibility();
 
-        // If eligible and has certificate, try to fetch it
-        if (eligibility.has_certificate) {
+        // Fetch/create certificate once user is eligible.
+        if (eligibility.has_certificate || eligibility.eligible) {
           const certData = await challengesApi.getMyCertificate();
           if (certData) {
             setUserCertificate(certData);
@@ -217,7 +217,7 @@ const Home = () => {
   };
 
   return (
-    <div className="h-screen relative select-none overflow-hidden bg-[#0a0a0a] text-white">
+    <div className="h-screen relative select-none overflow-hidden text-white bg-[#1a1a1a]">
       <AnimatePresence mode="wait">
         {isLoading ? (
           <motion.div
@@ -238,16 +238,8 @@ const Home = () => {
             transition={{ duration: 0.5 }}
             className="h-full w-full relative"
           >
-            {/* Background Texture */}
-            <div
-              className="absolute inset-0 opacity-20 pointer-events-none"
-              style={{
-                backgroundImage:
-                  "radial-gradient(circle at 1px 1px, rgba(255,255,255,0.05) 1px, transparent 0)",
-                backgroundSize: "40px 40px",
-              }}
-            />
-            <div className="absolute inset-0 bg-linear-to-b from-black/50 via-transparent to-black/80 pointer-events-none" />
+            <div className="absolute inset-0 pointer-events-none bg-[#1a1a1a]" />
+            <div className="absolute inset-0 pointer-events-none bg-[#262626]/50" />
 
             <ProfilePanel user={user} />
             <ChatDrawer

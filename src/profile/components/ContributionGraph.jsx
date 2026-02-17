@@ -62,10 +62,10 @@ const ContributionGraph = ({ data, loading }) => {
 
   const colors = [
     "bg-zinc-800/50", // Level 0
-    "bg-blue-900/40", // Level 1
-    "bg-blue-700/60", // Level 2
-    "bg-blue-500/80", // Level 3
-    "bg-blue-400 shadow-[0_0_10px_rgba(96,165,250,0.5)]", // Level 4
+    "bg-[#1f1f1f]/40", // Level 1
+    "bg-[#007a68]/60", // Level 2
+    "bg-[#00af9b]/80", // Level 3
+    "bg-[#00af9b] shadow-[0_0_10px_rgba(96,165,250,0.5)]", // Level 4
   ];
 
   if (loading) {
@@ -80,7 +80,7 @@ const ContributionGraph = ({ data, loading }) => {
     <Card className="bg-zinc-900/50 border-white/5 overflow-hidden">
       <CardHeader className="p-4 border-b border-white/5 flex flex-row items-center justify-between">
         <CardTitle className="text-sm font-medium flex items-center gap-2">
-          <Sparkles size={14} className="text-blue-500" /> Clash Activity
+          <Sparkles size={14} className="text-[#00af9b]" /> Clash Activity
         </CardTitle>
         <span className="text-[10px] text-zinc-500 uppercase tracking-widest">
           Last 12 Months

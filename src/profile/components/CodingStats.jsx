@@ -36,7 +36,7 @@ const CodingStats = ({ profileUser, loading }) => {
                 href={`https://github.com/${profileUser.profile.github_username}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs text-blue-400 hover:underline"
+                className="text-xs text-[#00af9b] hover:underline"
               >
                 @{profileUser.profile.github_username}
               </a>

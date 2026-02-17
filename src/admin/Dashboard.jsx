@@ -190,7 +190,7 @@ const AdminDashboard = () => {
                         </h3>
                         <Badge
                           variant="outline"
-                          className="bg-emerald-500/5 text-emerald-500 border-emerald-500/10 text-[9px] font-medium uppercase tracking-wider h-5"
+                          className="bg-[#00af9b]/5 text-[#00af9b] border-[#00af9b]/10 text-[9px] font-medium uppercase tracking-wider h-5"
                         >
                           Operational
                         </Badge>
@@ -248,7 +248,7 @@ const AdminDashboard = () => {
                     </div>
                     <div className="flex items-center justify-between mt-6 pt-4 border-t border-zinc-800">
                       <div className="flex items-center gap-2">
-                        <Shield className="text-emerald-500" size={12} />
+                        <Shield className="text-[#00af9b]" size={12} />
                         <span className="text-[9px] font-medium text-zinc-500 uppercase tracking-wider">
                           Real-time synchronization active
                         </span>

@@ -14,9 +14,11 @@ import { motion } from "framer-motion";
 import { formatDistanceToNow } from "date-fns";
 import { SkeletonBase } from "../common/SkeletonPrimitives";
 import useNotificationStore from "../stores/useNotificationStore";
+import useAuthStore from "../stores/useAuthStore";
 
 const NotificationDrawer = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
+  const user = useAuthStore((state) => state.user);
   const {
     notifications,
     unreadCount,
@@ -27,19 +29,16 @@ const NotificationDrawer = ({ isOpen, onClose }) => {
     clearAll,
   } = useNotificationStore();
 
-  // Poll for notifications every 30 seconds
+  // Poll only while drawer is open and user is authenticated
   useEffect(() => {
-    fetchNotifications();
-    const interval = setInterval(() => fetchNotifications(), 30000);
-    return () => clearInterval(interval);
-  }, [fetchNotifications]);
-
-  // Re-fetch when opened to ensure fresh data
-  useEffect(() => {
-    if (isOpen) {
-      fetchNotifications(true);
+    if (!isOpen || !user) {
+      return;
     }
-  }, [isOpen, fetchNotifications]);
+
+    fetchNotifications(true);
+    const interval = setInterval(() => fetchNotifications(), 60000);
+    return () => clearInterval(interval);
+  }, [isOpen, user, fetchNotifications]);
 
   const handleMarkRead = async (id, e) => {
     if (e) e.stopPropagation();
@@ -69,13 +68,13 @@ const NotificationDrawer = ({ isOpen, onClose }) => {
   const getNotificationIcon = (verb) => {
     switch (verb) {
       case "started following you":
-        return <UserPlus size={14} className="text-blue-400" />;
+        return <UserPlus size={14} className="text-[#00af9b]" />;
       case "liked your post":
-        return <Check size={14} className="text-pink-400" />; // Heart icon requires lucide-react Heart import if we want to be exact, Check/Bell is placeholder
+        return <Check size={14} className="text-[#ffb84d]" />; // Heart icon requires lucide-react Heart import if we want to be exact, Check/Bell is placeholder
       case "commented on your post":
         return <MessageSquare size={14} className="text-green-400" />;
       case "sent you a gift":
-        return <Gift size={14} className="text-yellow-400" />;
+        return <Gift size={14} className="text-[#ffa116]" />;
       default:
         return <Bell size={14} className="text-gray-400" />;
     }
@@ -97,13 +96,13 @@ const NotificationDrawer = ({ isOpen, onClose }) => {
     >
       <div className="w-full h-full bg-linear-to-b from-[#0d0d0d] via-[#0a0a0a] to-[#080808] backdrop-blur-3xl border-l border-white/5 flex flex-col pointer-events-auto shadow-2xl shadow-black/50 relative">
         {/* Decorative gradient orb */}
-        <div className="absolute -top-20 -right-20 w-40 h-40 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-10 -left-10 w-32 h-32 bg-purple-500/5 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -top-20 -right-20 w-40 h-40 bg-[#00af9b]/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-10 -left-10 w-32 h-32 bg-[#ffa116]/5 rounded-full blur-3xl pointer-events-none" />
 
         {/* Header */}
         <div className="relative h-16 border-b border-white/5 flex items-center justify-between px-5 bg-linear-to-r from-[#141414] to-[#0f0f0f]">
           {/* Header glow line */}
-          <div className="absolute bottom-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-blue-500/30 to-transparent" />
+          <div className="absolute bottom-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-[#00af9b]/30 to-transparent" />
 
           <div className="flex items-center gap-3">
             {/* Close Button */}
@@ -114,8 +113,8 @@ const NotificationDrawer = ({ isOpen, onClose }) => {
             >
               <X size={18} />
             </button>
-            <div className="w-9 h-9 rounded-xl bg-linear-to-br from-blue-500/20 to-blue-500/5 border border-blue-500/20 flex items-center justify-center">
-              <Bell size={16} className="text-blue-500" />
+            <div className="w-9 h-9 rounded-xl bg-linear-to-br from-[#00af9b]/20 to-[#00af9b]/5 border border-[#00af9b]/20 flex items-center justify-center">
+              <Bell size={16} className="text-[#00af9b]" />
             </div>
             <div>
               <span className="text-white font-bold text-base tracking-tight block leading-tight">
@@ -123,7 +122,7 @@ const NotificationDrawer = ({ isOpen, onClose }) => {
               </span>
               <div className="flex items-center gap-2">
                 {unreadCount > 0 ? (
-                  <span className="text-[10px] text-blue-400 font-medium uppercase tracking-wider">
+                  <span className="text-[10px] text-[#00af9b] font-medium uppercase tracking-wider">
                     {unreadCount} New
                   </span>
                 ) : (
@@ -139,7 +138,7 @@ const NotificationDrawer = ({ isOpen, onClose }) => {
             {unreadCount > 0 && (
               <button
                 onClick={handleMarkAllRead}
-                className="p-2 rounded-lg text-gray-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors"
+                className="p-2 rounded-lg text-gray-400 hover:text-[#00af9b] hover:bg-[#00af9b]/10 transition-colors"
                 title="Mark all as read"
               >
                 <Check size={16} />
@@ -195,14 +194,14 @@ const NotificationDrawer = ({ isOpen, onClose }) => {
                     group relative flex items-start gap-3 p-3 rounded-xl transition-all duration-200 cursor-pointer border
                     ${
                       !notification.is_read
-                        ? "bg-blue-500/5 border-blue-500/20 hover:bg-blue-500/10"
+                        ? "bg-[#00af9b]/5 border-[#00af9b]/20 hover:bg-[#00af9b]/10"
                         : "bg-white/2 border-white/5 hover:bg-white/5 hover:border-white/10"
                     }
                 `}
               >
                 {/* Unread Indicator Dot */}
                 {!notification.is_read && (
-                  <div className="absolute top-3 right-3 w-2 h-2 bg-blue-500 rounded-full shadow-lg shadow-blue-500/50" />
+                  <div className="absolute top-3 right-3 w-2 h-2 bg-[#00af9b] rounded-full shadow-lg shadow-[#00af9b]/50" />
                 )}
 
                 {/* Avatar */}

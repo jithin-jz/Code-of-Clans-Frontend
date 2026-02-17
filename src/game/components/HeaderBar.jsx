@@ -25,7 +25,7 @@ const HeaderBar = ({
         <div className="flex items-center gap-3">
           <div className="flex flex-col">
             <h1 className="text-xs font-bold text-gray-200 uppercase tracking-widest flex items-center gap-2">
-              <span className="w-1 h-1 rounded-none bg-blue-500"></span>
+              <span className="w-1 h-1 rounded-none bg-[#00af9b]"></span>
               {title}
             </h1>
           </div>
@@ -39,8 +39,8 @@ const HeaderBar = ({
           <div
             className={`w-1.5 h-1.5 rounded-none ${
               isPyodideReady
-                ? "bg-emerald-500 shadow-emerald-500/50"
-                : "bg-yellow-500 animate-pulse"
+                ? "bg-[#00af9b] shadow-[#00af9b]/50"
+                : "bg-[#ffa116] animate-pulse"
             }`}
           />
         </div>

@@ -30,7 +30,7 @@ const CertificateVerification = () => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-zinc-950">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-yellow-500 mx-auto"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#ffa116] mx-auto"></div>
           <p className="mt-4 text-zinc-400 font-mono text-sm">Verifying...</p>
         </div>
       </div>
@@ -64,7 +64,7 @@ const CertificateVerification = () => {
           </p>
           <button
             onClick={() => navigate("/")}
-            className="px-6 py-2 bg-yellow-600/10 text-yellow-500 border border-yellow-500/50 rounded hover:bg-yellow-600/20 transition text-sm font-medium"
+            className="px-6 py-2 bg-[#cc8400]/10 text-[#ffa116] border border-[#ffa116]/50 rounded hover:bg-[#cc8400]/20 transition text-sm font-medium"
           >
             Return Home
           </button>
@@ -93,8 +93,8 @@ const CertificateVerification = () => {
     <div className="min-h-screen bg-zinc-950 py-12 px-4 flex flex-col items-center">
       {/* Background Decor */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden opacity-20">
-        <div className="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-yellow-500/20 rounded-full blur-[120px]" />
-        <div className="absolute -bottom-[10%] -right-[10%] w-[40%] h-[40%] bg-yellow-600/10 rounded-full blur-[120px]" />
+        <div className="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-[#ffa116]/20 rounded-full blur-[120px]" />
+        <div className="absolute -bottom-[10%] -right-[10%] w-[40%] h-[40%] bg-[#cc8400]/10 rounded-full blur-[120px]" />
       </div>
 
       <div className="max-w-5xl w-full relative z-10 flex flex-col items-center">

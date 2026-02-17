@@ -66,7 +66,7 @@ const VictoryAnimation = ({ type }) => {
                     vx: Math.cos(angle) * speed,
                     vy: Math.sin(angle) * speed,
                     life: 1.5,
-                    color: i % 2 === 0 ? '#FFD700' : '#FFFFFF',
+                    color: i % 2 === 0 ? '#ffa116' : '#FFFFFF',
                     size: Math.random() * 6 + 2,
                     type: 'levelup'
                 });

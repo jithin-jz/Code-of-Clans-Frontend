@@ -132,12 +132,12 @@ const OAuthCallback = ({ provider }) => {
 
   if (loading || isProcessing) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0a0a0a] bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-900/20 via-[#0a0a0a] to-[#0a0a0a]">
+      <div className="min-h-screen flex items-center justify-center bg-[#0a0a0a] bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1f1f1f]/20 via-[#0a0a0a] to-[#0a0a0a]">
         <div className="flex flex-col items-center gap-6 animate-in fade-in zoom-in duration-500">
           <div className="relative">
-            <div className="absolute inset-0 bg-indigo-500 blur-xl opacity-20 animate-pulse" />
+            <div className="absolute inset-0 bg-[#ff8f00] blur-xl opacity-20 animate-pulse" />
             <div className="w-16 h-16 rounded-2xl bg-[#1a1a1a] border border-white/10 flex items-center justify-center relative z-10">
-              <div className="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+              <div className="w-8 h-8 border-2 border-[#ff8f00] border-t-transparent rounded-full animate-spin" />
             </div>
           </div>
           <div className="text-center space-y-2">
@@ -156,7 +156,7 @@ const OAuthCallback = ({ provider }) => {
       error ||
       `Authentication was cancelled or failed: ${searchParams.get("error")}`;
     return (
-      <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-slate-900 via-purple-900 to-slate-900 px-4">
+      <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-slate-900 via-[#1a1a1a] to-slate-900 px-4">
         <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-12 text-center max-w-md">
           <div className="text-5xl mb-4">❌</div>
           <h2 className="text-white text-2xl font-semibold mb-3">
@@ -172,7 +172,7 @@ const OAuthCallback = ({ provider }) => {
                 navigate("/login");
               }
             }}
-            className="px-8 py-3 bg-linear-to-r from-indigo-500 to-purple-600 text-white rounded-xl font-medium hover:shadow-lg hover:shadow-indigo-500/25 transition-all hover:-translate-y-0.5"
+            className="px-8 py-3 bg-linear-to-r from-[#ff8f00] to-[#ffa116] text-white rounded-xl font-medium hover:shadow-lg hover:shadow-[#ff8f00]/25 transition-all hover:-translate-y-0.5"
           >
             {isPopup ? "Close" : "Try Again"}
           </button>

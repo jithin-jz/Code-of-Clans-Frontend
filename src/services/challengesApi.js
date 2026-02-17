@@ -17,8 +17,9 @@ export const challengesApi = {
         const response = await api.post(`/challenges/${slug}/submit/`, data);
         return response.data;
     },
+    // Backward-compatible alias: backend now handles hint access via purchase_ai_assist.
     unlockHint: async (slug, hintOrder) => {
-        const response = await api.post(`/challenges/${slug}/unlock_hint/`, { hint_order: hintOrder });
+        const response = await api.post(`/challenges/${slug}/purchase_ai_assist/`, { hint_order: hintOrder });
         return response.data;
     },
     purchaseAIHint: async (slug) => {

@@ -158,7 +158,7 @@ const CertificateModal = ({ isOpen, onClose, certificate }) => {
                   </div>
 
                   <div className="flex items-center gap-3 p-3 bg-black/40 rounded-xl border border-white/5 group/link">
-                    <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center border border-blue-500/20 text-blue-400">
+                    <div className="w-8 h-8 rounded-lg bg-[#00af9b]/10 flex items-center justify-center border border-[#00af9b]/20 text-[#00af9b]">
                       <svg
                         className="w-4 h-4"
                         fill="none"
@@ -177,7 +177,7 @@ const CertificateModal = ({ isOpen, onClose, certificate }) => {
                       <p className="text-[10px] uppercase font-bold text-zinc-500 tracking-widest">
                         Verification Link
                       </p>
-                      <p className="text-xs text-blue-400/80 font-mono truncate group-hover/link:text-blue-400 transition-colors">
+                      <p className="text-xs text-[#00af9b]/80 font-mono truncate group-hover/link:text-[#00af9b] transition-colors">
                         {verificationUrl.replace(/^https?:\/\//, "")}
                       </p>
                     </div>

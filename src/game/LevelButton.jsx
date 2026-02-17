@@ -6,15 +6,14 @@ import { Star, Lock, Trophy } from "lucide-react";
 const LevelButton = ({ level, isCurrentLevel, onClick }) => {
   const baseStyle = level.unlocked
     ? {
-        background: "linear-gradient(135deg, #18181b 0%, #09090b 100%)", // Zinc 900 -> 950
-        border: "1.5px solid #fbbf24", // Gold Border
-        boxShadow:
-          "0 4px 12px rgba(0,0,0,0.6), 0 0 15px rgba(251, 191, 36, 0.05)",
+        background: "linear-gradient(160deg, #334155, #2b3542)",
+        border: "1.5px solid #7c8fa8",
+        boxShadow: "0 10px 18px rgba(0, 0, 0, 0.35)",
       }
     : {
-        background: "#09090b", // Zinc 950
-        border: "1px solid #27272a", // Zinc 800
-        boxShadow: "inset 0 2px 4px rgba(0,0,0,0.3)",
+        background: "#27303b",
+        border: "1px solid #394656",
+        boxShadow: "inset 0 1px 2px rgba(0,0,0,0.3)",
       };
 
   const isCertificate = level.order === 54;
@@ -27,7 +26,7 @@ const LevelButton = ({ level, isCurrentLevel, onClick }) => {
       return React.cloneElement(icon, {
         size,
         strokeWidth: 1.5,
-        className: `transition-all duration-300 ${isUnlocked ? "text-white" : "text-zinc-600"}`,
+        className: `transition-all duration-300 ${isUnlocked ? "text-[#e2e8f0]" : "text-slate-500"}`,
       });
     }
     return icon;
@@ -43,14 +42,14 @@ const LevelButton = ({ level, isCurrentLevel, onClick }) => {
     >
       <div
         className={`w-10 h-10 rounded-xl flex items-center justify-center relative transition-all duration-300
-                ${isCurrentLevel ? "ring-2 ring-yellow-400 ring-offset-4 ring-offset-[#09090b] shadow-[0_0_20px_rgba(250,204,21,0.2)]" : ""}
-                ${isCertificate ? "bg-linear-to-br from-yellow-600 to-yellow-900 border-2 border-[#FFD700] shadow-[0_0_20px_rgba(255,215,0,0.3)]" : ""}
+                ${isCurrentLevel ? "ring-2 ring-[#ffa116] ring-offset-4 ring-offset-[#1a1a1a] shadow-[0_0_20px_rgba(255,161,22,0.35)]" : ""}
+                ${isCertificate ? "bg-gradient-to-br from-[#ffb84d] via-[#ffa116] to-[#d97706] border-2 border-[#fef3c7] shadow-[0_0_20px_rgba(255,161,22,0.35)]" : ""}
                 ${!level.unlocked ? "opacity-60 grayscale" : ""}
             `}
         style={!isCertificate ? baseStyle : {}}
       >
         {/* Glass Gloss */}
-        <div className="absolute inset-0 bg-linear-to-br from-white/10 to-transparent rounded-[10px] pointer-events-none" />
+        <div className="absolute inset-0 bg-white/10 rounded-[10px] pointer-events-none" />
 
         <div className="relative z-10 flex items-center justify-center">
           {level.unlocked ? (
@@ -58,7 +57,7 @@ const LevelButton = ({ level, isCurrentLevel, onClick }) => {
               {isCertificate ? (
                 <Trophy
                   size={18}
-                  className="text-yellow-100"
+                  className="text-white"
                   fill="currentColor"
                 />
               ) : (
@@ -68,9 +67,9 @@ const LevelButton = ({ level, isCurrentLevel, onClick }) => {
           ) : (
             <div className="opacity-40">
               {isCertificate ? (
-                <Trophy size={16} className="text-zinc-500" />
+                <Trophy size={16} className="text-slate-500" />
               ) : (
-                <Lock size={14} className="text-zinc-500" />
+                <Lock size={14} className="text-slate-500" />
               )}
             </div>
           )}
@@ -78,13 +77,13 @@ const LevelButton = ({ level, isCurrentLevel, onClick }) => {
 
         {/* Stars (Small Overlay) */}
         {level.unlocked && !isCertificate && (
-          <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 flex gap-0.5 bg-zinc-900/90 rounded-full px-1.5 py-0.5 backdrop-blur-md border border-white/10 shadow-lg transform scale-90 z-20">
+          <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 flex gap-0.5 bg-[#262626] rounded-full px-1.5 py-0.5 backdrop-blur-md border border-[#3a3a3a] shadow-lg transform scale-90 z-20">
             {[1, 2, 3].map((star) => (
               <Star
                 key={star}
                 size={10}
                 strokeWidth={2.5}
-                className={`${star <= (level.stars || 0) ? "text-yellow-400 fill-yellow-400" : "text-zinc-800 fill-zinc-900"}`}
+                className={`${star <= (level.stars || 0) ? "text-[#ffb84d] fill-[#ffb84d]" : "text-slate-300 fill-slate-300"}`}
               />
             ))}
           </div>
@@ -96,10 +95,10 @@ const LevelButton = ({ level, isCurrentLevel, onClick }) => {
         <p
           className={`text-[11px] font-bold tracking-wider ${
             isCertificate
-              ? "text-[#FFD700] drop-shadow-[0_0_8px_rgba(255,215,0,0.5)]"
+              ? "text-[#ffa116]"
               : level.unlocked
-                ? "text-zinc-100 shadow-sm"
-                : "text-zinc-500/80"
+                ? "text-white shadow-sm"
+                : "text-slate-400"
           }`}
         >
           {isCertificate ? "BADGE" : `L${level.order || level.id}`}

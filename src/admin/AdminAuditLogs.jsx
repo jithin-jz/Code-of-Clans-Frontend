@@ -185,7 +185,7 @@ const AdminAuditLogs = () => {
         </Table>
       </div>
       <div className="flex items-center gap-2 px-1">
-        <div className="w-1 h-1 rounded-full bg-emerald-500/30" />
+        <div className="w-1 h-1 rounded-full bg-[#00af9b]/30" />
         <p className="text-[9px] text-zinc-600 font-medium uppercase tracking-wider">
           Audit records are immutable.
         </p>

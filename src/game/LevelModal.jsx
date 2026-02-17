@@ -43,7 +43,7 @@ const LevelModal = ({ selectedLevel, onClose }) => {
                                 key={star} 
                                 className={cn(
                                     "transition-all duration-300", 
-                                    star <= selectedLevel.stars ? "text-yellow-400 fill-yellow-400" : "text-gray-700 fill-gray-900"
+                                    star <= selectedLevel.stars ? "text-[#ffa116] fill-[#ffa116]" : "text-gray-700 fill-gray-900"
                                 )}
                             >
                                 <Star size={24} className="fill-current" />

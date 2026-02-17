@@ -41,11 +41,11 @@ const ReferralSection = () => {
 
   return (
     <div className="bg-[#1a1c23] border border-white/5 rounded-2xl p-6 relative overflow-hidden group">
-      <div className="absolute inset-0 bg-linear-to-br from-[#FFD700]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+      <div className="absolute inset-0 bg-linear-to-br from-[#ffa116]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
       
       <div className="relative">
         <h2 className="text-xl font-bold flex items-center gap-2 mb-6 text-white">
-          <Gift className="w-5 h-5 text-[#FFD700]" />
+          <Gift className="w-5 h-5 text-[#ffa116]" />
           Referral Program
         </h2>
 
@@ -53,8 +53,8 @@ const ReferralSection = () => {
           {/* Your Code Section */}
           <div className="space-y-3">
             <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest">Your Code</h3>
-            <div className="bg-black/40 rounded-xl p-3 border border-white/10 flex items-center justify-between group/code hover:border-[#FFD700]/50 transition-colors">
-              <code className="text-lg font-mono font-bold text-[#FFD700] tracking-widest">
+            <div className="bg-black/40 rounded-xl p-3 border border-white/10 flex items-center justify-between group/code hover:border-[#ffa116]/50 transition-colors">
+              <code className="text-lg font-mono font-bold text-[#ffa116] tracking-widest">
                 {user.profile.referral_code || '...'}
               </code>
               <button
@@ -87,13 +87,13 @@ const ReferralSection = () => {
                     value={referralCode}
                     onChange={(e) => setReferralCode(e.target.value)}
                     placeholder="Enter code"
-                    className="flex-1 bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-[#FFD700]/50 transition-colors font-mono"
+                    className="flex-1 bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-[#ffa116]/50 transition-colors font-mono"
                     maxLength={12}
                   />
                   <button
                     type="submit"
                     disabled={isSubmitting || !referralCode.trim()}
-                    className="bg-[#FFD700] text-black font-bold px-4 py-2 rounded-xl hover:bg-[#FFD700]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-95 text-sm"
+                    className="bg-[#ffa116] text-black font-bold px-4 py-2 rounded-xl hover:bg-[#ffa116]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-95 text-sm"
                   >
                     Go
                   </button>
@@ -110,7 +110,7 @@ const ReferralSection = () => {
             
             {!user.profile.is_referred && (
               <p className="text-xs text-gray-600">
-                Get <span className="text-[#FFD700]">100 XP</span> instant bonus.
+                Get <span className="text-[#ffa116]">100 XP</span> instant bonus.
               </p>
             )}
           </div>

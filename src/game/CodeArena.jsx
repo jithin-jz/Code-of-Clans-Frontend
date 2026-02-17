@@ -27,6 +27,7 @@ const CodeArena = () => {
   const { user } = useAuthStore();
   const [isPyodideReady, setPyodideReady] = useState(false);
   const editorRef = useRef(null);
+  const monacoRef = useRef(null);
 
   // Initial code template
   const [code, setCode] = useState("");
@@ -254,7 +255,6 @@ const CodeArena = () => {
 
     if (type === "ready") {
       setPyodideReady(true);
-      console.log("Pyodide Worker Ready");
     } else if (type === "log") {
       setOutput((prev) => [...prev, { type: "log", content }]);
     } else if (type === "error") {
@@ -263,11 +263,9 @@ const CodeArena = () => {
       setOutput((prev) => [...prev, { type: "success", content }]);
     } else if (type === "completed") {
       setIsRunning(false);
-      console.log("Execution Completed:", { passed });
       if (passed) {
         try {
           const currentId = idRef.current;
-          console.log("Submitting completion for slug:", currentId);
           const { challengesApi } = await import("../services/challengesApi");
           const result = await challengesApi.submit(currentId, {
             passed: true,
@@ -334,9 +332,63 @@ const CodeArena = () => {
     };
   }, [initWorker]);
 
+  const applyEditorPreferences = useCallback(() => {
+    if (!editorRef.current || !monacoRef.current) return;
+
+    const editor = editorRef.current;
+    const monaco = monacoRef.current;
+
+    const themeNameMap = {
+      solarized_dark: "solarized-dark",
+    };
+
+    const activeTheme = user?.profile?.active_theme;
+    const validThemes = [
+      "dracula",
+      "nord",
+      "monokai",
+      "solarized_dark",
+      "solarized-dark",
+      "cyberpunk",
+    ];
+
+    if (activeTheme && validThemes.includes(activeTheme)) {
+      const monacoThemeName = themeNameMap[activeTheme] || activeTheme;
+      monaco.editor.setTheme(monacoThemeName);
+    } else {
+      monaco.editor.setTheme("vs-dark");
+    }
+
+    const fontAliasMap = {
+      // Store item name may differ from actual webfont family.
+      "Comic Code": "Comic Neue",
+    };
+
+    const selectedFont = user?.profile?.active_font || "Fira Code";
+    const resolvedFont = fontAliasMap[selectedFont] || selectedFont;
+    const fontFamily = resolvedFont
+      ? `"${resolvedFont}", 'Fira Code', 'JetBrains Mono', Consolas, monospace`
+      : "'Fira Code', 'JetBrains Mono', Consolas, monospace";
+
+    const applyFont = () => {
+      editor.updateOptions({ fontFamily });
+      // Ensure Monaco recalculates glyph metrics when font changes dynamically.
+      monaco.editor.remeasureFonts();
+      editor.layout();
+    };
+
+    // Wait for the selected font to be available before applying.
+    if (document.fonts?.load && resolvedFont) {
+      document.fonts.load(`14px "${resolvedFont}"`).finally(applyFont);
+    } else {
+      applyFont();
+    }
+  }, [user?.profile?.active_theme, user?.profile?.active_font]);
+
   const handleEditorDidMount = useCallback(
     (editor, monaco) => {
       editorRef.current = editor;
+      monacoRef.current = monaco;
 
       // --- THEME DEFINITIONS ---
 
@@ -456,47 +508,19 @@ const CodeArena = () => {
         }
       });
 
-      // Apply active theme after defining it
-      // Map backend theme names (may have underscores) to Monaco-compatible names (hyphens only)
-      const themeNameMap = {
-        solarized_dark: "solarized-dark",
-      };
-      const activeTheme = user?.profile?.active_theme;
-      const validThemes = [
-        "dracula",
-        "nord",
-        "monokai",
-        "solarized_dark",
-        "solarized-dark",
-        "cyberpunk",
-      ];
-      if (activeTheme && validThemes.includes(activeTheme)) {
-        const monacoThemeName = themeNameMap[activeTheme] || activeTheme;
-        monaco.editor.setTheme(monacoThemeName);
-      }
-
-      // Apply active font
-      if (user?.profile?.active_font) {
-        editor.updateOptions({
-          fontFamily: `"${user.profile.active_font}", Consolas, "Courier New", monospace`,
-        });
-      }
+      // Apply profile theme/font immediately on mount.
+      applyEditorPreferences();
     },
     [
       user?.profile?.active_effect,
-      user?.profile?.active_theme,
-      user?.profile?.active_font,
+      applyEditorPreferences,
     ],
   );
 
-  // Apply Active Theme Reactively
+  // Apply active theme/font reactively when profile settings change.
   useEffect(() => {
-    if (editorRef.current && user?.profile?.active_theme) {
-      // Need to set theme via monaco instance or simple editor prop?
-      // Since we passed the theme prop in EditorPane, it should update automatically.
-      // But let's double check if we need to force it.
-    }
-  }, [user?.profile?.active_theme]);
+    applyEditorPreferences();
+  }, [applyEditorPreferences]);
 
   const runCode = useCallback(() => {
     if (!workerRef.current || isRunning) return;
@@ -556,7 +580,7 @@ const CodeArena = () => {
                 {[1, 2, 3].map((star) => (
                   <div
                     key={star}
-                    className={`w-6 h-6 flex items-center justify-center ${star <= completionData.stars ? "text-yellow-500" : "text-gray-800"}`}
+                    className={`w-6 h-6 flex items-center justify-center ${star <= completionData.stars ? "text-[#ffa116]" : "text-gray-800"}`}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -572,7 +596,7 @@ const CodeArena = () => {
               </div>
 
               {completionData.xp_earned > 0 && (
-                <div className="text-yellow-500 text-sm font-mono tracking-tighter">
+                <div className="text-[#ffa116] text-sm font-mono tracking-tighter">
                   +{completionData.xp_earned} XP EARNED
                 </div>
               )}
@@ -637,6 +661,11 @@ const CodeArena = () => {
                 user={user}
                 handleEditorDidMount={handleEditorDidMount}
                 loading={!challenge}
+                editorFontFamily={
+                  user?.profile?.active_font
+                    ? `"${user.profile.active_font}", 'Fira Code', 'JetBrains Mono', Consolas, monospace`
+                    : "'Fira Code', 'JetBrains Mono', Consolas, monospace"
+                }
               />
             </div>
           </div>
