@@ -75,6 +75,21 @@ const AdminAuditLogs = () => {
     }
   };
 
+  const renderDetails = (details) => {
+    if (!details) return "-";
+    if (typeof details === "string") return details;
+
+    if (details.before || details.after) {
+      const beforeState = details.before?.is_active;
+      const afterState = details.after?.is_active;
+      if (typeof beforeState === "boolean" && typeof afterState === "boolean") {
+        return `is_active: ${beforeState} -> ${afterState}`;
+      }
+    }
+
+    return JSON.stringify(details);
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -138,7 +153,10 @@ const AdminAuditLogs = () => {
             ) : (
               logs.map((log, idx) => (
                 <TableRow
-                  key={idx}
+                  key={
+                    log.request_id ||
+                    `${log.timestamp}-${log.admin}-${log.action}-${log.target}-${idx}`
+                  }
                   className="border-zinc-800 hover:bg-zinc-900/40 transition-colors group"
                 >
                   <TableCell className="py-3 px-6">
@@ -160,8 +178,8 @@ const AdminAuditLogs = () => {
                       {log.target}
                     </div>
                   </TableCell>
-                  <TableCell className="py-3 text-[10px] font-mono text-zinc-500 group-hover:text-zinc-400 Transition-all truncate max-w-xs">
-                    {JSON.stringify(log.details)}
+                  <TableCell className="py-3 text-[10px] font-mono text-zinc-500 group-hover:text-zinc-400 transition-all truncate max-w-xs">
+                    {renderDetails(log.details)}
                   </TableCell>
                   <TableCell className="text-right py-3 px-6">
                     <div className="flex flex-col items-end">
