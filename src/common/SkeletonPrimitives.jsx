@@ -1,6 +1,6 @@
 import { cn } from "../lib/utils";
 
-export const Shimmer = () => (
+const Shimmer = () => (
   <div className="absolute inset-0 -translate-x-full animate-[shimmer_1.8s_infinite] bg-linear-to-r from-transparent via-white/10 to-transparent" />
 );
 
@@ -19,20 +19,20 @@ export const SkeletonBase = ({ className, children, ...props }) => {
   );
 };
 
-export const SkeletonCircle = ({ className, ...props }) => (
+const SkeletonCircle = ({ className, ...props }) => (
   <SkeletonBase className={cn("rounded-full", className)} {...props} />
 );
 
-export const SkeletonText = ({ className, ...props }) => (
+const SkeletonText = ({ className, ...props }) => (
   <SkeletonBase className={cn("h-4 w-full", className)} {...props} />
 );
 
-export const SkeletonButton = ({ className, ...props }) => (
+const SkeletonButton = ({ className, ...props }) => (
   <SkeletonBase className={cn("h-10 w-24 rounded-lg", className)} {...props} />
 );
 
 // New: Avatar skeleton with size variants
-export const SkeletonAvatar = ({ size = "md", className, ...props }) => {
+const SkeletonAvatar = ({ size = "md", className, ...props }) => {
   const sizes = {
     sm: "w-8 h-8",
     md: "w-12 h-12",
@@ -43,7 +43,7 @@ export const SkeletonAvatar = ({ size = "md", className, ...props }) => {
 };
 
 // New: Card skeleton for content sections
-export const SkeletonCard = ({ className, children, ...props }) => (
+const SkeletonCard = ({ className, children, ...props }) => (
   <SkeletonBase
     className={cn("p-4 rounded-2xl bg-white/5", className)}
     {...props}
@@ -86,7 +86,7 @@ export const SkeletonCode = ({ lines = 12, className, ...props }) => {
 };
 
 // New: Tab bar skeleton
-export const SkeletonTabs = ({ count = 3, className, ...props }) => (
+const SkeletonTabs = ({ count = 3, className, ...props }) => (
   <div
     className={cn("flex border-b border-white/5 bg-black/20", className)}
     {...props}
@@ -98,7 +98,7 @@ export const SkeletonTabs = ({ count = 3, className, ...props }) => (
 );
 
 // New: Stats card skeleton
-export const SkeletonStats = ({ className, ...props }) => (
+const SkeletonStats = ({ className, ...props }) => (
   <SkeletonCard className={cn("flex flex-col gap-3", className)} {...props}>
     <div className="h-3 w-20 bg-white/10 rounded" />
     <div className="h-8 w-16 bg-white/10 rounded" />

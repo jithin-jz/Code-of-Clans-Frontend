@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { motion } from "framer-motion";
+import { motion as Motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { ArrowRight, Crown, Lock } from "lucide-react";
 import LevelButton from "../../game/LevelButton";
@@ -74,7 +74,7 @@ const ChallengeMap = ({ levels, handleLevelClick, user }) => {
       {/* LOCKED OVERLAY */}
       {!user && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-6 text-center">
-          <motion.div
+          <Motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             className="max-w-lg"
@@ -103,7 +103,7 @@ const ChallengeMap = ({ levels, handleLevelClick, user }) => {
             >
               Continue
             </button>
-          </motion.div>
+          </Motion.div>
         </div>
       )}
 

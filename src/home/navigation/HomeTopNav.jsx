@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Star, User, LogOut, Calendar, Trophy, Bell, Play, ShoppingBag, MessageSquare } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion as Motion, AnimatePresence } from "framer-motion";
 import useNotificationStore from "../../stores/useNotificationStore";
 
 const NavAction = ({
@@ -87,7 +87,7 @@ const HomeTopNav = ({
 
   return (
     <div className="fixed top-0 left-0 right-0 z-50 pointer-events-none">
-      <motion.nav
+      <Motion.nav
         initial={{ y: -10, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         className="pointer-events-auto h-16 w-full border-b border-white/10 bg-[#0a1220]/82 backdrop-blur-xl shadow-[0_8px_30px_rgba(0,0,0,0.35)] px-3 sm:px-6 lg:px-8 grid grid-cols-[1fr_auto_1fr] items-center gap-2"
@@ -201,7 +201,7 @@ const HomeTopNav = ({
             title="Alerts"
             label="Alerts"
             icon={
-              <motion.div
+              <Motion.div
                 animate={
                   hasNewNotification
                     ? { rotate: [0, -10, 10, -10, 10, 0], scale: [1, 1.1, 1] }
@@ -213,13 +213,13 @@ const HomeTopNav = ({
                   size={15}
                   className={unreadCount > 0 ? "text-[#f59e0b]" : "text-slate-300"}
                 />
-              </motion.div>
+              </Motion.div>
             }
             className={unreadCount > 0 ? "border-[#f59e0b]/50" : ""}
             badge={
               unreadCount > 0 ? (
                 <AnimatePresence>
-                  <motion.span
+                  <Motion.span
                     initial={{ scale: 0, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     exit={{ scale: 0, opacity: 0 }}
@@ -259,7 +259,7 @@ const HomeTopNav = ({
             className="border-[#ef4444]/70 bg-[#ef4444] hover:bg-[#dc2626] hover:border-[#ef4444]"
           />
         </div>
-      </motion.nav>
+      </Motion.nav>
     </div>
   );
 };

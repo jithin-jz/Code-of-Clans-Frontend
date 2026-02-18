@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Trophy, Crown, Medal, Users, X, Zap } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion as Motion } from "framer-motion";
 import { SkeletonBase } from "../../common/SkeletonPrimitives";
 import api from "../../services/api";
 import useAuthStore from "../../stores/useAuthStore";
@@ -45,7 +45,7 @@ const LeaderboardDrawer = ({ isLeaderboardOpen, setLeaderboardOpen }) => {
   };
 
   return (
-    <motion.div
+    <Motion.div
       className="fixed top-16 right-0 h-[calc(100vh-64px)] z-50 w-full sm:w-[390px]"
       initial={{ x: "100%" }}
       animate={{ x: isLeaderboardOpen ? 0 : "100%" }}
@@ -223,7 +223,7 @@ const LeaderboardDrawer = ({ isLeaderboardOpen, setLeaderboardOpen }) => {
         </div>
 
       </div>
-    </motion.div>
+    </Motion.div>
   );
 };
 

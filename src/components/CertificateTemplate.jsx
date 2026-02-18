@@ -16,8 +16,6 @@ const CertificateTemplate = forwardRef(
     },
     ref,
   ) => {
-    // Scales for preview mode vs full render
-    const scaleClass = isPreview ? "scale-[0.4] origin-top" : "scale-100";
     const containerClass = isPreview
       ? "w-[1000px] h-[707px]"
       : "w-[1000px] h-[707px]"; // A4 Landscape ratio-ish

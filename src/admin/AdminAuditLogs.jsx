@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   Table,
   TableBody,
@@ -53,22 +53,11 @@ const AdminAuditLogs = () => {
     total_pages: 1,
   });
   const requestRef = useRef(0);
+  const queryRef = useRef(query);
 
-  useEffect(() => {
-    fetchLogs();
-  }, []);
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      if (searchValue !== query.search) {
-        fetchLogs({ search: searchValue, page: 1 });
-      }
-    }, 350);
-    return () => clearTimeout(timeout);
-  }, [searchValue, query.search]);
-
-  const fetchLogs = async (overrides = {}) => {
-    const nextQuery = { ...query, ...overrides };
+  const fetchLogs = useCallback(async (overrides = {}) => {
+    const nextQuery = { ...queryRef.current, ...overrides };
+    queryRef.current = nextQuery;
     setQuery(nextQuery);
     setLoading(true);
     const requestId = ++requestRef.current;
@@ -101,7 +90,24 @@ const AdminAuditLogs = () => {
         setLoading(false);
       }
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    queryRef.current = query;
+  }, [query]);
+
+  useEffect(() => {
+    fetchLogs();
+  }, [fetchLogs]);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (searchValue !== query.search) {
+        fetchLogs({ search: searchValue, page: 1 });
+      }
+    }, 350);
+    return () => clearTimeout(timeout);
+  }, [searchValue, query.search, fetchLogs]);
 
   const getActionBadge = (action) => {
     switch (action) {

@@ -62,6 +62,3 @@ export const requestForToken = async () => {
 
 
 export const onMessageListener = (callback) => onMessage(messaging, callback);
-
-
-export default messaging;

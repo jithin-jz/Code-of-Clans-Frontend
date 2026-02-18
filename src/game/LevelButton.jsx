@@ -1,5 +1,5 @@
 import React from "react";
-import { motion } from "framer-motion";
+import { motion as Motion } from "framer-motion";
 import { ArrowRight, CheckCircle2, Lock, Star, Trophy } from "lucide-react";
 import { getDifficultyMeta } from "../utils/challengeMeta";
 
@@ -14,7 +14,7 @@ const LevelButton = ({ level, isCurrentLevel, onClick, motionIndex = 0 }) => {
       : "border-[#243042] bg-[#0f1521]/70";
 
   return (
-    <motion.button
+    <Motion.button
       onClick={onClick}
       disabled={!level.unlocked}
       className={`w-full text-left rounded-xl border p-3 sm:p-3.5 min-h-[160px] transition-all duration-200 ${statusTone} ${
@@ -139,7 +139,7 @@ const LevelButton = ({ level, isCurrentLevel, onClick, motionIndex = 0 }) => {
           {level.unlock_message || "Unlock after completing all levels"}
         </p>
       )}
-    </motion.button>
+    </Motion.button>
   );
 };
 

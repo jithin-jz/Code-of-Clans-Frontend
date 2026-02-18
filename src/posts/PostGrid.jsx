@@ -5,9 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
 import { Button } from "../components/ui/button";
 import {
   Heart,
-  MessageCircle,
   MoreHorizontal,
-  Send,
   Share2,
 } from "lucide-react";
 import { notify } from "../services/notification";
@@ -33,6 +31,18 @@ const PostGrid = ({ username, refreshTrigger }) => {
   const [searchParams, setSearchParams] = useSearchParams(); // URL params
 
   useEffect(() => {
+    const fetchPosts = async () => {
+      setLoading(true);
+      try {
+        const response = await postsAPI.getUserPosts(username);
+        setPosts(response.data);
+      } catch (error) {
+        console.error("Failed to fetch posts", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchPosts();
   }, [username, refreshTrigger]);
 
@@ -63,18 +73,6 @@ const PostGrid = ({ username, refreshTrigger }) => {
       setEditCaption("");
     }
   }, [selectedPost, searchParams, setSearchParams]);
-
-  const fetchPosts = async () => {
-    setLoading(true);
-    try {
-      const response = await postsAPI.getUserPosts(username);
-      setPosts(response.data);
-    } catch (error) {
-      console.error("Failed to fetch posts", error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleShareToChat = () => {
     if (!selectedPost) return;
@@ -108,7 +106,7 @@ const PostGrid = ({ username, refreshTrigger }) => {
 
     try {
       await postsAPI.toggleLike(post.id);
-    } catch (error) {
+    } catch {
       // Revert on error
       setPosts((prev) => prev.map((p) => (p.id === post.id ? post : p)));
       if (selectedPost && selectedPost.id === post.id) setSelectedPost(post);

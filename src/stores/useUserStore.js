@@ -137,7 +137,7 @@ const useUserStore = create((set, get) => ({
     try {
       const response = await authAPI.getUserProfile(username);
       set({ viewedProfile: response.data, loading: false });
-    } catch (error) {
+    } catch {
       set({ loading: false, error: "User not found" });
     }
   },

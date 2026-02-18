@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion as Motion } from "framer-motion";
 import { toast } from "sonner";
 import useAuthStore from "../stores/useAuthStore";
 import useChallengesStore from "../stores/useChallengesStore";
@@ -243,7 +243,7 @@ const Home = () => {
     <div className="h-screen relative select-none overflow-hidden text-white bg-[#0b1119]">
       <AnimatePresence mode="wait">
         {isLoading ? (
-          <motion.div
+          <Motion.div
             key="skeleton"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -252,9 +252,9 @@ const Home = () => {
             className="absolute inset-0 z-50"
           >
             <HomeSkeleton />
-          </motion.div>
+          </Motion.div>
         ) : (
-          <motion.div
+          <Motion.div
             key="content"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -329,7 +329,7 @@ const Home = () => {
               certificate={userCertificate}
               isLoading={isCertificateLoading}
             />
-          </motion.div>
+          </Motion.div>
         )}
       </AnimatePresence>
     </div>

@@ -98,6 +98,7 @@ const AdminDashboard = () => {
     verifyAdmin();
   }, [checkAuth]);
 
+  /* eslint-disable react-hooks/exhaustive-deps */
   useEffect(() => {
     if (!loading) {
       if (!isAuthenticated) {
@@ -111,6 +112,7 @@ const AdminDashboard = () => {
       }
     }
   }, [loading, isAuthenticated, user, navigate]);
+  /* eslint-enable react-hooks/exhaustive-deps */
 
   const fetchUsers = async (queryOverrides = {}) => {
     const query = { ...userFilters, ...queryOverrides };

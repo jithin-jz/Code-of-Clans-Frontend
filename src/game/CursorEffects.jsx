@@ -18,47 +18,6 @@ const CursorEffects = ({ effectType }) => {
         resize();
         window.addEventListener('resize', resize);
 
-        const createParticle = (x, y) => {
-            if (effect_key === 'sparkle') {
-                for (let i = 0; i < 3; i++) {
-                    particles.current.push({
-                        x, y,
-                        vx: (Math.random() - 0.5) * 2,
-                        vy: (Math.random() - 0.5) * 2,
-                        life: 1.0,
-                        color: `hsl(50, 100%, ${70 + Math.random() * 30}%)`, // Gold/Yellow sparkle
-                        size: Math.random() * 3 + 1,
-                        type: 'sparkle'
-                    });
-                }
-            } else if (effect_key === 'rainbow') {
-                for (let i = 0; i < 2; i++) {
-                    particles.current.push({
-                        x, y,
-                        vx: (Math.random() - 0.5) * 3,
-                        vy: (Math.random() - 0.5) * 3,
-                        life: 1.0,
-                        color: `hsl(${Math.random() * 360}, 100%, 50%)`,
-                        size: Math.random() * 4 + 2,
-                        type: 'rainbow'
-                    });
-                }
-            } else if (effect_key === 'matrix') {
-                if (Math.random() < 0.3) {
-                    particles.current.push({
-                        x, y,
-                        vx: 0,
-                        vy: Math.random() * 2 + 1,
-                        life: 1.0,
-                        color: '#00ff41', // Matrix Green
-                        size: 10,
-                        char: String.fromCharCode(0x30A0 + Math.random() * 96),
-                        type: 'matrix'
-                    });
-                }
-            }
-        };
-
         // Loop
         const render = () => {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -143,6 +102,10 @@ const CursorEffects = ({ effectType }) => {
                     type: 'matrix'
                 });
             }
+        };
+
+        return () => {
+            delete window.spawnCursorEffect;
         };
     }, [effectType]);
 

@@ -30,4 +30,3 @@ export const notify = {
     promise: (promise, messages, options = {}) => toast.promise(promise, messages, options),
     custom: (jsx, options = {}) => toast.custom(jsx, options),
 };
-export { default as NotificationContainer } from './NotificationContainer';

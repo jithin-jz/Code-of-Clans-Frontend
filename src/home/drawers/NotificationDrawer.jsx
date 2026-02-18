@@ -10,7 +10,7 @@ import {
   UserPlus,
   Gift,
 } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion as Motion } from "framer-motion";
 import { formatDistanceToNow } from "date-fns";
 import { SkeletonBase } from "../../common/SkeletonPrimitives";
 import useNotificationStore from "../../stores/useNotificationStore";
@@ -88,7 +88,7 @@ const NotificationDrawer = ({ isOpen, onClose }) => {
   };
 
   return (
-    <motion.div
+    <Motion.div
       className="fixed top-16 right-0 h-[calc(100vh-64px)] z-50 w-full sm:w-[390px]"
       initial={{ x: "100%" }}
       animate={{ x: isOpen ? 0 : "100%" }}
@@ -258,7 +258,7 @@ const NotificationDrawer = ({ isOpen, onClose }) => {
           )}
         </div>
       </div>
-    </motion.div>
+    </Motion.div>
   );
 };
 

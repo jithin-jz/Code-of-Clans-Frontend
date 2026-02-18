@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState, useCallback } from "react";
 import useChatStore from "../../stores/useChatStore";
 import useAuthStore from "../../stores/useAuthStore";
 import { MessageSquare, Users } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion as Motion } from "framer-motion";
 
 // Subcomponents
 import ChatInput from "../components/ChatInput";
@@ -98,7 +98,7 @@ const ChatDrawer = ({ isChatOpen, setChatOpen, user }) => {
   );
 
   return (
-    <motion.div
+    <Motion.div
       className="fixed top-16 left-0 h-[calc(100vh-64px)] z-40 w-full sm:w-[390px]"
       initial={{ x: "-100%" }}
       animate={{ x: isChatOpen ? 0 : "-100%" }}
@@ -171,7 +171,7 @@ const ChatDrawer = ({ isChatOpen, setChatOpen, user }) => {
         />
       </div>
 
-    </motion.div>
+    </Motion.div>
   );
 };
 

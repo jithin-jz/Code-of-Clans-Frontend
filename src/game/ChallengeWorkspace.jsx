@@ -4,7 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 
 import useAuthStore from "../stores/useAuthStore";
-import { motion } from "framer-motion";
+import { motion as Motion } from "framer-motion";
 import CursorEffects from "./CursorEffects";
 import VictoryAnimation from "./VictoryAnimation";
 import ChallengeWorkspaceSkeleton from "./ChallengeWorkspaceSkeleton";
@@ -615,7 +615,7 @@ const ChallengeWorkspace = () => {
       {completionData && (
         <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-4">
           <VictoryAnimation type={user?.profile?.active_victory} />
-          <motion.div
+          <Motion.div
             initial={{ scale: 0.98, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             className="bg-[#0c0c0e] border border-white/10 rounded-none p-8 max-w-sm w-full flex flex-col items-center text-center shadow-2xl"
@@ -685,7 +685,7 @@ const ChallengeWorkspace = () => {
                 </button>
               </div>
             </div>
-          </motion.div>
+          </Motion.div>
         </div>
       )}
 
