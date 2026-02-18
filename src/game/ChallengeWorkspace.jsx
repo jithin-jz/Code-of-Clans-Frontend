@@ -111,7 +111,7 @@ const ChallengeWorkspace = () => {
             hint_level: data.hints_purchased,
           });
           setHint(hintData.hint);
-          setHintLevel(data.hints_purchased + 1);
+          setHintLevel(Math.min(data.hints_purchased + 1, 3));
           setOutput((prev) => [
             ...prev,
             {

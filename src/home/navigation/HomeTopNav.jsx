@@ -191,7 +191,7 @@ const HomeTopNav = ({
                     initial={{ scale: 0, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     exit={{ scale: 0, opacity: 0 }}
-                    className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-[#f59e0b]"
+                    className="pointer-events-none absolute top-1 right-1 z-10 h-2.5 w-2.5 rounded-full bg-[#f59e0b] ring-2 ring-[#0a1220]"
                   />
                 </AnimatePresence>
               ) : null
@@ -205,7 +205,7 @@ const HomeTopNav = ({
             icon={<Calendar size={15} className="text-emerald-300" />}
             badge={
               hasUnclaimedReward ? (
-                <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-[#f59e0b] animate-pulse" />
+                <span className="pointer-events-none absolute top-1 right-1 z-10 h-2.5 w-2.5 rounded-full bg-[#f59e0b] ring-2 ring-[#0a1220] animate-pulse" />
               ) : null
             }
           />

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
+import { toast } from "sonner";
 import useAuthStore from "../stores/useAuthStore";
 import useChallengesStore from "../stores/useChallengesStore";
 
@@ -42,6 +43,7 @@ const Home = () => {
   const [hasUnclaimedReward, setHasUnclaimedReward] = useState(false);
   const [certificateModalOpen, setCertificateModalOpen] = useState(false);
   const [userCertificate, setUserCertificate] = useState(null);
+  const [isCertificateLoading, setIsCertificateLoading] = useState(false);
 
   // Check for daily reward status on mount
   useEffect(() => {
@@ -207,7 +209,26 @@ const Home = () => {
 
     if (level.unlocked) {
       if (level.order === 54) {
-        setCertificateModalOpen(true);
+        if (userCertificate) {
+          setCertificateModalOpen(true);
+          return;
+        }
+
+        setIsCertificateLoading(true);
+        try {
+          const certData = await challengesApi.getMyCertificate();
+          if (certData) {
+            setUserCertificate(certData);
+            setCertificateModalOpen(true);
+          } else {
+            toast.error("Certificate not available yet.");
+          }
+        } catch (error) {
+          console.error("Failed to load certificate:", error);
+          toast.error("Failed to load certificate.");
+        } finally {
+          setIsCertificateLoading(false);
+        }
       } else {
         setSelectedLevel(level);
       }
@@ -302,6 +323,7 @@ const Home = () => {
               isOpen={certificateModalOpen}
               onClose={() => setCertificateModalOpen(false)}
               certificate={userCertificate}
+              isLoading={isCertificateLoading}
             />
           </motion.div>
         )}

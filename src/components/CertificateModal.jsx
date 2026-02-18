@@ -4,7 +4,7 @@ import * as htmlToImage from "html-to-image";
 import { toast } from "sonner";
 import CertificateTemplate from "./CertificateTemplate";
 
-const CertificateModal = ({ isOpen, onClose, certificate }) => {
+const CertificateModal = ({ isOpen, onClose, certificate, isLoading = false }) => {
   const [downloading, setDownloading] = useState(false);
   const downloadRef = useRef(null);
 
@@ -34,7 +34,67 @@ const CertificateModal = ({ isOpen, onClose, certificate }) => {
     }
   };
 
-  if (!certificate) return null;
+  if (!isOpen) return null;
+
+  if (isLoading) {
+    return (
+      <AnimatePresence>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+          onClick={onClose}
+        >
+          <motion.div
+            initial={{ scale: 0.95, opacity: 0, y: 20 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.95, opacity: 0, y: 20 }}
+            transition={{ type: "spring", damping: 25, stiffness: 300 }}
+            className="bg-[#09090b] text-zinc-200 rounded-2xl max-w-[420px] w-full shadow-2xl border border-white/10 p-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <p className="text-sm text-zinc-300">Loading certificate...</p>
+          </motion.div>
+        </motion.div>
+      </AnimatePresence>
+    );
+  }
+
+  if (!certificate) {
+    return (
+      <AnimatePresence>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+          onClick={onClose}
+        >
+          <motion.div
+            initial={{ scale: 0.95, opacity: 0, y: 20 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.95, opacity: 0, y: 20 }}
+            transition={{ type: "spring", damping: 25, stiffness: 300 }}
+            className="bg-[#09090b] text-zinc-200 rounded-2xl max-w-[420px] w-full shadow-2xl border border-white/10 p-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <p className="text-sm text-zinc-300">
+              Certificate is not available yet. Complete all required challenges first.
+            </p>
+            <div className="mt-4 flex justify-end">
+              <button
+                onClick={onClose}
+                className="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/15 text-sm font-medium"
+              >
+                Close
+              </button>
+            </div>
+          </motion.div>
+        </motion.div>
+      </AnimatePresence>
+    );
+  }
 
   // Map Data
   const studentName = certificate.username || "Student";
