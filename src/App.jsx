@@ -37,7 +37,7 @@ import useNotificationStore from "./stores/useNotificationStore";
 // Auth initializer component
 const AuthInitializer = ({ children }) => {
   const { checkAuth, user } = useAuthStore();
-  const { initFCM } = useNotificationStore();
+  const { initNotifications } = useNotificationStore();
   const authInitRef = useRef(false);
 
   useEffect(() => {
@@ -48,9 +48,9 @@ const AuthInitializer = ({ children }) => {
 
   useEffect(() => {
     if (user) {
-      initFCM();
+      initNotifications();
     }
-  }, [user, initFCM]);
+  }, [user, initNotifications]);
 
   return children;
 };

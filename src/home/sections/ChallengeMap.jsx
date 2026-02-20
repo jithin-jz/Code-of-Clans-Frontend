@@ -71,38 +71,59 @@ const ChallengeMap = ({ levels, handleLevelClick, user }) => {
 
   return (
     <div className="w-full h-screen relative overflow-hidden flex flex-col items-center justify-center bg-[#0b1220]">
-      
-      {/* LOCKED OVERLAY */}
+
+      {/* HERO — Minimal & Elegant */}
       {!user && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-6 text-center">
-          <Motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="max-w-lg"
-          >
-            <p className="text-[10px] tracking-[0.35em] uppercase text-slate-500 mb-4">
-              Structured Python Track
-            </p>
 
-            <h1 className="text-3xl sm:text-4xl font-semibold text-white leading-tight">
-              Master Python through
-              <span className="block text-[#60a5fa]">
-                deliberate progression
+          {/* Single soft glow */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-[#3b82f6]/[0.04] blur-[100px] pointer-events-none" />
+
+          <Motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            className="max-w-lg relative z-10"
+          >
+            {/* Heading */}
+            <h1 className="text-4xl sm:text-5xl font-bold text-white leading-[1.15] tracking-tight">
+              Master Python
+              <span className="block mt-1 bg-gradient-to-r from-[#60a5fa] to-[#a78bfa] bg-clip-text text-transparent">
+                through practice
               </span>
             </h1>
 
-            <p className="text-sm text-slate-400 mt-5 leading-relaxed max-w-md mx-auto">
-              Solve focused challenges. Track real growth.
-              Certification unlocks only when every level is complete.
+            {/* Subtitle */}
+            <p className="text-[15px] text-slate-400 mt-5 leading-relaxed">
+              60+ challenges across 6 tracks.
+              <br />
+              Earn your certificate when every level is complete.
             </p>
 
+            {/* Minimal stats row */}
+            <div className="flex items-center justify-center gap-8 mt-8">
+              <div className="text-center">
+                <p className="text-lg font-bold text-white">60+</p>
+                <p className="text-[10px] uppercase tracking-[0.2em] text-slate-500 mt-0.5">Challenges</p>
+              </div>
+              <div className="w-px h-8 bg-white/10" />
+              <div className="text-center">
+                <p className="text-lg font-bold text-white">6</p>
+                <p className="text-[10px] uppercase tracking-[0.2em] text-slate-500 mt-0.5">Tracks</p>
+              </div>
+              <div className="w-px h-8 bg-white/10" />
+              <div className="text-center">
+                <p className="text-lg font-bold text-white">1</p>
+                <p className="text-[10px] uppercase tracking-[0.2em] text-slate-500 mt-0.5">Certificate</p>
+              </div>
+            </div>
+
+            {/* CTA */}
             <button
               onClick={() => navigate("/login")}
-              className="mt-8 h-10 px-6 rounded-lg bg-white text-[#0f172a] 
-                         text-xs font-semibold tracking-wide 
-                         hover:bg-slate-200 transition-all duration-200"
+              className="mt-8 h-11 px-7 rounded-xl bg-white text-[#0f172a] text-sm font-semibold hover:bg-slate-100 transition-colors duration-200"
             >
-              Continue
+              Get Started
             </button>
           </Motion.div>
         </div>
@@ -110,9 +131,8 @@ const ChallengeMap = ({ levels, handleLevelClick, user }) => {
 
       {/* MAIN CONTENT */}
       <div
-        className={`w-full h-[calc(100vh-64px)] mt-16 px-6 pt-4 transition-all duration-500 ${
-          !user ? "blur-sm opacity-20 grayscale pointer-events-none select-none" : ""
-        }`}
+        className={`w-full h-[calc(100vh-64px)] mt-16 px-6 pt-4 transition-all duration-500 ${!user ? "blur-sm opacity-20 grayscale pointer-events-none select-none" : ""
+          }`}
       >
         <div className="h-full overflow-y-auto space-y-6 pb-8">
 
@@ -180,11 +200,10 @@ const ChallengeMap = ({ levels, handleLevelClick, user }) => {
 
               <button
                 onClick={() => handleLevelClick(certificateLevel)}
-                className={`w-full rounded-xl border p-5 text-left transition-all duration-200 ${
-                  certificateLevel.unlocked
+                className={`w-full rounded-xl border p-5 text-left transition-all duration-200 ${certificateLevel.unlocked
                     ? "border-yellow-400/40 bg-[#18181b] hover:border-yellow-400"
                     : "border-yellow-900/30 bg-[#121212] cursor-not-allowed"
-                }`}
+                  }`}
               >
                 <div className="flex justify-between items-start">
                   <div className="flex gap-4">
