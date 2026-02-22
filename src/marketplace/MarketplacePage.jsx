@@ -9,7 +9,7 @@ import {
   Palette,
   Package,
   PartyPopper,
-  Zap,
+  Gem,
 } from "lucide-react";
 import * as LucideIcons from "lucide-react";
 import { Button } from "../components/ui/button";
@@ -175,86 +175,66 @@ const MarketplacePage = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.3 }}
-          className="relative min-h-screen bg-[#0b1119] text-white overflow-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+          className="relative w-full pb-20 sm:pb-0 text-white flex flex-col pt-0 mt-0"
         >
-          <div className="absolute inset-0 pointer-events-none bg-[#0b1119]" />
-          <div className="absolute inset-0 pointer-events-none bg-linear-to-b from-[#101928] via-[#0d141f] to-[#0a0f17]" />
-          <div
-            className="absolute inset-0 pointer-events-none opacity-[0.06]"
-            style={{
-              backgroundImage:
-                "linear-gradient(rgba(148,163,184,0.35) 1px, transparent 1px), linear-gradient(90deg, rgba(148,163,184,0.35) 1px, transparent 1px)",
-              backgroundSize: "52px 52px",
-            }}
-          />
-          <div className="absolute top-0 left-[8%] w-[24rem] h-[24rem] rounded-full bg-[#2563eb]/10 blur-3xl pointer-events-none" />
-          <div className="absolute bottom-[-8rem] right-[10%] w-[20rem] h-[20rem] rounded-full bg-[#0ea5e9]/10 blur-3xl pointer-events-none" />
 
-          {/* Minimal Header */}
-          <header className="sticky top-0 z-30 bg-[#0a1220]/85 backdrop-blur-xl border-b border-white/10">
-            <div className="max-w-6xl mx-auto px-4 sm:px-6">
-              <div className="h-16 flex items-center justify-between">
-                {/* Left: Back + Title */}
-                <div className="flex items-center gap-3">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => navigate("/")}
-                    className="h-9 w-9 text-slate-300 hover:text-white hover:bg-white/10"
-                  >
-                    <ArrowLeft size={18} />
-                  </Button>
-                  <h1 className="text-base font-semibold tracking-tight">
-                    Store
-                  </h1>
+          {/* Controls & Category Tabs (Unified Row) */}
+          <div className="sticky top-14 z-20 border-b border-white/5 bg-[#0a0f18]/85 backdrop-blur-xl">
+            <div className="w-full px-4 sm:px-6 lg:px-8 min-w-0">
+              <div className="flex items-center gap-2 sm:gap-4 py-2 sm:py-3">
+                {/* Back Button */}
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => navigate(-1)}
+                  className="h-8 w-8 text-slate-400 hover:text-white hover:bg-white/10 shrink-0 -ml-1.5"
+                >
+                  <ArrowLeft size={18} />
+                </Button>
+
+                <div className="w-px h-5 bg-white/10 shrink-0 hidden sm:block" />
+
+                {/* Scrollable Tabs */}
+                <div className="flex items-center gap-1 sm:gap-2 flex-1 overflow-x-auto no-scrollbar">
+                  {CATEGORIES.map((cat) => {
+                    const isActive = activeCategory === cat.id;
+                    const Icon = cat.icon;
+                    return (
+                      <button
+                        key={cat.id}
+                        onClick={() => setActiveCategory(cat.id)}
+                        title={cat.label}
+                        className={`
+                        flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-colors border flex-1 sm:flex-none sm:whitespace-nowrap
+                        ${isActive
+                            ? "bg-white/[0.14] text-white border-white/25"
+                            : "text-slate-400 border-transparent hover:text-white hover:bg-white/10 hover:border-white/15"
+                          }
+                      `}
+                      >
+                        <Icon size={14} />
+                        <span className="hidden sm:inline">{cat.label}</span>
+                      </button>
+                    );
+                  })}
                 </div>
 
-                {/* Right: XP Balance - Clickable */}
-                <button
-                  onClick={() => navigate("/buy-xp")}
-                  className="flex items-center gap-2 px-3 py-1.5 bg-white/[0.06] rounded-lg border border-white/15 hover:bg-white/[0.12] transition-all cursor-pointer"
-                >
-                  <Zap size={14} className="text-[#ffa116]" />
-                  <span className="text-sm font-medium text-white">
-                    {user?.profile?.xp?.toLocaleString() || 0}
-                  </span>
-                  <span className="text-xs text-slate-400">XP</span>
-                </button>
-              </div>
-            </div>
-          </header>
+                {/* Get XP Button (Optional mobile hide, clear call to action) */}
+                <div className="shrink-0 ml-1">
+                  <button
+                    onClick={() => navigate("/buy-xp")}
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-[#162338] rounded-full border border-[#7ea3d9]/20 hover:bg-[#1b2a40] transition-colors"
+                  >
+                    <span className="text-xs font-semibold text-slate-300">Get XP</span>
+                  </button>
+                </div>
 
-          {/* Category Tabs */}
-          <div className="sticky top-16 z-20 border-b border-white/10 bg-[#0a1220]/75 backdrop-blur-sm">
-            <div className="max-w-6xl mx-auto px-4 sm:px-6">
-              <div className="flex items-center gap-2 overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] py-2.5">
-                {CATEGORIES.map((cat) => {
-                  const isActive = activeCategory === cat.id;
-                  const Icon = cat.icon;
-                  return (
-                    <button
-                      key={cat.id}
-                      onClick={() => setActiveCategory(cat.id)}
-                      className={`
-                        flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-colors whitespace-nowrap border
-                        ${
-                          isActive
-                            ? "bg-white/[0.14] text-white border-white/25"
-                            : "text-slate-300 border-transparent hover:text-white hover:bg-white/10 hover:border-white/15"
-                        }
-                      `}
-                    >
-                      <Icon size={14} />
-                      {cat.label}
-                    </button>
-                  );
-                })}
               </div>
             </div>
           </div>
 
           {/* Items Grid */}
-          <main className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 py-6 pb-10">
+          <main className="relative z-10 w-full px-4 sm:px-6 lg:px-8 py-6 min-w-0">
             {filteredItems.length === 0 ? (
               <div className="h-64 flex flex-col items-center justify-center text-slate-400 gap-3">
                 <Package size={32} className="opacity-30" />
@@ -279,20 +259,23 @@ const MarketplacePage = () => {
                       >
                         <Card
                           className={`
-                            rounded-2xl overflow-hidden bg-[#0f1b2e]/75 border-[#7ea3d9]/20 hover:border-[#7ea3d9]/40 backdrop-blur-sm shadow-[0_10px_30px_rgba(0,0,0,0.22)] transition-all
-                            ${isActive ? "ring-1 ring-[#7ea3d9]/40" : ""}
+                            rounded-xl overflow-hidden backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.3)] transition-all duration-300 group flex flex-col h-full
+                            ${isActive
+                              ? "bg-gradient-to-br from-emerald-500/10 to-emerald-500/[0.02] border border-emerald-500/30 border-t-emerald-400/50 shadow-[0_8px_32px_rgba(16,185,129,0.08)]"
+                              : "bg-[#0f1b2e]/70 border border-[#7ea3d9]/20 hover:border-[#7ea3d9]/50 hover:bg-[#162338]/80 hover:-translate-y-1 hover:shadow-[0_12px_40px_-15px_rgba(126,163,217,0.2)]"
+                            }
                           `}
                         >
-                          {/* Icon/Preview - Reduced Height */}
-                          <div className="h-32 flex items-center justify-center bg-[#0b1526]/80 border-b border-white/10 relative">
+                          {/* Icon/Preview - Glass Area */}
+                          <div className={`h-32 flex items-center justify-center border-b transition-colors relative shrink-0 ${isActive ? "bg-emerald-500/[0.05] border-emerald-500/20" : "bg-[#162338]/80 border-[#7ea3d9]/20 group-hover:bg-[#1a2940]"}`}>
                             {item.image ? (
                               <img
                                 src={item.image}
                                 alt={item.name}
-                                className="w-full h-full object-cover"
+                                className="w-full h-full object-cover mix-blend-overlay"
                               />
                             ) : (
-                              <div className="text-slate-500">
+                              <div className={`${isActive ? "text-emerald-400" : "text-[#d3deee]"}`}>
                                 {renderIcon(item.icon_name)}
                               </div>
                             )}
@@ -302,9 +285,9 @@ const MarketplacePage = () => {
                               {isOwned && (
                                 <Badge
                                   variant="secondary"
-                                  className="bg-[#162338] text-slate-200 text-[10px] px-1.5 py-0.5"
+                                  className={`text-[10px] px-2 py-0.5 rounded border font-semibold ${isActive ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" : "bg-[#162338]/80 text-[#d3deee] border-[#7ea3d9]/20"}`}
                                 >
-                                  <Check size={10} className="mr-0.5" />
+                                  {isActive && <Check size={10} className="mr-1" />}
                                   {isActive ? "Active" : "Owned"}
                                 </Badge>
                               )}
@@ -313,32 +296,30 @@ const MarketplacePage = () => {
                             {/* Category Badge */}
                             <Badge
                               variant="outline"
-                              className="absolute top-2 left-2 bg-black/40 border-white/20 text-slate-300 text-[10px] px-1.5 py-0.5"
+                              className={`absolute top-2 left-2 text-[10px] px-2 py-0.5 rounded border ${isActive ? "bg-emerald-500/10 text-emerald-400/80 border-emerald-500/20" : "bg-black/20 text-[#a3b8d9] border-[#7ea3d9]/10"}`}
                             >
                               {item.category}
                             </Badge>
                           </div>
 
                           {/* Content - Compact Padding */}
-                          <CardHeader className="p-3 pb-1.5">
-                            <CardTitle className="text-xs font-medium text-white truncate">
+                          <div className="flex flex-col flex-1 p-3.5 pb-2.5">
+                            <h3 className={`text-sm tracking-tight truncate ${isActive ? "text-emerald-400 font-bold" : "text-slate-100 font-semibold"}`}>
                               {item.name}
-                            </CardTitle>
-                            <CardDescription className="text-[10px] text-slate-400 line-clamp-2 min-h-[32px] leading-tight">
+                            </h3>
+                            <p className={`text-[11px] mt-1 line-clamp-2 leading-relaxed ${isActive ? "text-emerald-400/70" : "text-[#7ea3d9]/70"}`}>
                               {item.description}
-                            </CardDescription>
-                          </CardHeader>
+                            </p>
+                          </div>
 
-                          <CardContent className="p-2.5 pt-0">
+                          <div className="p-3.5 pt-0 mt-auto">
                             {isOwned ? (
                               <Button
-                                variant={isActive ? "outline" : "default"}
                                 className={`
-                                  w-full h-8 text-xs font-medium
-                                  ${
-                                    isActive
-                                      ? "bg-transparent border-white/20 text-slate-300 hover:bg-white/10"
-                                      : "bg-white text-black hover:bg-slate-200"
+                                  w-full h-9 text-xs font-semibold tracking-wide transition-all
+                                  ${isActive
+                                    ? "bg-transparent border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10"
+                                    : "bg-[#162338] border border-[#7ea3d9]/20 text-slate-200 hover:bg-[#1a2940] hover:text-white"
                                   }
                                 `}
                                 onClick={() =>
@@ -352,11 +333,10 @@ const MarketplacePage = () => {
                             ) : (
                               <Button
                                 className={`
-                                  w-full h-8 text-xs font-medium
-                                  ${
-                                    canAfford
-                                      ? "bg-white text-black hover:bg-slate-200"
-                                      : "bg-[#1a2638] text-slate-500 cursor-not-allowed"
+                                  w-full h-9 text-xs font-semibold tracking-wide transition-all border
+                                  ${canAfford
+                                    ? "bg-[#0ea5e9]/90 border-[#0ea5e9]/50 text-white hover:bg-[#0284c7] hover:border-[#0284c7] shadow-[0_4px_12px_rgba(14,165,233,0.3)] hover:shadow-[0_4px_16px_rgba(14,165,233,0.4)]"
+                                    : "bg-[#0a0f18]/80 text-[#7ea3d9]/40 border-[#7ea3d9]/10 cursor-not-allowed"
                                   }
                                 `}
                                 disabled={
@@ -367,23 +347,23 @@ const MarketplacePage = () => {
                                 onClick={() => handleBuy(item)}
                               >
                                 {isMutating &&
-                                activeMutationItemId === item.id ? (
+                                  activeMutationItemId === item.id ? (
                                   <span className="text-[10px] font-semibold">
                                     Processing...
                                   </span>
                                 ) : (
-                                  <span className="flex items-center gap-1">
+                                  <span className="flex items-center gap-1.5">
                                     {canAfford ? (
-                                      <Zap size={10} />
+                                      <Gem size={12} className="text-white/80" />
                                     ) : (
-                                      <Lock size={10} />
+                                      <Lock size={12} className="opacity-50" />
                                     )}
-                                    {item.cost} XP
+                                    {item.cost}
                                   </span>
                                 )}
                               </Button>
                             )}
-                          </CardContent>
+                          </div>
                         </Card>
                       </Motion.div>
                     );

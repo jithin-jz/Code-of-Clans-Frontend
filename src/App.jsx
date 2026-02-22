@@ -55,6 +55,7 @@ const AuthInitializer = ({ children }) => {
   return children;
 };
 
+import MainLayout from "./common/MainLayout";
 import { Toaster } from "./components/ui/sonner";
 
 const AppContent = () => {
@@ -65,123 +66,125 @@ const AppContent = () => {
         <div className="min-h-screen">
           <main>
             <Suspense fallback={<Loader />}>
-              <Routes>
-                {/* Public Landing (Game Map) - Visible to all */}
-                <Route path="/" element={<Home />} />
+              <MainLayout>
+                <Routes>
+                  {/* Public Landing (Game Map) - Visible to all */}
+                  <Route path="/" element={<Home />} />
 
-                {/* Authentication - Public Only */}
-                <Route
-                  path="/login"
-                  element={
-                    <PublicOnlyRoute>
-                      <Login />
-                    </PublicOnlyRoute>
-                  }
-                />
+                  {/* Authentication - Public Only */}
+                  <Route
+                    path="/login"
+                    element={
+                      <PublicOnlyRoute>
+                        <Login />
+                      </PublicOnlyRoute>
+                    }
+                  />
 
-                {/* Redirect legacy routes to / */}
-                <Route path="/home" element={<Navigate to="/" replace />} />
+                  {/* Redirect legacy routes to / */}
+                  <Route path="/home" element={<Navigate to="/" replace />} />
 
-                {/* OAuth Callbacks */}
-                <Route
-                  path="/auth/github/callback"
-                  element={<OAuthCallback provider="github" />}
-                />
-                <Route
-                  path="/auth/google/callback"
-                  element={<OAuthCallback provider="google" />}
-                />
+                  {/* OAuth Callbacks */}
+                  <Route
+                    path="/auth/github/callback"
+                    element={<OAuthCallback provider="github" />}
+                  />
+                  <Route
+                    path="/auth/google/callback"
+                    element={<OAuthCallback provider="google" />}
+                  />
 
-                {/* Admin Dashboard - Admin Only */}
-                <Route
-                  path="/admin/dashboard"
-                  element={
-                    <AdminRoute>
-                      <AdminDashboard />
-                    </AdminRoute>
-                  }
-                />
+                  {/* Admin Dashboard - Admin Only */}
+                  <Route
+                    path="/admin/dashboard"
+                    element={
+                      <AdminRoute>
+                        <AdminDashboard />
+                      </AdminRoute>
+                    }
+                  />
 
-                {/* Protected Routes */}
-                <Route
-                  path="/profile"
-                  element={
-                    <ProtectedRoute>
-                      <Profile />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/profile/:username"
-                  element={
-                    <ProtectedRoute>
-                      <Profile />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/level/:id"
-                  element={
-                    <ProtectedRoute>
-                      <ChallengeWorkspace />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/shop"
-                  element={
-                    <ProtectedRoute>
-                      <BuyXpPage />
-                    </ProtectedRoute>
-                  }
-                />
+                  {/* Protected Routes */}
+                  <Route
+                    path="/profile"
+                    element={
+                      <ProtectedRoute>
+                        <Profile />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/profile/:username"
+                    element={
+                      <ProtectedRoute>
+                        <Profile />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/level/:id"
+                    element={
+                      <ProtectedRoute>
+                        <ChallengeWorkspace />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/shop"
+                    element={
+                      <ProtectedRoute>
+                        <BuyXpPage />
+                      </ProtectedRoute>
+                    }
+                  />
 
-                <Route
-                  path="/buy-xp"
-                  element={
-                    <ProtectedRoute>
-                      <BuyXpPage />
-                    </ProtectedRoute>
-                  }
-                />
+                  <Route
+                    path="/buy-xp"
+                    element={
+                      <ProtectedRoute>
+                        <BuyXpPage />
+                      </ProtectedRoute>
+                    }
+                  />
 
-                <Route
-                  path="/game"
-                  element={
-                    <ProtectedRoute>
-                      <GameRedirectPage />
-                    </ProtectedRoute>
-                  }
-                />
+                  <Route
+                    path="/game"
+                    element={
+                      <ProtectedRoute>
+                        <GameRedirectPage />
+                      </ProtectedRoute>
+                    }
+                  />
 
-                <Route
-                  path="/store"
-                  element={
-                    <ProtectedRoute>
-                      <MarketplacePage />
-                    </ProtectedRoute>
-                  }
-                />
+                  <Route
+                    path="/store"
+                    element={
+                      <ProtectedRoute>
+                        <MarketplacePage />
+                      </ProtectedRoute>
+                    }
+                  />
 
-                {/* Public Certificate Verification */}
-                <Route
-                  path="/verify/:certificateId"
-                  element={<CertificateVerification />}
-                />
+                  {/* Public Certificate Verification */}
+                  <Route
+                    path="/verify/:certificateId"
+                    element={<CertificateVerification />}
+                  />
 
-                {/* Fallback */}
-                <Route
-                  path="/admin"
-                  element={
-                    <AdminRoute>
-                      <AdminDashboard />
-                    </AdminRoute>
-                  }
-                />
+                  {/* Fallback */}
+                  <Route
+                    path="/admin"
+                    element={
+                      <AdminRoute>
+                        <AdminDashboard />
+                      </AdminRoute>
+                    }
+                  />
 
-                {/* 404 Route */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
+                  {/* 404 Route */}
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </MainLayout>
             </Suspense>
           </main>
         </div>

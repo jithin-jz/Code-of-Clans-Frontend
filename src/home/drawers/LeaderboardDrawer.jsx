@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Trophy, Crown, Medal, Users, X, Zap } from "lucide-react";
+import { Trophy, Crown, Medal, Users, X, Gem } from "lucide-react";
 import { motion as Motion } from "framer-motion";
 import { SkeletonBase } from "../../common/SkeletonPrimitives";
 import api from "../../services/api";
@@ -46,12 +46,12 @@ const LeaderboardDrawer = ({ isLeaderboardOpen, setLeaderboardOpen }) => {
 
   return (
     <Motion.div
-      className="fixed top-16 right-0 h-[calc(100vh-64px)] z-50 w-full sm:w-[390px]"
+      className="fixed top-14 right-0 h-[calc(100vh-56px)] z-50 w-full sm:w-[390px]"
       initial={{ x: "100%" }}
       animate={{ x: isLeaderboardOpen ? 0 : "100%" }}
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
     >
-      <div className="w-full h-full bg-linear-to-b from-[#111d30]/95 via-[#0f1b2e]/95 to-[#0c1627]/95 backdrop-blur-3xl border-l border-white/15 flex flex-col pointer-events-auto shadow-2xl shadow-black/50 relative">
+      <div className="w-full h-full bg-linear-to-b from-[#111d30]/95 via-[#0f1b2e]/95 to-[#0c1627]/95 backdrop-blur-3xl border-l border-white/15 flex flex-col pointer-events-auto shadow-2xl shadow-black/50 relative pb-16 sm:pb-0">
         {/* Decorative gradient orb */}
         <div className="absolute -top-20 -right-20 w-40 h-40 bg-[#3b82f6]/12 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute top-1/2 -left-10 w-32 h-32 bg-[#00af9b]/10 rounded-full blur-3xl pointer-events-none" />
@@ -128,19 +128,17 @@ const LeaderboardDrawer = ({ isLeaderboardOpen, setLeaderboardOpen }) => {
                   key={rankUser.username}
                   to={`/profile/${rankUser.username}`}
                   onClick={() => setLeaderboardOpen(false)}
-                  className={`flex items-center gap-3 p-3 rounded-xl transition-all duration-200 group ${
-                    isMe
-                      ? "bg-[#ffa116]/10 border border-[#ffa116]/25 hover:bg-[#ffa116]/15"
-                      : "bg-white/[0.03] border border-white/10 hover:bg-white/[0.07] hover:border-white/20"
-                  }`}
+                  className={`flex items-center gap-3 p-3 rounded-xl transition-all duration-200 group ${isMe
+                    ? "bg-[#ffa116]/10 border border-[#ffa116]/25 hover:bg-[#ffa116]/15"
+                    : "bg-white/[0.03] border border-white/10 hover:bg-white/[0.07] hover:border-white/20"
+                    }`}
                 >
                   {/* Rank */}
                   <div
-                    className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                      isTopThree
-                        ? "bg-linear-to-br from-[#ffa116]/20 to-[#ffa116]/5"
-                        : "bg-white/10"
-                    }`}
+                    className={`w-8 h-8 rounded-lg flex items-center justify-center ${isTopThree
+                      ? "bg-linear-to-br from-[#ffa116]/20 to-[#ffa116]/5"
+                      : "bg-white/10"
+                      }`}
                   >
                     {getRankIcon(index) || (
                       <span className="text-xs font-bold text-gray-500">
@@ -151,9 +149,8 @@ const LeaderboardDrawer = ({ isLeaderboardOpen, setLeaderboardOpen }) => {
 
                   {/* Avatar */}
                   <div
-                    className={`w-9 h-9 rounded-full overflow-hidden ring-2 shrink-0 ${
-                      isMe ? "ring-[#ffa116]/40" : "ring-white/10"
-                    }`}
+                    className={`w-9 h-9 rounded-full overflow-hidden ring-2 shrink-0 ${isMe ? "ring-[#ffa116]/40" : "ring-white/10"
+                      }`}
                   >
                     {rankUser.avatar ? (
                       <img
@@ -176,30 +173,28 @@ const LeaderboardDrawer = ({ isLeaderboardOpen, setLeaderboardOpen }) => {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <span
-                        className={`text-sm font-semibold truncate ${
-                          isMe ? "text-[#ffa116]" : "text-white"
-                        }`}
+                        className={`text-sm font-semibold truncate ${isMe ? "text-[#ffa116]" : "text-white"
+                          }`}
                       >
                         {isMe ? "You" : rankUser.username}
                       </span>
                       {isTopThree && (
                         <span
-                          className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${
-                            index === 0
-                              ? "bg-[#ffa116]/20 text-[#ffa116]"
-                              : index === 1
-                                ? "bg-gray-400/20 text-gray-400"
-                                : "bg-[#996200]/20 text-[#cc8400]"
-                          }`}
+                          className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${index === 0
+                            ? "bg-[#ffa116]/20 text-[#ffa116]"
+                            : index === 1
+                              ? "bg-gray-400/20 text-gray-400"
+                              : "bg-[#996200]/20 text-[#cc8400]"
+                            }`}
                         >
                           {index === 0 ? "1ST" : index === 1 ? "2ND" : "3RD"}
                         </span>
                       )}
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <Zap size={10} className="text-[#ffa116]" />
+                      <Gem size={10} className="text-[#a78bfa]" />
                       <span className="text-xs font-bold text-[#ffa116]">
-                        {rankUser.xp?.toLocaleString() || 0} XP
+                        {rankUser.xp?.toLocaleString() || 0}
                       </span>
                       <span className="text-[10px] text-gray-600">•</span>
                       <span className="text-[10px] text-gray-500">

@@ -5,14 +5,12 @@ import useAuthStore from "../stores/useAuthStore";
 import useUserStore from "../stores/useUserStore";
 import { toast } from "sonner";
 import {
-  Zap,
-  ArrowLeft,
+  Gem,
   Check,
   Sparkles,
   Crown,
   Flame,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import { AnimatePresence, motion as Motion } from "framer-motion";
 import {
   Card,
@@ -25,8 +23,8 @@ import { Badge } from "../components/ui/badge";
 import BuyXpPageSkeleton from "./BuyXpPageSkeleton";
 
 const XP_PACKAGES = [
-  { amount: 49, xp: 50, label: "Mini", icon: Zap },
-  { amount: 99, xp: 100, label: "Starter", icon: Zap },
+  { amount: 49, xp: 50, label: "Mini", icon: Gem },
+  { amount: 99, xp: 100, label: "Starter", icon: Gem },
   { amount: 199, xp: 200, label: "Growth", icon: Sparkles },
   { amount: 249, xp: 250, label: "Booster", icon: Sparkles },
   { amount: 499, xp: 500, label: "Pro", icon: Flame, popular: true },
@@ -38,7 +36,6 @@ const XP_PACKAGES = [
 const BuyXpPage = () => {
   const [loading, setLoading] = useState(true);
   const [purchasing, setPurchasing] = useState(null);
-  const navigate = useNavigate();
   const { user } = useAuthStore();
   const { fetchCurrentUser } = useUserStore();
 
@@ -127,56 +124,14 @@ const BuyXpPage = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.3 }}
-          className="relative h-screen bg-[#0b1119] text-white flex flex-col overflow-hidden"
+          className="relative w-full pb-20 sm:pb-0 text-white flex flex-col pt-0 mt-0"
         >
-          <div className="absolute inset-0 pointer-events-none bg-[#0b1119]" />
-          <div className="absolute inset-0 pointer-events-none bg-linear-to-b from-[#101928] via-[#0d141f] to-[#0a0f17]" />
-          <div
-            className="absolute inset-0 pointer-events-none opacity-[0.06]"
-            style={{
-              backgroundImage:
-                "linear-gradient(rgba(148,163,184,0.35) 1px, transparent 1px), linear-gradient(90deg, rgba(148,163,184,0.35) 1px, transparent 1px)",
-              backgroundSize: "52px 52px",
-            }}
-          />
-          <div className="absolute top-0 left-[8%] w-[24rem] h-[24rem] rounded-full bg-[#2563eb]/10 blur-3xl pointer-events-none" />
-          <div className="absolute bottom-[-8rem] right-[10%] w-[20rem] h-[20rem] rounded-full bg-[#0ea5e9]/10 blur-3xl pointer-events-none" />
-
-          {/* Header */}
-          <header className="relative z-10 bg-[#0a1220]/85 backdrop-blur-xl border-b border-white/10">
-            <div className="max-w-6xl mx-auto px-4 sm:px-6">
-              <div className="h-16 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => navigate(-1)}
-                    className="h-9 w-9 text-slate-300 hover:text-white hover:bg-white/10"
-                  >
-                    <ArrowLeft size={18} />
-                  </Button>
-                  <h1 className="text-base font-semibold tracking-tight">
-                    Buy XP
-                  </h1>
-                </div>
-
-                {/* Current Balance */}
-                <div className="flex items-center gap-2 px-3 py-1.5 bg-white/[0.06] rounded-lg border border-white/15">
-                  <Zap size={14} className="text-[#ffa116]" />
-                  <span className="text-sm font-medium text-white">
-                    {user?.profile?.xp?.toLocaleString() || 0}
-                  </span>
-                  <span className="text-xs text-slate-400">XP</span>
-                </div>
-              </div>
-            </div>
-          </header>
 
           {/* Main Content */}
-          <main className="relative z-10 flex-1 overflow-hidden px-4 sm:px-6 py-6">
-            <div className="max-w-6xl mx-auto h-full">
+          <main className="relative z-10 flex-1 w-full px-4 sm:px-6 lg:px-8 py-6 min-w-0">
+            <div className="w-full">
               {/* Grid */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 h-full content-start">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                 {XP_PACKAGES.map((pkg) => {
                   const Icon = pkg.icon;
                   const isPurchasing = purchasing === pkg.amount;
@@ -185,20 +140,23 @@ const BuyXpPage = () => {
                     <Card
                       key={pkg.amount}
                       className={`
-                        bg-[#0f1b2e]/70 border-[#7ea3d9]/20 hover:border-[#7ea3d9]/40 transition-all relative backdrop-blur-sm
-                        ${pkg.popular ? "ring-1 ring-[#ffa116]/30" : ""}
-                        ${pkg.bestValue ? "ring-1 ring-[#00af9b]/30" : ""}
+                        rounded-xl overflow-hidden backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.3)] transition-all duration-300 group flex flex-col relative
+                        ${pkg.popular
+                          ? "bg-gradient-to-br from-[#ffa116]/10 to-[#ffa116]/[0.02] border border-[#ffa116]/30 border-t-[#ffa116]/50 shadow-[0_8px_32px_rgba(255,161,22,0.12)] -translate-y-1"
+                          : pkg.bestValue
+                            ? "bg-gradient-to-br from-[#00af9b]/10 to-[#00af9b]/[0.02] border border-[#00af9b]/30 border-t-[#00af9b]/50 shadow-[0_8px_32px_rgba(0,175,155,0.08)]"
+                            : "bg-[#0f1b2e]/70 border border-[#7ea3d9]/20 hover:border-[#7ea3d9]/50 hover:bg-[#162338]/80 hover:-translate-y-1 hover:shadow-[0_12px_40px_-15px_rgba(126,163,217,0.2)]"
+                        }
                       `}
                     >
                       {/* Badge */}
                       {(pkg.popular || pkg.bestValue) && (
                         <div className="absolute top-3 right-3">
                           <Badge
-                            className={`text-[9px] px-1.5 py-0 ${
-                              pkg.popular
-                                ? "bg-[#ffa116]/10 text-[#ffa116] border-[#ffa116]/20"
-                                : "bg-[#00af9b]/10 text-[#00af9b] border-[#00af9b]/20"
-                            }`}
+                            className={`text-[9px] px-1.5 py-0 ${pkg.popular
+                              ? "bg-[#ffa116]/10 text-[#ffa116] border-[#ffa116]/20"
+                              : "bg-[#00af9b]/10 text-[#00af9b] border-[#00af9b]/20"
+                              }`}
                           >
                             {pkg.popular ? "Popular" : "Best Value"}
                           </Badge>
@@ -208,13 +166,12 @@ const BuyXpPage = () => {
                       <CardHeader className="p-5 pb-3">
                         {/* Icon */}
                         <div
-                          className={`w-10 h-10 rounded-lg flex items-center justify-center mb-4 ${
-                            pkg.popular
-                              ? "bg-[#ffa116]/10"
+                          className={`w-10 h-10 rounded-lg flex items-center justify-center mb-4 ${pkg.popular
+                            ? "bg-[#ffa116]/10"
                             : pkg.bestValue
-                                ? "bg-[#00af9b]/10"
-                                : "bg-white/[0.06]"
-                          }`}
+                              ? "bg-[#00af9b]/10"
+                              : "bg-white/[0.06]"
+                            }`}
                         >
                           <Icon
                             size={20}
@@ -238,19 +195,18 @@ const BuyXpPage = () => {
                             {pkg.xp.toLocaleString()}
                           </span>
                           <span className="text-sm text-zinc-500 font-medium">
-                            XP
+
                           </span>
                         </div>
                       </CardHeader>
 
-                      <CardContent className="p-5 pt-2">
+                      <CardContent className="p-5 pt-2 mt-auto">
                         {/* Bonus indicator */}
                         {pkg.xp > pkg.amount && (
-                          <div className="flex items-center gap-1 mb-4">
-                            <Check size={12} className="text-[#00af9b]" />
-                            <span className="text-xs text-[#00af9b]">
-                              +{Math.round((pkg.xp / pkg.amount - 1) * 100)}%
-                              bonus
+                          <div className="flex items-center gap-1.5 mb-4">
+                            <Check size={14} className="text-[#00af9b]" />
+                            <span className="text-xs font-medium text-[#00af9b] tracking-tight">
+                              +{Math.round((pkg.xp / pkg.amount - 1) * 100)}% bonus
                             </span>
                           </div>
                         )}
@@ -259,13 +215,12 @@ const BuyXpPage = () => {
                           onClick={() => handleBuy(pkg)}
                           disabled={isPurchasing}
                           className={`
-                            w-full h-10 text-sm font-medium
-                            ${
-                              pkg.popular
-                                ? "bg-[#ffa116] hover:bg-[#cc8400] text-black"
-                                : pkg.bestValue
-                                  ? "bg-[#00af9b] hover:bg-emerald-600 text-black"
-                                  : "bg-white text-black hover:bg-zinc-200"
+                            w-full h-10 text-sm font-bold tracking-wide transition-all border
+                            ${pkg.popular
+                              ? "bg-[#ffa116]/90 border-[#ffa116]/50 text-black hover:bg-[#e69114] hover:border-[#e69114] shadow-[0_4px_12px_rgba(255,161,22,0.2)] hover:shadow-[0_4px_16px_rgba(255,161,22,0.3)]"
+                              : pkg.bestValue
+                                ? "bg-[#00af9b]/90 border-[#00af9b]/50 text-black hover:bg-[#009483] hover:border-[#009483] shadow-[0_4px_12px_rgba(0,175,155,0.2)] hover:shadow-[0_4px_16px_rgba(0,175,155,0.3)]"
+                                : "bg-white text-black border-transparent hover:bg-slate-200"
                             }
                           `}
                         >

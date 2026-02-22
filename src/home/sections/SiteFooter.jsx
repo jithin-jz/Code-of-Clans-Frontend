@@ -1,13 +1,6 @@
 import React from "react";
 import { Github, Linkedin, Twitter, Youtube } from "lucide-react";
 
-const quickLinks = [
-  { label: "Home", href: "/" },
-  { label: "Profile", href: "/profile" },
-  { label: "Marketplace", href: "/store" },
-  { label: "Buy XP", href: "/buy-xp" },
-];
-
 const legalLinks = [
   { label: "Privacy", href: "#" },
   { label: "Terms", href: "#" },
@@ -25,40 +18,14 @@ const SiteFooter = () => {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="rounded-xl border border-white/10 bg-[#0d172a]/85 backdrop-blur-md px-5 py-6">
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-[1.6fr_1fr_1.1fr]">
-        <div>
-          <p className="text-xs tracking-[0.24em] uppercase text-slate-400">
-            Clash Of Code
+    <footer className="w-full border-t border-white/[0.04] bg-[#0a0f18]/80 backdrop-blur-xl">
+      <div className="max-w-7xl mx-auto px-6 py-6 flex flex-col items-center justify-between gap-4 sm:flex-row">
+        <div className="flex items-center gap-4">
+          <p className="text-[11px] text-slate-500 font-medium tracking-wide">
+            © {year} CLASH OF CODE
           </p>
-          <p className="mt-3 max-w-md text-sm text-slate-400 leading-relaxed">
-            A structured coding platform for building consistency, mastering
-            fundamentals, and shipping better code through deliberate practice.
-          </p>
-        </div>
-
-        <div>
-          <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-slate-500">
-            Quick Links
-          </p>
-          <div className="mt-3 flex flex-col gap-2">
-            {quickLinks.map((link) => (
-              <a
-                key={link.label}
-                href={link.href}
-                className="text-sm text-slate-400 hover:text-white transition-colors"
-              >
-                {link.label}
-              </a>
-            ))}
-          </div>
-        </div>
-
-        <div>
-          <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-slate-500">
-            Connect
-          </p>
-          <div className="mt-3 flex flex-wrap items-center gap-2">
+          <div className="hidden sm:block h-3 w-[1px] bg-white/[0.1]"></div>
+          <div className="flex items-center gap-3">
             {socialLinks.map((item) => (
               <a
                 key={item.label}
@@ -66,32 +33,33 @@ const SiteFooter = () => {
                 target="_blank"
                 rel="noreferrer"
                 aria-label={item.label}
-                title={item.label}
-                className="h-9 w-9 rounded-lg border border-white/10 bg-white/[0.03] text-slate-300 hover:text-white hover:border-white/25 hover:bg-white/[0.08] inline-flex items-center justify-center transition-all"
+                className="text-slate-500 hover:text-white transition-colors duration-200"
               >
-                {React.createElement(item.Icon, { size: 16 })}
+                {React.createElement(item.Icon, { size: 14 })}
               </a>
             ))}
           </div>
-          <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1">
+        </div>
+
+        <div className="flex flex-col items-center gap-3 sm:flex-row sm:gap-6">
+          <div className="flex items-center gap-4">
             {legalLinks.map((link) => (
               <a
                 key={link.label}
                 href={link.href}
-                className="text-xs text-slate-500 hover:text-slate-300 transition-colors"
+                className="text-[11px] text-slate-500 hover:text-slate-300 transition-colors"
               >
                 {link.label}
               </a>
             ))}
           </div>
+          <div className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-emerald-500/5 border border-emerald-500/10">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            <p className="text-[10px] text-emerald-500/80 font-bold uppercase tracking-wider">
+              System Active
+            </p>
+          </div>
         </div>
-      </div>
-
-      <div className="mt-6 border-t border-white/10 pt-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-xs text-slate-500">© {year} Clash Of Code. All rights reserved.</p>
-        <p className="text-[11px] text-slate-600">
-          Built for focused coding practice.
-        </p>
       </div>
     </footer>
   );

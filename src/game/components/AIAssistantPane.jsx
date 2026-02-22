@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import ReactMarkdown from "react-markdown";
-import { Sparkles } from "lucide-react";
+import { Sparkles, Gem } from "lucide-react";
 
 const formatReviewMarkdown = (raw = "") => {
   if (!raw) return "";
@@ -88,10 +88,10 @@ const AIAssistantPane = ({
         <div className="flex items-center gap-3">
           {userXp !== undefined && (
             <div className="flex items-center gap-1">
-              <span className="text-[#ffa116] text-[10px] font-bold">
+              <Gem size={10} className="text-[#a78bfa]" />
+              <span className="text-[#a78bfa] text-[10px] font-bold">
                 {userXp}
               </span>
-              <span className="text-[8px] text-[#cc8400] font-bold">XP</span>
             </div>
           )}
         </div>
@@ -207,21 +207,20 @@ const AIAssistantPane = ({
             {/* Carousel Pagination Dots */}
             {(hintHistory.length > 1 ||
               (hintHistory.length > 0 && isHintLoading)) && (
-              <div className="flex justify-center gap-1.5 pb-3">
-                {[...Array(hintHistory.length + (isHintLoading ? 1 : 0))].map(
-                  (_, i) => (
-                    <div
-                      key={i}
-                      className={`w-1 h-1 transition-all duration-300 ${
-                        i === activeIndex
-                          ? "bg-[#00af9b] scale-125 shadow-[0_0_8px_rgba(59,130,246,0.5)]"
-                          : "bg-white/10"
-                      }`}
-                    />
-                  ),
-                )}
-              </div>
-            )}
+                <div className="flex justify-center gap-1.5 pb-3">
+                  {[...Array(hintHistory.length + (isHintLoading ? 1 : 0))].map(
+                    (_, i) => (
+                      <div
+                        key={i}
+                        className={`w-1 h-1 transition-all duration-300 ${i === activeIndex
+                            ? "bg-[#00af9b] scale-125 shadow-[0_0_8px_rgba(59,130,246,0.5)]"
+                            : "bg-white/10"
+                          }`}
+                      />
+                    ),
+                  )}
+                </div>
+              )}
           </div>
         </div>
       </div>
@@ -240,11 +239,10 @@ const AIAssistantPane = ({
               disabled={
                 isHintLoading || (userXp !== undefined && userXp < nextCost)
               }
-              className={`w-full text-[10px] font-bold h-10 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 group relative overflow-hidden uppercase tracking-widest ${
-                userXp !== undefined && userXp < nextCost
+              className={`w-full text-[10px] font-bold h-10 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 group relative overflow-hidden uppercase tracking-widest ${userXp !== undefined && userXp < nextCost
                   ? "bg-red-500/10 border border-red-500/25 text-red-300 cursor-not-allowed"
                   : "bg-[#ffa116] text-black hover:bg-[#ff8f00] border border-[#ffb347]/40 shadow-lg shadow-[#ffa116]/20"
-              }`}
+                }`}
             >
               {/* Shimmer effect overlay */}
               {userXp >= nextCost && (
@@ -257,13 +255,13 @@ const AIAssistantPane = ({
                 <Sparkles size={12} className="fill-current" />
               )}
               <span className="relative z-10">Get Hint</span>
-              <span className="opacity-50 text-[9px] relative z-10 font-normal ml-1">
-                ({nextCost} XP)
+              <span className="opacity-50 text-[9px] relative z-10 font-normal ml-1 flex items-center gap-0.5">
+                (<Gem size={8} className="inline" />{nextCost})
               </span>
             </button>
             {userXp !== undefined && userXp < nextCost && (
               <p className="text-[9px] text-red-900 text-center font-bold uppercase tracking-tighter">
-                Insufficient XP
+                Insufficient <Gem size={8} className="inline text-red-400" />
               </p>
             )}
           </div>

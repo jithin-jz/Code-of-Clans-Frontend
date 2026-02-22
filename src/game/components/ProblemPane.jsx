@@ -45,7 +45,7 @@ const ProblemPane = ({ challenge, loading }) => {
             {derived.difficulty.label}
           </span>
           <span className="text-xs px-2 py-1 rounded-md bg-white/[0.05] border border-white/15 text-slate-300">
-            {challenge.xp_reward} XP
+            {challenge.xp_reward}
           </span>
           <span className="text-xs px-2 py-1 rounded-md bg-white/[0.05] border border-white/15 text-slate-300">
             Target: {derived.targetMinutes} min

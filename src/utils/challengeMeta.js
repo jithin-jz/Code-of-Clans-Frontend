@@ -2,18 +2,18 @@ export const getDifficultyMeta = (order = 1) => {
   if (order <= 20) {
     return {
       label: "Easy",
-      pill: "bg-emerald-500/10 text-emerald-300 border border-emerald-500/30",
+      pill: "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 backdrop-blur-sm",
     };
   }
   if (order <= 40) {
     return {
       label: "Medium",
-      pill: "bg-amber-500/10 text-amber-300 border border-amber-500/30",
+      pill: "bg-amber-500/10 text-amber-400 border border-amber-500/20 backdrop-blur-sm",
     };
   }
   return {
     label: "Hard",
-    pill: "bg-rose-500/10 text-rose-300 border border-rose-500/30",
+    pill: "bg-rose-500/10 text-rose-400 border border-rose-500/20 backdrop-blur-sm",
   };
 };
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { Play, Sparkles, Star, Zap } from "lucide-react";
+import { Play, Sparkles, Star, Gem } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -56,9 +56,9 @@ const LevelModal = ({ selectedLevel, onClose }) => {
                 <div className="relative flex h-full w-full items-center justify-center text-white">
                   {selectedLevel.icon && React.isValidElement(selectedLevel.icon)
                     ? React.cloneElement(selectedLevel.icon, {
-                        size: 38,
-                        strokeWidth: 1.9,
-                      })
+                      size: 38,
+                      strokeWidth: 1.9,
+                    })
                     : null}
                 </div>
               </div>
@@ -68,9 +68,9 @@ const LevelModal = ({ selectedLevel, onClose }) => {
                   Reward
                 </p>
                 <div className="mt-1 flex items-center gap-2">
-                  <Zap size={14} className="text-sky-300" />
+                  <Gem size={14} className="text-[#a78bfa]" />
                   <p className="text-xl font-black text-white">
-                    {xpReward.toLocaleString()} XP
+                    {xpReward.toLocaleString()}
                   </p>
                 </div>
                 <span className="mt-2 inline-flex rounded-full border border-sky-300/35 bg-sky-300/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-sky-200">

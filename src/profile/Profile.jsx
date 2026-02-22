@@ -238,10 +238,10 @@ const Profile = () => {
     setProfileUser((prev) =>
       prev
         ? {
-            ...prev,
-            is_following: nextIsFollowing,
-            followers_count: nextFollowerCount,
-          }
+          ...prev,
+          is_following: nextIsFollowing,
+          followers_count: nextFollowerCount,
+        }
         : prev,
     );
 
@@ -250,10 +250,10 @@ const Profile = () => {
       setProfileUser((prev) =>
         prev
           ? {
-              ...prev,
-              is_following: data.is_following,
-              followers_count: data.follower_count,
-            }
+            ...prev,
+            is_following: data.is_following,
+            followers_count: data.follower_count,
+          }
           : prev,
       );
     } catch (error) {
@@ -286,14 +286,14 @@ const Profile = () => {
       setProfileUser((prev) =>
         prev
           ? {
-              ...prev,
-              is_following: !previousProfile?.is_following,
-              followers_count: Math.max(
-                0,
-                (previousProfile?.followers_count || 0) +
-                  (previousProfile?.is_following ? -1 : 1),
-              ),
-            }
+            ...prev,
+            is_following: !previousProfile?.is_following,
+            followers_count: Math.max(
+              0,
+              (previousProfile?.followers_count || 0) +
+              (previousProfile?.is_following ? -1 : 1),
+            ),
+          }
           : prev,
       );
     }
@@ -314,10 +314,10 @@ const Profile = () => {
         setProfileUser((prev) =>
           prev
             ? {
-                ...prev,
-                is_following: data.is_following,
-                followers_count: data.follower_count,
-              }
+              ...prev,
+              is_following: data.is_following,
+              followers_count: data.follower_count,
+            }
             : prev,
         );
       }
@@ -420,65 +420,13 @@ const Profile = () => {
       <ProfileSkeleton />
     </div>
   ) : (
-    <div className="relative h-screen bg-[#0b1119] text-white flex flex-col overflow-hidden">
-      <div className="absolute inset-0 pointer-events-none bg-[#0b1119]" />
-      <div className="absolute inset-0 pointer-events-none bg-linear-to-b from-[#101928] via-[#0d141f] to-[#0a0f17]" />
-      <div
-        className="absolute inset-0 pointer-events-none opacity-[0.06]"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(148,163,184,0.35) 1px, transparent 1px), linear-gradient(90deg, rgba(148,163,184,0.35) 1px, transparent 1px)",
-          backgroundSize: "52px 52px",
-        }}
-      />
-      <div className="absolute top-0 left-[8%] w-[24rem] h-[24rem] rounded-full bg-[#2563eb]/10 blur-3xl pointer-events-none" />
-      <div className="absolute bottom-[-8rem] right-[10%] w-[20rem] h-[20rem] rounded-full bg-[#0ea5e9]/10 blur-3xl pointer-events-none" />
-
-      {/* Header */}
-      <header className="relative z-10 bg-[#0a1220]/85 backdrop-blur-xl border-b border-white/10">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6">
-          <div className="h-14 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => navigate(-1)}
-                className="h-9 w-9 text-slate-300 hover:text-white hover:bg-white/10"
-              >
-                <ArrowLeft size={18} />
-              </Button>
-              <h1 className="text-base font-semibold">Profile</h1>
-            </div>
-            {isOwnProfile && (
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setIsEditing(!isEditing)}
-                  className="h-10 w-10 text-slate-300 hover:text-white hover:bg-white/10 rounded-xl transition-all"
-                >
-                  <Settings size={20} />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={handleLogout}
-                  className="h-10 w-10 text-slate-300 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-all"
-                >
-                  <LogOut size={20} />
-                </Button>
-              </div>
-            )}
-          </div>
-        </div>
-      </header>
-
+    <div className="relative min-h-screen overflow-x-hidden w-full max-w-[100vw] pb-20 sm:pb-0 text-white flex flex-col">
       {/* Main Content */}
-      <main className="relative z-10 flex-1 overflow-auto no-scrollbar px-4 sm:px-6 py-6">
+      <main className="relative z-10 flex-1 px-4 sm:px-6 py-4">
         <div className="max-w-5xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             {/* Left Column - Profile Card */}
-            <div className="lg:col-span-1 space-y-4">
+            <div className="lg:col-span-1 space-y-4 min-w-0">
               {/* Profile Card */}
               <Card className="bg-[#0f1b2e]/70 border-[#7ea3d9]/20 overflow-hidden">
                 {/* Banner Image */}
@@ -492,6 +440,42 @@ const Profile = () => {
                   ) : (
                     <div className="w-full h-full bg-linear-to-r from-[#162338] to-[#0f1b2e]" />
                   )}
+
+                  {/* Profile Controls Overlay on Banner */}
+                  <div className="absolute top-3 px-3 w-full flex items-center justify-between pointer-events-none">
+                    <div className="pointer-events-auto">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => navigate(-1)}
+                        className="h-8 w-8 text-white/80 hover:text-white bg-black/20 hover:bg-black/40 backdrop-blur-md rounded-lg transition-all"
+                      >
+                        <ArrowLeft size={16} />
+                      </Button>
+                    </div>
+                    <div className="flex items-center gap-2 pointer-events-auto">
+                      {isOwnProfile && (
+                        <>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => setIsEditing(!isEditing)}
+                            className="h-8 w-8 text-white/80 hover:text-white bg-black/20 hover:bg-black/40 backdrop-blur-md rounded-lg transition-all"
+                          >
+                            <Settings size={16} />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={handleLogout}
+                            className="h-8 w-8 text-white/80 hover:text-red-400 bg-black/20 hover:bg-red-500/20 backdrop-blur-md rounded-lg transition-all"
+                          >
+                            <LogOut size={16} />
+                          </Button>
+                        </>
+                      )}
+                    </div>
+                  </div>
                   {/* Avatar (Absolute positioned) */}
                   <div className="absolute -bottom-12 left-1/2 transform -translate-x-1/2">
                     <Avatar className="w-24 h-24 border-4 border-[#0b1119]">
@@ -581,11 +565,10 @@ const Profile = () => {
                   {!isOwnProfile && (
                     <Button
                       onClick={handleFollowToggle}
-                      className={`w-full h-10 font-bold ${
-                        profileUser?.is_following
-                          ? "bg-zinc-800 text-white hover:bg-zinc-700"
-                          : "bg-white text-black hover:bg-zinc-200"
-                      }`}
+                      className={`w-full h-10 font-bold ${profileUser?.is_following
+                        ? "bg-zinc-800 text-white hover:bg-zinc-700"
+                        : "bg-white text-black hover:bg-zinc-200"
+                        }`}
                     >
                       {profileUser?.is_following ? "Following" : "Follow"}
                     </Button>
@@ -655,7 +638,7 @@ const Profile = () => {
             </div>
 
             {/* Right Column - Content */}
-            <div className="lg:col-span-2 space-y-4">
+            <div className="lg:col-span-2 space-y-4 min-w-0">
               {isEditing && isOwnProfile ? (
                 /* Edit Form */
                 <Card className="bg-[#0f1b2e]/70 border-[#7ea3d9]/20">
@@ -815,7 +798,7 @@ const Profile = () => {
             </div>
 
             {/* Right Column - Suggestions */}
-            <div className="lg:col-span-1 space-y-6">
+            <div className="lg:col-span-1 space-y-6 min-w-0">
               {isOwnProfile && suggestedUsers.length > 0 && (
                 <Card className="bg-[#0f1b2e]/70 border-[#7ea3d9]/20 sticky top-4 shadow-xl overflow-hidden">
                   <CardHeader className="py-3 px-4 border-b border-white/10 bg-[#0f1b2e]/70">

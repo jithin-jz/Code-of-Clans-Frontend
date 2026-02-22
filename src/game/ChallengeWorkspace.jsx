@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import { BookOpen, Code2, Bot } from "lucide-react";
 import { Sparkles } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
@@ -17,6 +18,12 @@ import ProblemPane from "./components/ProblemPane";
 import ConsolePane from "./components/ConsolePane";
 import AIAssistantPane from "./components/AIAssistantPane";
 
+const MOBILE_TABS = [
+  { id: "problem", label: "Problem", Icon: BookOpen },
+  { id: "code", label: "Code", Icon: Code2 },
+  { id: "ai", label: "AI", Icon: Bot },
+];
+
 const ChallengeWorkspace = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -32,6 +39,7 @@ const ChallengeWorkspace = () => {
   // Initial code template
   const [code, setCode] = useState("");
   const [completionData, setCompletionData] = useState(null);
+  const [mobileTab, setMobileTab] = useState("problem");
 
   // AI Hint State
   const [hint, setHint] = useState("");
@@ -655,7 +663,7 @@ const ChallengeWorkspace = () => {
 
               {completionData.xp_earned > 0 && (
                 <div className="text-[#ffa116] text-sm font-mono tracking-tighter">
-                  +{completionData.xp_earned} XP EARNED
+                  +{completionData.xp_earned} EARNED
                 </div>
               )}
 
@@ -702,15 +710,21 @@ const ChallengeWorkspace = () => {
 
       {/* Main Content - Minimalist Boxy Layout */}
       <div className="flex-1 flex flex-col lg:flex-row overflow-hidden relative z-10 p-2 sm:p-3 gap-3">
-        {/* LEFT CARD: Problem */}
-        <div className="w-full lg:w-[24rem] min-h-0 flex flex-col bg-[#0f1827]/64 backdrop-blur-xl border border-white/12 rounded-2xl shadow-[0_22px_60px_rgba(0,0,0,0.3)] overflow-y-auto custom-scrollbar">
+        {/* LEFT CARD: Problem — desktop always visible, mobile only when tab=problem */}
+        <div
+          className={`lg:flex w-full lg:w-[24rem] min-h-0 flex-col bg-[#0f1827]/64 backdrop-blur-xl border border-white/12 rounded-2xl shadow-[0_22px_60px_rgba(0,0,0,0.3)] overflow-y-auto custom-scrollbar ${mobileTab === "problem" ? "flex" : "hidden"
+            }`}
+        >
           <div className="flex-1 min-h-0 relative">
             <ProblemPane challenge={challenge} loading={!challenge} />
           </div>
         </div>
 
-        {/* MIDDLE COLUMN: Editor & Console Cards */}
-        <div className="flex-1 flex flex-col min-w-0 rounded-2xl border border-white/12 shadow-[0_22px_60px_rgba(0,0,0,0.3)] overflow-hidden bg-[#0f1827]/64 backdrop-blur-xl">
+        {/* MIDDLE COLUMN: Editor & Console Cards — desktop always visible, mobile only when tab=code */}
+        <div
+          className={`lg:flex flex-1 flex-col min-w-0 rounded-2xl border border-white/12 shadow-[0_22px_60px_rgba(0,0,0,0.3)] overflow-hidden bg-[#0f1827]/64 backdrop-blur-xl ${mobileTab === "code" ? "flex" : "hidden"
+            }`}
+        >
           {/* Editor Card */}
           <div className="flex-1 flex flex-col bg-[#0b1526]/85 overflow-hidden relative group">
             <div className="flex-1 relative">
@@ -747,8 +761,11 @@ const ChallengeWorkspace = () => {
           </div>
         </div>
 
-        {/* RIGHT CARD: AI Assistant */}
-        <div className="w-full lg:w-[24rem] xl:w-[26rem] flex flex-col bg-[#0f1827]/64 backdrop-blur-xl border border-white/12 rounded-2xl shadow-[0_22px_60px_rgba(0,0,0,0.3)] overflow-hidden">
+        {/* RIGHT CARD: AI Assistant — desktop always visible, mobile only when tab=ai */}
+        <div
+          className={`lg:flex w-full lg:w-[24rem] xl:w-[26rem] flex-col bg-[#0f1827]/64 backdrop-blur-xl border border-white/12 rounded-2xl shadow-[0_22px_60px_rgba(0,0,0,0.3)] overflow-hidden ${mobileTab === "ai" ? "flex" : "hidden"
+            }`}
+        >
           <div className="flex-1 flex flex-col overflow-hidden relative">
             <AIAssistantPane
               onGetHint={handleGetHint}
@@ -764,6 +781,28 @@ const ChallengeWorkspace = () => {
             />
           </div>
         </div>
+      </div>
+
+      {/* MOBILE TAB BAR — only shown on mobile */}
+      <div className="lg:hidden shrink-0 relative z-20 bg-[#0a1220]/95 backdrop-blur-xl border-t border-white/10">
+        <div className="flex items-stretch h-14">
+          {MOBILE_TABS.map(({ id, label, Icon }) => (
+            <button
+              key={id}
+              type="button"
+              onClick={() => setMobileTab(id)}
+              className={`flex-1 flex flex-col items-center justify-center gap-1 transition-all duration-150 ${mobileTab === id
+                ? "text-[#10b981] border-t-2 border-[#10b981] bg-[#10b981]/5"
+                : "text-slate-500 hover:text-slate-300 border-t-2 border-transparent"
+                }`}
+            >
+              <Icon size={18} strokeWidth={mobileTab === id ? 2.2 : 1.7} />
+              <span className="text-[10px] font-semibold uppercase tracking-wide">{label}</span>
+            </button>
+          ))}
+        </div>
+        {/* Safe area for iPhone home indicator */}
+        <div className="h-[env(safe-area-inset-bottom,0px)]" />
       </div>
     </div>
   );

@@ -103,8 +103,8 @@ const ContributionGraph = ({ data, loading }) => {
             ))}
           </div>
 
-          <div className="flex items-center justify-between text-[10px] text-zinc-500 font-medium">
-            <div className="flex items-center gap-6">
+          <div className="flex flex-wrap items-center justify-between gap-y-3 gap-x-4 text-[10px] text-zinc-500 font-medium">
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 w-full sm:w-auto">
               <span>
                 Total Contributions:{" "}
                 <span className="text-white">
@@ -115,7 +115,7 @@ const ContributionGraph = ({ data, loading }) => {
                 Longest Streak: <span className="text-white">12 Days</span>
               </span>
             </div>
-            <div className="flex items-center gap-1.5 font-mono">
+            <div className="flex items-center gap-1.5 font-mono ml-auto sm:ml-0">
               <span>Less</span>
               {colors.map((c, i) => (
                 <div key={i} className={`w-2 h-2 rounded-[1px] ${c}`} />

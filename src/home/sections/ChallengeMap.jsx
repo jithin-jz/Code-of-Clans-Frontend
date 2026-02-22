@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { ArrowRight, Crown, Lock } from "lucide-react";
 import LevelButton from "../../game/LevelButton";
 import { getTrackMeta } from "../../utils/challengeMeta";
-import SiteFooter from "./SiteFooter";
 
 const TRACK_ORDER = [
   "Python Basics",
@@ -70,7 +69,7 @@ const ChallengeMap = ({ levels, handleLevelClick, user }) => {
   }, [levels]);
 
   return (
-    <div className="w-full h-screen relative overflow-hidden flex flex-col items-center justify-center bg-[#0b1220]">
+    <div className="w-full relative flex flex-col items-center">
 
       {/* HERO — Minimal & Elegant */}
       {!user && (
@@ -131,10 +130,10 @@ const ChallengeMap = ({ levels, handleLevelClick, user }) => {
 
       {/* MAIN CONTENT */}
       <div
-        className={`w-full h-[calc(100vh-64px)] mt-16 px-6 pt-4 transition-all duration-500 ${!user ? "blur-sm opacity-20 grayscale pointer-events-none select-none" : ""
+        className={`w-full px-3 sm:px-6 transition-all duration-500 ${!user ? "blur-sm opacity-20 grayscale pointer-events-none select-none" : ""
           }`}
       >
-        <div className="h-full overflow-y-auto space-y-6 pb-8">
+        <div className="space-y-1 pb-4">
 
           {/* TRACK SECTIONS */}
           {TRACK_ORDER.map((track) => {
@@ -144,22 +143,22 @@ const ChallengeMap = ({ levels, handleLevelClick, user }) => {
             return (
               <section
                 key={track}
-                className="rounded-xl border border-white/5 bg-[#111827]/70 backdrop-blur-md p-5"
+                className="px-4 py-2 sm:p-4"
               >
-                <div className="flex items-center justify-between mb-4">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2">
                   <div>
                     <h3 className="text-sm font-semibold text-white">
                       {track}
                     </h3>
-                    <p className="text-[11px] text-slate-500 mt-1">
+                    <p className="text-[11px] text-slate-500 mt-0.5">
                       {trackProgress[track]?.solved || 0} / {trackLevels.length} completed
                     </p>
                   </div>
 
-                  <div className="w-36">
-                    <div className="h-1.5 rounded-full bg-[#1f2937] overflow-hidden">
+                  <div className="w-full sm:w-36">
+                    <div className="h-1 rounded-full bg-white/[0.07] overflow-hidden">
                       <div
-                        className="h-full rounded-full bg-gradient-to-r from-[#3b82f6] to-[#38bdf8]"
+                        className="h-full rounded-full bg-gradient-to-r from-[#3b82f6] to-[#38bdf8] transition-all duration-500"
                         style={{ width: `${trackProgress[track]?.percent || 0}%` }}
                       />
                     </div>
@@ -188,7 +187,7 @@ const ChallengeMap = ({ levels, handleLevelClick, user }) => {
 
           {/* CERTIFICATE */}
           {certificateLevel && (
-            <section className="rounded-xl border border-yellow-500/10 bg-[#111827]/80 p-6 mb-6">
+            <section className="px-4 pt-2 pb-6">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-[11px] tracking-[0.25em] uppercase text-yellow-400 font-semibold">
                   Certification
@@ -200,9 +199,9 @@ const ChallengeMap = ({ levels, handleLevelClick, user }) => {
 
               <button
                 onClick={() => handleLevelClick(certificateLevel)}
-                className={`w-full rounded-xl border p-5 text-left transition-all duration-200 ${certificateLevel.unlocked
-                    ? "border-yellow-400/40 bg-[#18181b] hover:border-yellow-400"
-                    : "border-yellow-900/30 bg-[#121212] cursor-not-allowed"
+                className={`w-full rounded-xl border p-5 text-left transition-all duration-300 backdrop-blur-md ${certificateLevel.unlocked
+                  ? "border-yellow-400/40 bg-yellow-400/5 hover:bg-yellow-400/10 hover:border-yellow-400 hover:shadow-[0_0_15px_rgba(250,204,21,0.15)]"
+                  : "border-white/5 bg-white/[0.02] cursor-not-allowed grayscale-[50%]"
                   }`}
               >
                 <div className="flex justify-between items-start">
@@ -256,8 +255,6 @@ const ChallengeMap = ({ levels, handleLevelClick, user }) => {
               </button>
             </section>
           )}
-
-          <SiteFooter />
         </div>
       </div>
     </div>

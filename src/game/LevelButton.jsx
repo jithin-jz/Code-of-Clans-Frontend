@@ -8,20 +8,19 @@ const LevelButton = ({ level, isCurrentLevel, onClick, motionIndex = 0 }) => {
   const difficulty = getDifficultyMeta(level.order);
 
   const statusTone = level.completed
-    ? "border-emerald-400/35 bg-emerald-400/5"
+    ? "bg-[#0f1b2e]/70 border-[#7ea3d9]/30 border-t-emerald-400/50 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.3)]"
     : level.unlocked
-      ? "border-[#2e3d54] bg-[#111a2a]"
-      : "border-[#243042] bg-[#0f1521]/70";
+      ? "bg-[#0f1b2e]/70 border-[#7ea3d9]/20 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.3)]"
+      : "bg-[#0f1b2e]/40 border-[#7ea3d9]/10 backdrop-blur-md grayscale-[40%] opacity-80";
 
   return (
     <Motion.button
       onClick={onClick}
       disabled={!level.unlocked}
-      className={`w-full text-left rounded-xl border p-3 sm:p-3.5 min-h-[160px] transition-all duration-200 ${statusTone} ${
-        level.unlocked
-          ? "cursor-pointer hover:border-[#4b6386] hover:bg-[#152137] hover:shadow-[0_14px_32px_rgba(2,8,22,0.45)]"
-          : "cursor-not-allowed opacity-80"
-      } group`}
+      className={`w-full text-left rounded-xl border p-3 sm:p-3.5 min-h-[160px] transition-all duration-300 ${statusTone} ${level.unlocked
+        ? "cursor-pointer hover:border-[#7ea3d9]/50 hover:bg-[#162338]/80 hover:shadow-[0_12px_40px_-15px_rgba(126,163,217,0.2)]"
+        : "cursor-not-allowed opacity-60"
+        } group`}
       initial={{ opacity: 0, y: 10, scale: 0.985 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{
@@ -32,10 +31,10 @@ const LevelButton = ({ level, isCurrentLevel, onClick, motionIndex = 0 }) => {
       whileHover={
         level.unlocked
           ? {
-              y: -4,
-              scale: 1.01,
-              transition: { type: "spring", stiffness: 260, damping: 20 },
-            }
+            y: -4,
+            scale: 1.01,
+            transition: { type: "spring", stiffness: 260, damping: 20 },
+          }
           : {}
       }
       whileTap={level.unlocked ? { scale: 0.992 } : {}}
@@ -43,11 +42,10 @@ const LevelButton = ({ level, isCurrentLevel, onClick, motionIndex = 0 }) => {
       <div className="flex items-start justify-between gap-2.5">
         <div className="flex items-center gap-2.5 min-w-0">
           <div
-            className={`w-9 h-9 rounded-lg border flex items-center justify-center shrink-0 ${
-              isCertificate
-                ? "bg-linear-to-br from-[#facc15] to-[#f59e0b] border-[#fde68a] text-black"
-                : "bg-[#1c2a3f] border-[#415672] text-[#d3deee]"
-            }`}
+            className={`w-9 h-9 rounded-lg border flex items-center justify-center shrink-0 ${isCertificate
+              ? "bg-linear-to-br from-[#facc15] to-[#f59e0b] border-[#fde68a] text-black"
+              : "bg-[#162338]/80 border-[#7ea3d9]/20 text-[#d3deee]"
+              }`}
           >
             {level.unlocked ? (
               isCertificate ? (
@@ -55,10 +53,10 @@ const LevelButton = ({ level, isCurrentLevel, onClick, motionIndex = 0 }) => {
               ) : (
                 React.isValidElement(level.icon)
                   ? React.cloneElement(level.icon, {
-                      size: 18,
-                      strokeWidth: 1.7,
-                      className: "text-[#d3deee]",
-                    })
+                    size: 18,
+                    strokeWidth: 1.7,
+                    className: "text-[#d3deee]",
+                  })
                   : level.icon
               )
             ) : (
@@ -103,7 +101,7 @@ const LevelButton = ({ level, isCurrentLevel, onClick, motionIndex = 0 }) => {
       {!isCertificate && (
         <div className="mt-2.5 flex items-center justify-between">
           <p className="text-xs text-slate-400">
-            {(level.xp_reward || 0).toLocaleString()} XP
+            {(level.xp_reward || 0).toLocaleString()}
           </p>
           <div className="flex gap-1">
             {[1, 2, 3].map((star) => (
@@ -124,7 +122,7 @@ const LevelButton = ({ level, isCurrentLevel, onClick, motionIndex = 0 }) => {
 
       {isCurrentLevel && level.unlocked && (
         <div className="mt-2.5">
-          <span className="inline-flex text-[10px] px-2.5 py-1 rounded-md font-semibold bg-[#3b82f6]/15 text-[#93c5fd] border border-[#3b82f6]/35 uppercase tracking-wide">
+          <span className="inline-flex text-[10px] px-2.5 py-1 rounded-md font-semibold bg-white/[0.08] text-white border border-white/[0.15] backdrop-blur-md uppercase tracking-wide">
             Current
           </span>
         </div>

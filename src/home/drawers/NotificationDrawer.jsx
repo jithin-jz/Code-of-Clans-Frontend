@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   Bell,
   Check,
@@ -70,7 +70,7 @@ const NotificationDrawer = ({ isOpen, onClose }) => {
       case "started following you":
         return <UserPlus size={14} className="text-[#00af9b]" />;
       case "liked your post":
-        return <Check size={14} className="text-[#ffb84d]" />; // Heart icon requires lucide-react Heart import if we want to be exact, Check/Bell is placeholder
+        return <Check size={14} className="text-[#ffb84d]" />;
       case "commented on your post":
         return <MessageSquare size={14} className="text-green-400" />;
       case "sent you a gift":
@@ -89,12 +89,12 @@ const NotificationDrawer = ({ isOpen, onClose }) => {
 
   return (
     <Motion.div
-      className="fixed top-16 right-0 h-[calc(100vh-64px)] z-50 w-full sm:w-[390px]"
+      className="fixed top-14 right-0 h-[calc(100vh-56px)] z-50 w-full sm:w-[390px]"
       initial={{ x: "100%" }}
       animate={{ x: isOpen ? 0 : "100%" }}
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
     >
-      <div className="w-full h-full bg-linear-to-b from-[#111d30]/95 via-[#0f1b2e]/95 to-[#0c1627]/95 backdrop-blur-3xl border-l border-white/15 flex flex-col pointer-events-auto shadow-2xl shadow-black/50 relative">
+      <div className="w-full h-full bg-linear-to-b from-[#111d30]/95 via-[#0f1b2e]/95 to-[#0c1627]/95 backdrop-blur-3xl border-l border-white/15 flex flex-col pointer-events-auto shadow-2xl shadow-black/50 relative pb-16 sm:pb-0">
         {/* Decorative gradient orb */}
         <div className="absolute -top-20 -right-20 w-40 h-40 bg-[#3b82f6]/12 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute bottom-10 -left-10 w-32 h-32 bg-[#00af9b]/10 rounded-full blur-3xl pointer-events-none" />
@@ -192,11 +192,10 @@ const NotificationDrawer = ({ isOpen, onClose }) => {
                 onClick={() => handleNotificationClick(notification)}
                 className={`
                     group relative flex items-start gap-3 p-3 rounded-xl transition-all duration-200 cursor-pointer border
-                    ${
-                      !notification.is_read
-                        ? "bg-[#00af9b]/5 border-[#00af9b]/20 hover:bg-[#00af9b]/10"
-                        : "bg-white/[0.03] border-white/10 hover:bg-white/[0.07] hover:border-white/20"
-                    }
+                    ${!notification.is_read
+                    ? "bg-[#00af9b]/5 border-[#00af9b]/20 hover:bg-[#00af9b]/10"
+                    : "bg-white/[0.03] border-white/10 hover:bg-white/[0.07] hover:border-white/20"
+                  }
                 `}
               >
                 {/* Unread Indicator Dot */}

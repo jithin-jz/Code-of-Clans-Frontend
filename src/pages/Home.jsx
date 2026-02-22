@@ -9,14 +9,8 @@ import useChallengesStore from "../stores/useChallengesStore";
 import HomeSkeleton from "./HomeSkeleton";
 import LevelModal from "../game/LevelModal";
 import {
-  ChatDrawer,
-  LeaderboardDrawer,
-  HomeTopNav,
-  NotificationDrawer,
   ChallengeMap,
-  DailyCheckInModal,
 } from "../home";
-import { checkInApi } from "../services/checkInApi";
 import { challengesApi } from "../services/challengesApi";
 import CertificateModal from "../components/CertificateModal";
 
@@ -27,7 +21,7 @@ const CERTIFICATE_SLUG = "certificate";
 
 const Home = () => {
   const navigate = useNavigate();
-  const { user, logout } = useAuthStore();
+  const { user } = useAuthStore();
 
   // Use centralized challenges store
   const {
@@ -38,29 +32,11 @@ const Home = () => {
 
   // Local UI State
   const [selectedLevel, setSelectedLevel] = useState(null);
-  const [isChatOpen, setChatOpen] = useState(false);
-  const [isLeaderboardOpen, setLeaderboardOpen] = useState(false);
-  const [isNotificationOpen, setNotificationOpen] = useState(false);
-  const [checkInOpen, setCheckInOpen] = useState(false);
-  const [hasUnclaimedReward, setHasUnclaimedReward] = useState(false);
   const [certificateModalOpen, setCertificateModalOpen] = useState(false);
   const [userCertificate, setUserCertificate] = useState(null);
   const [isCertificateLoading, setIsCertificateLoading] = useState(false);
 
-  // Check for daily reward status on mount
-  useEffect(() => {
-    const checkRewardStatus = async () => {
-      if (!user) return;
-      try {
-        const data = await checkInApi.getCheckInStatus();
-        // If not checked in today, show red dot
-        setHasUnclaimedReward(!data.checked_in_today);
-      } catch (error) {
-        console.error("Failed to check reward status:", error);
-      }
-    };
-    checkRewardStatus();
-  }, [user]);
+
 
   // Fetch levels when user is authenticated
   useEffect(() => {
@@ -163,45 +139,9 @@ const Home = () => {
     });
   }, [apiLevels]);
 
-  // Keyboard Shortcuts
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "b") {
-        e.preventDefault();
-        setChatOpen((prev) => !prev);
-      }
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "l") {
-        e.preventDefault();
-        setLeaderboardOpen((prev) => !prev);
-      }
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "p") {
-        e.preventDefault();
-        if (user) {
-          navigate("/profile");
-        }
-      }
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "x") {
-        e.preventDefault();
-        if (user) {
-          navigate("/shop");
-        }
-      }
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "s") {
-        e.preventDefault();
-        if (user) {
-          navigate("/store");
-        }
-      }
-    };
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [user, navigate]);
 
-  const handleLogout = async () => {
-    await logout();
-    navigate("/");
-  };
+  /* handleLogout and drawer states moved to MainLayout */
 
   const handleLevelClick = async (level) => {
     if (!user) {
@@ -240,7 +180,7 @@ const Home = () => {
   };
 
   return (
-    <div className="h-screen relative select-none overflow-hidden text-white bg-[#0b1119]">
+    <div className="relative select-none text-white">
       <AnimatePresence mode="wait">
         {isLoading ? (
           <Motion.div
@@ -259,59 +199,15 @@ const Home = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
-            className="h-full w-full relative"
+            className="w-full relative"
           >
-            <div className="absolute inset-0 pointer-events-none bg-[#0b1119]" />
-            <div className="absolute inset-0 pointer-events-none bg-linear-to-b from-[#101928] via-[#0d141f] to-[#0a0f17]" />
-            <div
-              className="absolute inset-0 pointer-events-none opacity-[0.06]"
-              style={{
-                backgroundImage:
-                  "linear-gradient(rgba(148,163,184,0.35) 1px, transparent 1px), linear-gradient(90deg, rgba(148,163,184,0.35) 1px, transparent 1px)",
-                backgroundSize: "52px 52px",
-              }}
-            />
-            <div className="absolute top-0 left-[8%] w-[32rem] h-[32rem] rounded-full bg-[#2563eb]/10 blur-3xl pointer-events-none" />
-            <div className="absolute bottom-[-8rem] right-[10%] w-[28rem] h-[28rem] rounded-full bg-[#0ea5e9]/10 blur-3xl pointer-events-none" />
 
-            <ChatDrawer
-              isChatOpen={isChatOpen}
-              setChatOpen={setChatOpen}
-              user={user}
-            />
-            <LeaderboardDrawer
-              isLeaderboardOpen={isLeaderboardOpen}
-              setLeaderboardOpen={setLeaderboardOpen}
-            />
-            <NotificationDrawer
-              isOpen={isNotificationOpen}
-              onClose={() => setNotificationOpen(false)}
-            />
-            <HomeTopNav
-              user={user}
-              levels={levels}
-              handleLogout={handleLogout}
-              setChatOpen={setChatOpen}
-              isChatOpen={isChatOpen}
-              checkInOpen={checkInOpen}
-              setCheckInOpen={setCheckInOpen}
-              setLeaderboardOpen={setLeaderboardOpen}
-              setNotificationOpen={setNotificationOpen}
-              hasUnclaimedReward={hasUnclaimedReward}
-              userCertificate={userCertificate}
-            />
-            <DailyCheckInModal
-              isOpen={checkInOpen}
-              onClose={() => setCheckInOpen(false)}
-              onClaim={() => setHasUnclaimedReward(false)}
-            />
+
 
             <ChallengeMap
               user={user}
               levels={levels}
               handleLevelClick={handleLevelClick}
-              isLeaderboardOpen={isLeaderboardOpen}
-              isNotificationOpen={isNotificationOpen}
             />
 
             {/* Level Modal */}
