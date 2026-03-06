@@ -9,19 +9,18 @@ import {
 
 const LoginSkeleton = () => {
     return (
-        <SkeletonPage className="flex items-center justify-center min-h-screen bg-[#060a11] overflow-hidden">
-            {/* Decorative ambient blobs to match the actual login page */}
-            <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-blue-600/5 blur-[120px] pointer-events-none" />
-            <div className="absolute bottom-[10%] right-[-5%] w-[30%] h-[30%] rounded-full bg-purple-600/5 blur-[100px] pointer-events-none" />
+        <SkeletonPage className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background">
+            <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_16%_20%,rgba(34,211,238,0.1),transparent_34%),radial-gradient(circle_at_82%_78%,rgba(14,165,233,0.08),transparent_30%)]" />
+            <div className="app-grid-overlay absolute inset-0 pointer-events-none opacity-[0.04]" />
 
             <div className="relative z-10 w-full max-w-[440px] px-4">
                 {/* Branding placeholder */}
                 <div className="flex justify-center mb-8">
-                    <SkeletonText width="180px" height="1.75rem" className="bg-white/5" />
+                    <SkeletonText width="180px" height="1rem" className="bg-white/5" />
                 </div>
 
                 {/* Main login card placeholder */}
-                <SkeletonCard className="p-8 pb-10 rounded-[2.5rem] border border-white/10 bg-[#0f1b2e]/60 backdrop-blur-3xl shadow-[0_32px_80px_-15px_rgba(0,0,0,0.5)]">
+                <SkeletonCard className="app-panel p-8 pb-10 rounded-2xl">
                     <div className="space-y-6">
                         {/* Input field placeholder */}
                         <div className="space-y-2">
@@ -33,8 +32,8 @@ const LoginSkeleton = () => {
 
                         {/* Divider */}
                         <div className="relative flex items-center justify-center py-4">
-                            <div className="absolute inset-x-0 h-px bg-white/[0.05]" />
-                            <div className="relative bg-[#0f1b2e] px-4">
+                            <div className="absolute inset-x-0 h-px bg-border/70" />
+                            <div className="relative bg-[rgba(10,16,28,0.96)] px-4">
                                 <SkeletonText width="100px" height="0.6rem" className="opacity-40" />
                             </div>
                         </div>

@@ -59,7 +59,7 @@ const NotificationDrawer = ({ isOpen, onClose }) => {
     if (v.includes("comment")) return { icon: <MessageSquare size={14} />, color: "text-blue-400", bg: "bg-blue-400/10", border: "border-blue-400/20" };
     if (v.includes("gift")) return { icon: <Gift size={14} />, color: "text-accent", bg: "bg-accent/10", border: "border-accent/20" };
     if (v.includes("verified")) return { icon: <Shield size={14} />, color: "text-green-400", bg: "bg-green-400/10", border: "border-green-400/20" };
-    return { icon: <Bell size={14} />, color: "text-slate-400", bg: "bg-white/10", border: "border-white/20" };
+    return { icon: <Bell size={14} />, color: "text-neutral-400", bg: "bg-white/10", border: "border-white/20" };
   };
 
   const getImageUrl = (url) => {
@@ -85,24 +85,19 @@ const NotificationDrawer = ({ isOpen, onClose }) => {
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", damping: 30, stiffness: 300 }}
-            className="fixed right-0 top-0 h-full z-[60] w-full sm:w-[420px] bg-[#03070c] shadow-2xl flex flex-col border-l border-white/[0.08]"
+            className="fixed right-0 top-0 h-full z-[60] w-full md:max-w-[360px] bg-[#050505] shadow-2xl flex flex-col md:border-l border-[#1a1a1a]"
           >
             {/* Header */}
-            <header className="relative shrink-0 h-14 bg-[#0a0f18]/95 backdrop-blur-2xl flex items-center justify-between px-6 border-b border-white/[0.08]">
-              <div className="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-transparent via-primary/30 to-transparent" />
-              
+            <header className="relative shrink-0 h-12 bg-[#0a0a0a] flex items-center justify-between px-4 border-b border-[#1a1a1a]">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
-                   <Bell size={18} className="text-primary" />
-                </div>
-                <div>
-                  <h2 className="text-sm font-black tracking-widest text-white uppercase font-sans">
-                    Transmissions
+                <div className="flex flex-col">
+                  <h2 className="text-[10px] font-bold tracking-[0.2em] text-[#444] uppercase font-mono">
+                    Notifications
                   </h2>
-                  <div className="flex items-center gap-1.5 mt-0.5">
-                    <span className={`w-1.5 h-1.5 rounded-full ${unreadCount > 0 ? "bg-accent animate-pulse shadow-[0_0_8px_rgba(255,161,22,0.6)]" : "bg-slate-600"}`} />
-                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-tighter">
-                      {unreadCount} UNREAD
+                  <div className="flex items-center gap-1.5 mt-[-1px]">
+                    <span className={`w-1 h-1 rounded-full ${unreadCount > 0 ? "bg-amber-500 animate-pulse shadow-[0_0_4px_rgba(245,158,11,0.5)]" : "bg-neutral-600"}`} />
+                    <span className="text-[8px] font-bold text-neutral-600 uppercase tracking-tighter">
+                      {unreadCount} Signal{unreadCount !== 1 ? "s" : ""}
                     </span>
                   </div>
                 </div>
@@ -110,20 +105,20 @@ const NotificationDrawer = ({ isOpen, onClose }) => {
 
               <div className="flex items-center gap-1">
                 {notifications.length > 0 && (
-                   <button
+                  <button
                     onClick={markAllAsRead}
-                    className="h-8 w-8 rounded-lg flex items-center justify-center text-slate-500 hover:text-primary hover:bg-primary/10 transition-all"
+                    className="h-6 w-6 rounded flex items-center justify-center text-neutral-600 hover:text-white hover:bg-[#1a1a1a] transition-all"
                     title="Acknowledge All"
                   >
-                    <Check size={16} strokeWidth={2.5} />
+                    <Check size={14} />
                   </button>
                 )}
                 <button
                   type="button"
                   onClick={onClose}
-                  className="h-9 w-9 rounded-xl flex items-center justify-center text-slate-500 hover:text-white hover:bg-white/[0.06] transition-all"
+                  className="h-6 w-6 rounded flex items-center justify-center text-neutral-600 hover:text-white hover:bg-[#1a1a1a] transition-all"
                 >
-                  <X size={20} strokeWidth={2.5} />
+                  <X size={14} />
                 </button>
               </div>
             </header>
@@ -137,11 +132,9 @@ const NotificationDrawer = ({ isOpen, onClose }) => {
                   ))}
                 </div>
               ) : notifications.length === 0 ? (
-                <div className="h-full flex flex-col items-center justify-center text-center opacity-40">
-                  <div className="w-16 h-16 rounded-3xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-center mb-4">
-                    <Zap size={32} className="text-slate-600" />
-                  </div>
-                  <p className="text-xs font-black uppercase tracking-[0.2em]">Signal Clear</p>
+                <div className="h-full flex flex-col items-center justify-center text-center opacity-30 mt-20">
+                  <Bell size={24} className="text-neutral-700 mb-2" />
+                  <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-neutral-600">Signal Clear</p>
                 </div>
               ) : (
                 <div className="space-y-2">
@@ -154,55 +147,49 @@ const NotificationDrawer = ({ isOpen, onClose }) => {
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: index * 0.03 }}
                         onClick={() => handleNotificationClick(notification)}
-                        className={`group relative flex items-start gap-4 p-4 rounded-2xl transition-all duration-300 border cursor-pointer ${
-                          !notification.is_read 
-                            ? "bg-primary/5 border-primary/20 shadow-[0_4px_20px_rgba(0,175,155,0.05)]" 
-                            : "bg-white/[0.02] border-white/[0.04] hover:bg-white/[0.05] hover:border-white/[0.08]"
-                        }`}
+                        className={`group relative flex items-start gap-3 p-3 rounded-lg transition-all border cursor-pointer ${!notification.is_read
+                          ? "bg-amber-500/5 border-amber-500/10"
+                          : "bg-[#111] border-[#1a1a1a] hover:bg-[#161616] hover:border-[#222]"
+                          }`}
                       >
                         {/* Status Marker */}
                         {!notification.is_read && (
-                          <div className="absolute top-4 right-4 w-1.5 h-1.5 rounded-full bg-primary" />
+                          <div className="absolute top-3 right-3 w-1 h-1 rounded-full bg-amber-500" />
                         )}
 
                         {/* Avatar & Icon Badge */}
                         <div className="relative shrink-0">
-                          <div className="w-11 h-11 rounded-xl overflow-hidden border border-white/10 bg-white/[0.05]">
+                          <div className="w-9 h-9 rounded-md overflow-hidden border border-white/5 bg-[#1c1c1c]">
                             {getImageUrl(notification.actor?.avatar_url) ? (
                               <img
                                 src={getImageUrl(notification.actor.avatar_url)}
                                 alt=""
-                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                className="w-full h-full object-cover transition-transform duration-500"
                               />
                             ) : (
-                              <div className="w-full h-full flex items-center justify-center text-xs font-black bg-primary/10 text-primary uppercase">
-                                {notification.actor?.username?.[0]}
+                              <div className="w-full h-full flex items-center justify-center text-[10px] font-bold text-neutral-500 uppercase">
+                                {notification.actor?.username?.[0] || "?"}
                               </div>
                             )}
                           </div>
-                          <div className={`absolute -bottom-1 -right-1 w-5 h-5 rounded-lg flex items-center justify-center border shadow-lg ${config.bg} ${config.border} ${config.color}`}>
+                          <div className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-md flex items-center justify-center border shadow-lg ${config.bg} ${config.border} ${config.color}`}>
                             {config.icon}
                           </div>
                         </div>
 
                         {/* Text Content */}
                         <div className="flex-1 min-w-0 pt-0.5">
-                          <p className="text-[13px] leading-relaxed text-slate-300">
-                            <span className={`font-black uppercase tracking-tight ${!notification.is_read ? "text-white" : "text-slate-400"}`}>
+                          <p className="text-[12px] leading-snug text-neutral-400">
+                            <span className={`font-bold uppercase tracking-tight ${!notification.is_read ? "text-neutral-200" : "text-neutral-500"}`}>
                               {notification.actor?.username || "SYSTEM"}
                             </span>{" "}
-                            <span className="font-medium text-slate-500">{notification.verb}</span>
+                            <span className="text-neutral-600">{notification.verb}</span>
                           </p>
-                          <div className="flex items-center gap-2 mt-1.5">
-                            <span className="text-[9px] font-black font-mono text-slate-600 uppercase tracking-tighter">
+                          <div className="flex items-center gap-2 mt-1">
+                            <span className="text-[9px] font-bold font-mono text-neutral-700 uppercase tracking-tighter">
                               {formatDistanceToNow(new Date(notification.created_at), { addSuffix: true })}
                             </span>
                           </div>
-                        </div>
-
-                        {/* Action Hint */}
-                        <div className="self-center opacity-0 group-hover:opacity-100 transition-opacity translate-x-2 group-hover:translate-x-0">
-                           <ArrowRight size={14} className="text-primary" />
                         </div>
                       </Motion.div>
                     );
@@ -213,13 +200,13 @@ const NotificationDrawer = ({ isOpen, onClose }) => {
 
             {/* Footer Actions */}
             {notifications.length > 0 && (
-              <footer className="p-4 bg-white/[0.02] border-t border-white/[0.06] flex items-center justify-between">
+              <footer className="p-3 bg-[#0a0a0a] border-t border-[#1a1a1a] flex items-center justify-between">
                 <button
                   onClick={clearAll}
-                  className="px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-rose-400 hover:bg-rose-400/10 transition-all flex items-center gap-2"
+                  className="px-3 py-1.5 rounded-md text-[9px] font-bold uppercase tracking-widest text-neutral-600 hover:text-red-500 hover:bg-red-500/5 transition-all flex items-center gap-2"
                 >
-                  <Trash2 size={12} />
-                  Purge History
+                  <Trash2 size={10} />
+                  Purge Data
                 </button>
               </footer>
             )}

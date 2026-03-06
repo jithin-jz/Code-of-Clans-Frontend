@@ -115,16 +115,16 @@ const AdminTasks = () => {
     };
 
     return (
-      <div className="bg-[#0d1525] rounded-xl p-6 border border-white/5 shadow-sm">
+      <div className="bg-[#0a0a0a] rounded-xl p-6 border border-white/5 shadow-sm">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold text-slate-100">
+          <h2 className="text-xl font-semibold text-neutral-100">
             {task ? "Edit Challenge" : "New Challenge"}
           </h2>
           <Button
             variant="ghost"
             size="sm"
             onClick={onCancel}
-            className="h-8 w-8 p-0 text-slate-400 hover:text-white hover:bg-white/10"
+            className="h-8 w-8 p-0 text-neutral-400 hover:text-white hover:bg-white/10"
           >
             <X size={18} />
           </Button>
@@ -133,7 +133,7 @@ const AdminTasks = () => {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-slate-500">Title</label>
+              <label className="text-xs font-medium text-neutral-500">Title</label>
               <input
                 name="title"
                 value={formData.title}
@@ -144,7 +144,7 @@ const AdminTasks = () => {
               />
             </div>
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-slate-500">Slug</label>
+              <label className="text-xs font-medium text-neutral-500">Slug</label>
               <input
                 name="slug"
                 value={formData.slug}
@@ -157,7 +157,7 @@ const AdminTasks = () => {
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-xs font-medium text-slate-500">
+            <label className="text-xs font-medium text-neutral-500">
               Description (Markdown)
             </label>
             <textarea
@@ -171,7 +171,7 @@ const AdminTasks = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-slate-500">Order</label>
+              <label className="text-xs font-medium text-neutral-500">Order</label>
               <input
                 type="number"
                 name="order"
@@ -181,7 +181,7 @@ const AdminTasks = () => {
               />
             </div>
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-slate-500">
+              <label className="text-xs font-medium text-neutral-500">
                 XP Reward
               </label>
               <input
@@ -193,7 +193,7 @@ const AdminTasks = () => {
               />
             </div>
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-slate-500">
+              <label className="text-xs font-medium text-neutral-500">
                 Time Limit (s)
               </label>
               <input
@@ -208,7 +208,7 @@ const AdminTasks = () => {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:h-[300px]">
             <div className="flex flex-col space-y-1.5">
-              <label className="text-xs font-medium text-slate-500">
+              <label className="text-xs font-medium text-neutral-500">
                 Initial Code
               </label>
               <div className="h-56 lg:h-full border border-white/10 rounded-md overflow-hidden bg-[#0a1220]">
@@ -230,7 +230,7 @@ const AdminTasks = () => {
               </div>
             </div>
             <div className="flex flex-col space-y-1.5">
-              <label className="text-xs font-medium text-slate-500">
+              <label className="text-xs font-medium text-neutral-500">
                 Validation Code
               </label>
               <div className="h-56 lg:h-full border border-white/10 rounded-md overflow-hidden bg-[#0a1220]">
@@ -258,7 +258,7 @@ const AdminTasks = () => {
               type="button"
               variant="ghost"
               onClick={onCancel}
-              className="text-slate-400 hover:text-white hover:bg-white/10 px-4 h-9"
+              className="text-neutral-400 hover:text-white hover:bg-white/10 px-4 h-9"
             >
               Cancel
             </Button>
@@ -279,7 +279,7 @@ const AdminTasks = () => {
       {!editingTask ? (
         <>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <h2 className="text-xl font-semibold text-slate-100 tracking-tight">
+            <h2 className="text-xl font-semibold text-neutral-100 tracking-tight">
               Challenge Management
             </h2>
             <div className="flex flex-wrap items-center gap-2">
@@ -288,7 +288,7 @@ const AdminTasks = () => {
                 size="sm"
                 onClick={fetchTasks}
                 disabled={isLoading}
-                className="h-8 gap-2 bg-white/[0.04] border-white/10 text-slate-300 hover:text-white hover:bg-white/10 transition-colors rounded-md"
+                className="h-8 gap-2 bg-white/[0.04] border-white/10 text-neutral-300 hover:text-white hover:bg-white/10 transition-colors rounded-md"
               >
                 <RefreshCw className="h-3.5 w-3.5" />
                 <span className="text-xs font-medium">
@@ -306,23 +306,23 @@ const AdminTasks = () => {
             </div>
           </div>
 
-          <div className="rounded-lg border border-white/5 bg-[#0d1525] shadow-sm overflow-hidden">
+          <div className="rounded-lg border border-white/5 bg-[#0a0a0a] shadow-sm overflow-hidden">
             <Table className="min-w-[760px]">
               <TableHeader>
                 <TableRow className="border-white/10 hover:bg-transparent bg-white/[0.02]">
-                  <TableHead className="w-[80px] text-[10px] font-medium uppercase tracking-wider text-slate-400 py-3">
+                  <TableHead className="w-[80px] text-[10px] font-medium uppercase tracking-wider text-neutral-400 py-3">
                     #
                   </TableHead>
-                  <TableHead className="text-[10px] font-medium uppercase tracking-wider text-slate-400 py-3">
+                  <TableHead className="text-[10px] font-medium uppercase tracking-wider text-neutral-400 py-3">
                     Challenge
                   </TableHead>
-                  <TableHead className="text-[10px] font-medium uppercase tracking-wider text-slate-400 py-3">
+                  <TableHead className="text-[10px] font-medium uppercase tracking-wider text-neutral-400 py-3">
                     XP Reward
                   </TableHead>
-                  <TableHead className="text-[10px] font-medium uppercase tracking-wider text-slate-400 py-3">
+                  <TableHead className="text-[10px] font-medium uppercase tracking-wider text-neutral-400 py-3">
                     Time Limit
                   </TableHead>
-                  <TableHead className="text-right text-[10px] font-medium uppercase tracking-wider text-slate-400 py-3">
+                  <TableHead className="text-right text-[10px] font-medium uppercase tracking-wider text-neutral-400 py-3">
                     Actions
                   </TableHead>
                 </TableRow>
@@ -334,7 +334,7 @@ const AdminTasks = () => {
                   <TableRow>
                     <TableCell
                       colSpan={5}
-                      className="h-24 text-center text-slate-500 text-sm italic"
+                      className="h-24 text-center text-neutral-500 text-sm italic"
                     >
                       No challenges found.
                     </TableCell>
@@ -346,27 +346,27 @@ const AdminTasks = () => {
                       className="border-white/10 hover:bg-white/5 transition-colors group"
                     >
                       <TableCell className="py-3">
-                        <span className="text-xs font-mono text-slate-500">
+                        <span className="text-xs font-mono text-neutral-500">
                           {task.order.toString().padStart(2, "0")}
                         </span>
                       </TableCell>
                       <TableCell className="py-3">
                         <div className="flex flex-col">
-                          <span className="text-sm font-medium text-slate-100 tracking-tight flex items-center gap-2">
+                          <span className="text-sm font-medium text-neutral-100 tracking-tight flex items-center gap-2">
                             {task.title}
                           </span>
-                          <span className="text-[11px] text-slate-500 font-mono">
+                          <span className="text-[11px] text-neutral-500 font-mono">
                             /{task.slug}
                           </span>
                         </div>
                       </TableCell>
                       <TableCell className="py-3 font-mono text-xs">
-                        <span className="text-slate-300">
+                        <span className="text-neutral-300">
                           {task.xp_reward} XP
                         </span>
                       </TableCell>
                       <TableCell className="py-3">
-                        <span className="text-slate-500 text-xs">
+                        <span className="text-neutral-500 text-xs">
                           {task.time_limit}s
                         </span>
                       </TableCell>
@@ -376,7 +376,7 @@ const AdminTasks = () => {
                             variant="ghost"
                             size="sm"
                             onClick={() => setEditingTask(task)}
-                            className="h-8 w-8 p-0 text-slate-400 hover:text-white hover:bg-white/10 rounded-md"
+                            className="h-8 w-8 p-0 text-neutral-400 hover:text-white hover:bg-white/10 rounded-md"
                           >
                             <Edit className="h-3.5 w-3.5" />
                           </Button>
@@ -384,7 +384,7 @@ const AdminTasks = () => {
                             variant="ghost"
                             size="sm"
                             onClick={() => handleDelete(task.slug)}
-                            className="h-8 w-8 p-0 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-md"
+                            className="h-8 w-8 p-0 text-neutral-400 hover:text-red-400 hover:bg-red-500/10 rounded-md"
                           >
                             <Trash2 className="h-3.5 w-3.5" />
                           </Button>
@@ -397,7 +397,7 @@ const AdminTasks = () => {
             </Table>
           </div>
           {!isLoading && (
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs text-slate-500">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs text-neutral-500">
               <div className="flex flex-wrap items-center gap-2">
                 <span>
                   Showing {totalCount === 0 ? 0 : (page - 1) * pageSize + 1}-
@@ -409,7 +409,7 @@ const AdminTasks = () => {
                     setPageSize(Number(e.target.value));
                     setPage(1);
                   }}
-                  className="h-7 rounded-md bg-white/[0.04] border border-white/10 text-slate-300 text-xs px-2"
+                  className="h-7 rounded-md bg-white/[0.04] border border-white/10 text-neutral-300 text-xs px-2"
                 >
                   <option value="10">10 / page</option>
                   <option value="25">25 / page</option>
@@ -420,19 +420,19 @@ const AdminTasks = () => {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="h-7 px-2 border-white/10 bg-white/[0.04] text-slate-300 hover:text-white hover:bg-white/10"
+                  className="h-7 px-2 border-white/10 bg-white/[0.04] text-neutral-300 hover:text-white hover:bg-white/10"
                   disabled={page <= 1}
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                 >
                   Prev
                 </Button>
-                <span className="text-slate-400">
+                <span className="text-neutral-400">
                   Page {page} / {totalPages}
                 </span>
                 <Button
                   variant="outline"
                   size="sm"
-                  className="h-7 px-2 border-white/10 bg-white/[0.04] text-slate-300 hover:text-white hover:bg-white/10"
+                  className="h-7 px-2 border-white/10 bg-white/[0.04] text-neutral-300 hover:text-white hover:bg-white/10"
                   disabled={page >= totalPages}
                   onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 >

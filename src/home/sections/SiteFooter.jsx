@@ -18,35 +18,45 @@ const SiteFooter = () => {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="w-full border-t border-white/[0.06] bg-transparent">
-      <div className="max-w-7xl mx-auto px-6 py-6 flex flex-col items-center justify-between gap-4 sm:flex-row">
-        <div className="flex items-center gap-4">
-          <p className="text-[11px] text-slate-500 font-medium tracking-wide">
-            © {year} CLASH OF CODE
-          </p>
-          <div className="hidden sm:block h-3 w-[1px] bg-white/[0.1]"></div>
-          <div className="flex items-center gap-3">
-            {socialLinks.map((item) => (
+    <footer className="w-full border-t border-white/5 bg-black relative z-10">
+      <div className="max-w-6xl mx-auto px-5 py-8 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+
+        {/* Brand + socials */}
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
+          <div className="flex items-center gap-2">
+            <span className="font-['Geist_Mono'] text-[10px] font-bold tracking-[0.2em] text-neutral-400 uppercase">
+              Clash of Code
+            </span>
+          </div>
+
+          <div className="hidden sm:block h-4 w-px bg-white/5" />
+
+          <div className="flex items-center gap-5">
+            {socialLinks.map((s) => (
               <a
-                key={item.label}
-                href={item.href}
+                key={s.label}
+                href={s.href}
                 target="_blank"
                 rel="noreferrer"
-                aria-label={item.label}
-                className="text-slate-500 hover:text-white transition-colors duration-200"
+                aria-label={s.label}
+                className="text-neutral-700 hover:text-neutral-300 transition-all duration-200 hover:scale-110"
               >
-                {React.createElement(item.Icon, { size: 14 })}
+                {React.createElement(s.Icon, { size: 14, strokeWidth: 1.5 })}
               </a>
             ))}
           </div>
         </div>
 
-        <div className="flex items-center gap-4">
+        {/* Copyright + Legal */}
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+          <span className="font-['Geist_Mono'] text-[9px] font-medium tracking-wider text-neutral-800 uppercase">
+            © {year}
+          </span>
           {legalLinks.map((link) => (
             <a
               key={link.label}
               href={link.href}
-              className="text-[11px] text-slate-500 hover:text-slate-300 transition-colors"
+              className="font-['Geist_Mono'] text-[9px] font-bold tracking-widest text-neutral-700 hover:text-neutral-400 transition-colors uppercase"
             >
               {link.label}
             </a>

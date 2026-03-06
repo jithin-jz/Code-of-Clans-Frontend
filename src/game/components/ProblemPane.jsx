@@ -1,5 +1,6 @@
 import React, { memo, useMemo } from "react";
 import ReactMarkdown from "react-markdown";
+import { cn } from "../../lib/utils";
 import { getDifficultyMeta } from "../../utils/challengeMeta";
 
 const ProblemPane = ({ challenge, loading }) => {
@@ -16,8 +17,8 @@ const ProblemPane = ({ challenge, loading }) => {
 
   if (loading || !challenge || !derived) {
     return (
-      <div className="flex-1 bg-[#0f1b2e] flex flex-col animate-pulse">
-        <div className="p-5 border-b border-white/10 bg-[#111d30] space-y-2">
+      <div className="flex-1 bg-black flex flex-col animate-pulse">
+        <div className="p-5 border-b border-white/5 bg-black space-y-2">
           <div className="h-4 w-40 bg-white/10 rounded-md" />
           <div className="h-3 w-56 bg-white/5 rounded-md" />
         </div>
@@ -32,33 +33,37 @@ const ProblemPane = ({ challenge, loading }) => {
   }
 
   return (
-    <section className="flex-1 min-h-0 flex flex-col bg-[#0f1b2e]">
-      <div className="p-4 border-b border-white/10 bg-[#111d30]">
-        <h2 className="text-sm font-bold text-white uppercase tracking-wide">
+    <section className="flex-1 min-h-0 flex flex-col bg-black">
+      <div className="p-4 border-b border-white/5 bg-black">
+        <h2 className="text-[11px] font-bold text-neutral-400 uppercase tracking-[0.15em] font-mono leading-none">
           {challenge.title}
         </h2>
-        <div className="mt-2 flex flex-wrap items-center gap-2">
-          <span className="text-xs px-2 py-1 rounded-md bg-[#00af9b]/10 text-[#84f0e4] border border-[#00af9b]/30">
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          <span className="text-[9px] font-bold px-2.5 py-1 rounded-md bg-emerald-500/5 text-emerald-400 border border-emerald-500/10 uppercase tracking-widest font-mono">
             Python
           </span>
-          <span className={`text-xs px-2 py-1 rounded-md ${derived.difficulty.pill}`}>
+          <span className={cn("text-[9px] font-bold px-2.5 py-1 rounded-md border uppercase tracking-widest font-mono", derived.difficulty.pill)}>
             {derived.difficulty.label}
           </span>
-          <span className="text-xs px-2 py-1 rounded-md bg-white/[0.05] border border-white/15 text-slate-300">
-            {challenge.xp_reward}
+          <span className="text-[9px] font-bold px-2.5 py-1 rounded-md bg-white/[0.02] border border-white/5 text-neutral-500 uppercase tracking-widest font-mono">
+            {challenge.xp_reward} XP
           </span>
-          <span className="text-xs px-2 py-1 rounded-md bg-white/[0.05] border border-white/15 text-slate-300">
-            Target: {derived.targetMinutes} min
+          <span className="text-[9px] font-bold px-2.5 py-1 rounded-md bg-white/[0.02] border border-white/5 text-neutral-500 uppercase tracking-widest font-mono">
+            Target: {derived.targetMinutes}M
           </span>
         </div>
       </div>
 
       <div className="flex-1 p-3 sm:p-4 pb-8 space-y-4">
-        <div className="rounded-xl border border-white/10 bg-[#111d30] p-3 sm:p-4">
-          <h3 className="text-[10px] sm:text-xs font-bold text-zinc-200 uppercase tracking-wider mb-2">
-            Problem
-          </h3>
-          <div className="prose prose-invert prose-sm max-w-none prose-p:text-zinc-300 prose-code:text-[#66d1c3] prose-code:bg-black/25 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-md">
+        <div className="rounded-xl border border-white/5 bg-black p-5 sm:p-6 shadow-2xl">
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-1.5 h-1.5 rounded-full bg-white/20" />
+            <h3 className="text-[10px] font-bold text-neutral-500 uppercase tracking-[0.2em] font-mono leading-none">
+              Problem Statement
+            </h3>
+            <div className="h-px flex-1 bg-white/[0.03]" />
+          </div>
+          <div className="prose prose-invert prose-sm max-w-none prose-p:text-neutral-300 prose-p:leading-relaxed prose-headings:text-white prose-headings:uppercase prose-headings:tracking-widest prose-headings:text-[10px] prose-headings:font-bold prose-code:text-emerald-400 prose-code:bg-emerald-500/5 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:border prose-code:border-emerald-500/10">
             <ReactMarkdown>{challenge.description}</ReactMarkdown>
           </div>
         </div>

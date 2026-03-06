@@ -6,7 +6,7 @@ import { cn } from "../lib/utils";
  * Industrial Standard: Smooth, translucent CSS animation
  */
 export const Shimmer = () => (
-  <div className="absolute inset-0 -translate-x-full animate-[shimmer_2.5s_infinite] bg-linear-to-r from-transparent via-white/[0.03] to-transparent pointer-events-none" />
+  <div className="absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] bg-linear-to-r from-transparent via-white/[0.02] to-transparent pointer-events-none" />
 );
 
 /**
@@ -16,7 +16,7 @@ export const SkeletonBase = ({ className, children, ...props }) => {
   return (
     <div
       className={cn(
-        "relative overflow-hidden bg-white/[0.04] border border-white/[0.02] rounded-xl",
+        "relative overflow-hidden bg-white/[0.02] border border-white/[0.01] rounded-xl",
         className,
       )}
       {...props}
@@ -57,8 +57,8 @@ export const SkeletonAvatar = ({ size = "md", className, ...props }) => {
 
 export const SkeletonCard = ({ className, children, variant = "solid", ...props }) => {
   const variants = {
-    glass: "bg-[#0d1525]/80 backdrop-blur-md border border-white/5 shadow-sm",
-    solid: "bg-white/[0.04] border border-white/5",
+    glass: "bg-[#000000]/80 backdrop-blur-md border border-white/5 shadow-2xl",
+    solid: "bg-black border border-white/5",
     plain: "bg-transparent border border-white/5"
   };
 
@@ -80,7 +80,7 @@ export const SkeletonCode = ({ lines = 12, className, ...props }) => {
 
   return (
     <div
-      className={cn("bg-[#0d1117] rounded-xl border border-white/5 overflow-hidden font-mono", className)}
+      className={cn("bg-black rounded-xl border border-white/5 overflow-hidden font-mono", className)}
       {...props}
     >
       <div className="flex">
@@ -106,9 +106,9 @@ export const SkeletonCode = ({ lines = 12, className, ...props }) => {
 
 export const SkeletonStats = ({ className, ...props }) => (
   <SkeletonCard className={cn("flex flex-col gap-3", className)} {...props}>
-    <SkeletonText width="60%" height="0.75rem" className="opacity-50" />
+    <SkeletonText width="60%" height="0.75rem" className="opacity-30" />
     <SkeletonText width="40%" height="1.5rem" />
-    <div className="h-1.5 w-full bg-white/[0.05] rounded-full overflow-hidden mt-2">
+    <div className="h-1.5 w-full bg-white/[0.02] rounded-full overflow-hidden mt-2">
       <SkeletonBase className="h-full w-2/3 bg-blue-500/20" />
     </div>
   </SkeletonCard>
@@ -137,7 +137,7 @@ export const SkeletonPage = ({ children, className }) => (
 /* --- High-Level Page Skeletons --- */
 
 export const SkeletonAdminDashboard = () => (
-  <SkeletonPage className="p-6 bg-[#060a11] space-y-8">
+  <SkeletonPage className="p-6 bg-[#000000] space-y-8">
     <div className="flex justify-between items-center">
       <SkeletonText width="250px" height="2rem" />
       <div className="flex gap-4">
@@ -156,7 +156,7 @@ export const SkeletonAdminDashboard = () => (
 );
 
 export const SkeletonGenericPage = () => (
-  <SkeletonPage className="p-8 space-y-8 bg-[#060a11]">
+  <SkeletonPage className="p-8 space-y-8 bg-[#000000]">
     <div className="space-y-4">
       <SkeletonText width="300px" height="2.5rem" />
       <SkeletonText width="500px" height="1.1rem" className="opacity-40" />

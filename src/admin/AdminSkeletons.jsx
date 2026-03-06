@@ -51,7 +51,7 @@ export const AnalyticsSkeleton = () => (
 
 export const AdminPageSkeleton = () => (
   <SkeletonPage className="flex h-screen overflow-hidden flex-col md:flex-row">
-    <aside className="hidden md:block w-[260px] h-full border-r border-white/5 bg-[#0d1525] p-5 space-y-4">
+    <aside className="hidden md:block w-[260px] h-full border-r border-white/5 bg-[#0a0a0a] p-5 space-y-4">
       <SkeletonBase className="h-8 w-28 rounded-md" />
       <div className="space-y-2 mt-8">
         {[...Array(6)].map((_, i) => (

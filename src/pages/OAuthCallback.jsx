@@ -134,8 +134,8 @@ const OAuthCallback = ({ provider }) => {
 
   if (loading || isProcessing) {
     return (
-      <SkeletonPage className="flex items-center justify-center px-4 min-h-screen bg-[#060a11]">
-        <div className="relative z-10 w-full max-w-md rounded-[2rem] border border-white/10 bg-[#0f1b2e]/60 backdrop-blur-3xl p-8 space-y-6 text-center">
+      <SkeletonPage className="flex items-center justify-center px-4 min-h-screen bg-[#000000]">
+        <div className="relative z-10 w-full max-w-md rounded-[2rem] border border-white/10 bg-[#141414]/60 backdrop-blur-3xl p-8 space-y-6 text-center">
           <SkeletonBase className="h-10 w-48 rounded-md mx-auto" />
           <SkeletonBase className="h-4 w-64 rounded mx-auto" />
           <div className="space-y-4 pt-4">
@@ -152,7 +152,7 @@ const OAuthCallback = ({ provider }) => {
       error ||
       `Authentication was cancelled or failed: ${searchParams.get("error")}`;
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#060a11] px-4">
+      <div className="min-h-screen flex items-center justify-center bg-[#000000] px-4">
         <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-12 text-center max-w-md">
           <div className="text-5xl mb-4">❌</div>
           <h2 className="text-white text-2xl font-semibold mb-3">
@@ -178,8 +178,8 @@ const OAuthCallback = ({ provider }) => {
   }
 
   return (
-    <SkeletonPage className="flex items-center justify-center px-4 min-h-screen bg-[#060a11]">
-      <div className="relative z-10 w-full max-w-md rounded-[2rem] border border-white/10 bg-[#0f1b2e]/60 backdrop-blur-3xl p-8 space-y-6 text-center">
+    <SkeletonPage className="flex items-center justify-center px-4 min-h-screen bg-[#000000]">
+      <div className="relative z-10 w-full max-w-md rounded-[2rem] border border-white/10 bg-[#141414]/60 backdrop-blur-3xl p-8 space-y-6 text-center">
         <SkeletonBase className="h-10 w-56 rounded-md mx-auto" />
         <SkeletonBase className="h-4 w-64 rounded mx-auto" />
         <div className="space-y-4 pt-4">

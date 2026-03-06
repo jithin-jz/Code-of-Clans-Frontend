@@ -395,13 +395,13 @@ const Profile = () => {
 
   if (userNotFound) {
     return (
-      <div className="h-screen w-full bg-[#0b1119] text-white flex flex-col items-center justify-center gap-6">
+      <div className="h-screen w-full bg-[#000000] text-white flex flex-col items-center justify-center gap-6">
         <div className="text-center">
-          <div className="w-20 h-20 rounded-xl bg-[#162338] border border-white/10 flex items-center justify-center mx-auto mb-6">
-            <Users size={40} className="text-slate-500" />
+          <div className="w-20 h-20 rounded-xl bg-[#1a1a1a] border border-white/10 flex items-center justify-center mx-auto mb-6">
+            <Users size={40} className="text-neutral-500" />
           </div>
           <h1 className="text-2xl font-semibold mb-2">User Not Found</h1>
-          <p className="text-slate-400 mb-6 text-sm">
+          <p className="text-neutral-400 mb-6 text-sm">
             This user may have changed their username or doesn't exist.
           </p>
           <Button
@@ -426,9 +426,9 @@ const Profile = () => {
             {/* Left Column - Profile Card */}
             <div className="lg:col-span-1 space-y-4 min-w-0">
               {/* Profile Card */}
-              <Card className="bg-[#0f1b2e]/70 border-[#7ea3d9]/20 overflow-hidden">
+              <Card className="bg-[#141414]/70 border-[#404040]/20 overflow-hidden">
                 {/* Banner Image */}
-                <div className="h-32 bg-[#162338]/40 relative">
+                <div className="h-32 bg-[#1a1a1a]/40 relative">
                   {profileUser?.profile?.banner_url ? (
                     <img
                       src={profileUser.profile.banner_url}
@@ -436,7 +436,7 @@ const Profile = () => {
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <div className="w-full h-full bg-linear-to-r from-[#162338] to-[#0f1b2e]" />
+                    <div className="w-full h-full bg-linear-to-r from-[#1a1a1a] to-[#141414]" />
                   )}
 
                   {/* Profile Controls Overlay on Banner */}
@@ -476,12 +476,12 @@ const Profile = () => {
                   </div>
                   {/* Avatar (Absolute positioned) */}
                   <div className="absolute -bottom-12 left-1/2 transform -translate-x-1/2">
-                    <Avatar className="w-24 h-24 border-4 border-[#0b1119]">
+                    <Avatar className="w-24 h-24 border-4 border-[#000000]">
                       <AvatarImage
                         src={profileUser?.profile?.avatar_url}
                         alt={profileUser?.username}
                       />
-                      <AvatarFallback className="bg-[#162338] text-slate-300 text-2xl">
+                      <AvatarFallback className="bg-[#1a1a1a] text-neutral-300 text-2xl">
                         {profileUser?.username?.[0]?.toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
@@ -490,7 +490,7 @@ const Profile = () => {
                         <button
                           onClick={() => avatarInputRef.current?.click()}
                           disabled={uploadingAvatar}
-                          className="absolute bottom-0 right-0 w-8 h-8 bg-[#162338] border border-white/15 rounded-full flex items-center justify-center text-slate-300 hover:text-white transition-colors cursor-pointer"
+                          className="absolute bottom-0 right-0 w-8 h-8 bg-[#1a1a1a] border border-white/15 rounded-full flex items-center justify-center text-neutral-300 hover:text-white transition-colors cursor-pointer"
                         >
                           {uploadingAvatar ? (
                             <SkeletonBase className="w-3.5 h-3.5 rounded-full bg-white/20" />
@@ -542,7 +542,7 @@ const Profile = () => {
                       <div className="text-lg font-bold text-white group-hover:text-zinc-300 transition-colors">
                         {profileUser?.followers_count || 0}
                       </div>
-                      <div className="text-xs text-slate-400 font-medium uppercase tracking-wider">
+                      <div className="text-xs text-neutral-400 font-medium uppercase tracking-wider">
                         Followers
                       </div>
                     </button>
@@ -553,7 +553,7 @@ const Profile = () => {
                       <div className="text-lg font-bold text-white group-hover:text-zinc-300 transition-colors">
                         {profileUser?.following_count || 0}
                       </div>
-                      <div className="text-xs text-slate-400 font-medium uppercase tracking-wider">
+                      <div className="text-xs text-neutral-400 font-medium uppercase tracking-wider">
                         Following
                       </div>
                     </button>
@@ -576,21 +576,21 @@ const Profile = () => {
 
               {/* Referral Section - Optimized */}
               {isOwnProfile && currentUser?.profile?.referral_code && (
-                <Card className="bg-[#0f1b2e]/70 border-[#7ea3d9]/20">
+                <Card className="bg-[#141414]/70 border-[#404040]/20">
                   <CardHeader className="p-4 border-b border-white/5">
                     <CardTitle className="text-sm font-medium flex items-center gap-2">
-                      <Gift size={14} className="text-slate-400" /> Referral
+                      <Gift size={14} className="text-neutral-400" /> Referral
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="p-4 space-y-4">
                     {/* Copy Code */}
-                    <div className="flex items-center justify-between bg-[#162338]/50 p-2.5 rounded-lg border border-white/10">
+                    <div className="flex items-center justify-between bg-[#1a1a1a]/50 p-2.5 rounded-lg border border-white/10">
                       <code className="text-sm font-mono text-white px-1">
                         {currentUser.profile.referral_code}
                       </code>
                       <button
                         onClick={handleCopyReferral}
-                        className="p-1.5 hover:bg-white/10 rounded transition-colors text-slate-300 hover:text-white"
+                        className="p-1.5 hover:bg-white/10 rounded transition-colors text-neutral-300 hover:text-white"
                       >
                         {copied ? (
                           <Check size={14} className="text-[#00af9b]" />
@@ -603,7 +603,7 @@ const Profile = () => {
                     {/* Redeem Input */}
                     {!currentUser.profile.is_referred && (
                       <div>
-                        <h4 className="text-xs text-slate-400 font-medium mb-2 uppercase tracking-wide">
+                        <h4 className="text-xs text-neutral-400 font-medium mb-2 uppercase tracking-wide">
                           Redeem Code
                         </h4>
                         <form
@@ -617,13 +617,13 @@ const Profile = () => {
                               setReferralCodeInput(e.target.value)
                             }
                             placeholder="Enter code"
-                            className="flex-1 min-w-0 bg-[#162338]/50 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-white/25 placeholder-slate-500"
+                            className="flex-1 min-w-0 bg-[#1a1a1a]/50 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-white/25 placeholder-slate-500"
                           />
                           <Button
                             type="submit"
                             size="sm"
                             disabled={isRedeeming || !referralCodeInput}
-                            className="bg-[#162338] text-white hover:bg-[#1b2a40] shrink-0"
+                            className="bg-[#1a1a1a] text-white hover:bg-[#262626] shrink-0"
                           >
                             {isRedeeming ? "..." : "Go"}
                           </Button>
@@ -639,7 +639,7 @@ const Profile = () => {
             <div className="lg:col-span-2 space-y-4 min-w-0">
               {isEditing && isOwnProfile ? (
                 /* Edit Form */
-                <Card className="bg-[#0f1b2e]/70 border-[#7ea3d9]/20">
+                <Card className="bg-[#141414]/70 border-[#404040]/20">
                   <CardHeader className="p-4 border-b border-white/5">
                     <CardTitle className="text-sm font-medium">
                       Edit Profile
@@ -648,7 +648,7 @@ const Profile = () => {
                   <CardContent className="p-4 space-y-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div className="space-y-2">
-                        <label className="text-xs text-slate-400">First Name</label>
+                        <label className="text-xs text-neutral-400">First Name</label>
                         <input
                           type="text"
                           value={editForm.first_name}
@@ -658,11 +658,11 @@ const Profile = () => {
                               first_name: e.target.value,
                             })
                           }
-                          className="w-full bg-[#162338]/50 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-white/25"
+                          className="w-full bg-[#1a1a1a]/50 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-white/25"
                         />
                       </div>
                       <div className="space-y-2">
-                        <label className="text-xs text-slate-400">Last Name</label>
+                        <label className="text-xs text-neutral-400">Last Name</label>
                         <input
                           type="text"
                           value={editForm.last_name}
@@ -672,12 +672,12 @@ const Profile = () => {
                               last_name: e.target.value,
                             })
                           }
-                          className="w-full bg-[#162338]/50 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-white/25"
+                          className="w-full bg-[#1a1a1a]/50 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-white/25"
                         />
                       </div>
                     </div>
                     <div className="space-y-2">
-                      <label className="text-xs text-slate-400">Username</label>
+                      <label className="text-xs text-neutral-400">Username</label>
                       <input
                         type="text"
                         value={editForm.username}
@@ -687,26 +687,26 @@ const Profile = () => {
                             username: e.target.value,
                           })
                         }
-                        className="w-full bg-[#162338]/50 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-white/25"
+                        className="w-full bg-[#1a1a1a]/50 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-white/25"
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-xs text-slate-400">Bio</label>
+                      <label className="text-xs text-neutral-400">Bio</label>
                       <textarea
                         value={editForm.bio}
                         onChange={(e) =>
                           setEditForm({ ...editForm, bio: e.target.value })
                         }
-                        className="w-full bg-[#162338]/50 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-white/25 min-h-[80px] resize-none"
+                        className="w-full bg-[#1a1a1a]/50 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-white/25 min-h-[80px] resize-none"
                         placeholder="Write something about yourself..."
                       />
                     </div>
 
                     {/* Banner Upload */}
-                    <div className="flex items-center justify-between p-3 bg-[#162338]/30 rounded-lg">
+                    <div className="flex items-center justify-between p-3 bg-[#1a1a1a]/30 rounded-lg">
                       <div className="flex items-center gap-3">
-                        <Camera size={16} className="text-slate-400" />
-                        <span className="text-sm text-slate-300">
+                        <Camera size={16} className="text-neutral-400" />
+                        <span className="text-sm text-neutral-300">
                           Profile Banner
                         </span>
                       </div>
@@ -715,7 +715,7 @@ const Profile = () => {
                         size="sm"
                         disabled={uploadingBanner}
                         onClick={() => bannerInputRef.current?.click()}
-                        className="text-xs text-slate-300 hover:text-white"
+                        className="text-xs text-neutral-300 hover:text-white"
                       >
                         {uploadingBanner ? "Saving..." : "Change"}
                       </Button>
@@ -741,7 +741,7 @@ const Profile = () => {
                         <Button
                           variant="ghost"
                           onClick={() => setIsEditing(false)}
-                          className="text-slate-300 hover:text-white text-sm"
+                          className="text-neutral-300 hover:text-white text-sm"
                         >
                           Cancel
                         </Button>
@@ -761,8 +761,8 @@ const Profile = () => {
                 <div className="space-y-6">
                   {/* Tabs / Actions */}
                   <div className="flex items-center justify-between">
-                    <div className="flex bg-[#0f1b2e]/70 p-1 rounded-lg border border-white/10">
-                      <button className="px-4 py-1.5 text-sm font-medium bg-[#162338] text-white rounded-md shadow-sm">
+                    <div className="flex bg-[#141414]/70 p-1 rounded-lg border border-white/10">
+                      <button className="px-4 py-1.5 text-sm font-medium bg-[#1a1a1a] text-white rounded-md shadow-sm">
                         Posts
                       </button>
                       {/* Future: Saved Tab */}
@@ -798,7 +798,7 @@ const Profile = () => {
             {/* Right Column - Suggestions */}
             <div className="lg:col-span-1 min-w-0">
               <div className="sticky top-[88px] space-y-4">
-                <Card className="bg-[#0f1b2e]/70 border-[#7ea3d9]/20">
+                <Card className="bg-[#141414]/70 border-[#404040]/20">
                   <CardHeader className="p-4 border-b border-white/5">
                     <CardTitle className="text-sm font-medium">Suggested for you</CardTitle>
                   </CardHeader>
@@ -813,7 +813,7 @@ const Profile = () => {
                             >
                               <Avatar className="w-8 h-8 shrink-0">
                                 <AvatarImage src={user.profile?.avatar_url} />
-                                <AvatarFallback className="bg-[#162338] text-[10px] text-zinc-400">
+                                <AvatarFallback className="bg-[#1a1a1a] text-[10px] text-zinc-400">
                                   {user.username[0]?.toUpperCase()}
                                 </AvatarFallback>
                               </Avatar>
@@ -821,7 +821,7 @@ const Profile = () => {
                                 <p className="text-xs font-semibold text-white truncate">
                                   {user.username}
                                 </p>
-                                <p className="text-[10px] text-slate-400 truncate">
+                                <p className="text-[10px] text-neutral-400 truncate">
                                   Suggested for you
                                 </p>
                               </div>
@@ -842,17 +842,6 @@ const Profile = () => {
                     )}
                   </CardContent>
                 </Card>
-
-                {/* Minimal Footer */}
-                <div className="px-4 text-[10px] text-zinc-600 space-y-2">
-                  <div className="flex flex-wrap gap-x-3 gap-y-1">
-                    <a href="#" className="hover:underline">About</a>
-                    <a href="#" className="hover:underline">Help</a>
-                    <a href="#" className="hover:underline">Privacy</a>
-                    <a href="#" className="hover:underline">Terms</a>
-                  </div>
-                  <p>© {new Date().getFullYear()} CLASH OF CODE</p>
-                </div>
               </div>
             </div>
           </div>
@@ -867,10 +856,10 @@ const Profile = () => {
       />
 
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <DialogContent className="bg-[#0f1b2e] border-[#7ea3d9]/20 text-white">
+        <DialogContent className="bg-[#141414] border-[#404040]/20 text-white">
           <DialogHeader>
             <DialogTitle>Delete Account</DialogTitle>
-            <DialogDescription className="text-slate-400">
+            <DialogDescription className="text-neutral-400">
               Are you absolutely sure? This action cannot be undone. All your
               progress, XP, and items will be permanently deleted.
             </DialogDescription>
@@ -879,7 +868,7 @@ const Profile = () => {
             <Button
               variant="ghost"
               onClick={() => setDeleteDialogOpen(false)}
-              className="text-slate-300"
+              className="text-neutral-300"
             >
               Cancel
             </Button>
@@ -895,7 +884,7 @@ const Profile = () => {
 
       {/* Followers/Following List Dialog */}
       <Dialog open={listType !== null} onOpenChange={() => setListType(null)}>
-        <DialogContent className="bg-[#0b1119] border-white/10 text-white max-w-sm p-0 overflow-hidden">
+        <DialogContent className="bg-[#000000] border-white/10 text-white max-w-sm p-0 overflow-hidden">
           <DialogHeader className="p-4 border-b border-white/5 space-y-1">
             <DialogTitle className="text-base font-bold capitalize">
               {listType}
@@ -915,7 +904,7 @@ const Profile = () => {
                 ))}
               </div>
             ) : userList.length === 0 ? (
-              <div className="p-8 text-center text-slate-500">
+              <div className="p-8 text-center text-neutral-500">
                 <Users size={32} className="mx-auto mb-3 opacity-20" />
                 <p className="text-sm">No {listType} yet</p>
               </div>
@@ -935,7 +924,7 @@ const Profile = () => {
                     >
                       <Avatar className="w-10 h-10 border border-white/10">
                         <AvatarImage src={userItem.avatar_url} />
-                        <AvatarFallback className="bg-[#162338]">
+                        <AvatarFallback className="bg-[#1a1a1a]">
                           {userItem.username[0]?.toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
@@ -943,7 +932,7 @@ const Profile = () => {
                         <p className="text-sm font-bold text-white truncate">
                           {userItem.username}
                         </p>
-                        <p className="text-xs text-slate-500 truncate">
+                        <p className="text-xs text-neutral-500 truncate">
                           {userItem.first_name || ""} {userItem.last_name || ""}
                         </p>
                       </div>

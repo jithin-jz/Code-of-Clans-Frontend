@@ -90,7 +90,7 @@ const MessageList = ({ user, messages, viewportHeight }) => {
         <h3 className="text-xl font-bold text-white mb-2 uppercase tracking-widest">
           Secure Forge
         </h3>
-        <p className="text-slate-500 text-sm mb-8 max-w-[240px] leading-relaxed font-medium">
+        <p className="text-neutral-500 text-sm mb-8 max-w-[240px] leading-relaxed font-medium">
           The inner circle is restricted. Authenticate to join the real-time transmission.
         </p>
 
@@ -108,15 +108,15 @@ const MessageList = ({ user, messages, viewportHeight }) => {
     <div
       ref={scrollRef}
       onScroll={handleScroll}
-      className="h-full overflow-y-auto px-4 py-8 space-y-6 custom-scrollbar bg-transparent scroll-smooth"
+      className="h-full overflow-y-auto px-4 py-4 space-y-4 custom-scrollbar bg-transparent scroll-smooth"
     >
       {messages.length === 0 && (
         <div className="flex flex-col items-center justify-center h-full text-center">
           <div className="w-16 h-16 bg-white/[0.03] rounded-3xl flex items-center justify-center mb-5 border border-white/[0.06] shadow-inner">
-            <MessageCircle size={28} className="text-slate-700" />
+            <MessageCircle size={28} className="text-neutral-700" />
           </div>
-          <p className="text-slate-400 text-sm font-bold uppercase tracking-widest">Quiet in the forge</p>
-          <p className="text-slate-600 text-[10px] mt-2 font-mono uppercase tracking-tighter">
+          <p className="text-neutral-400 text-sm font-bold uppercase tracking-widest">Quiet in the forge</p>
+          <p className="text-neutral-600 text-[10px] mt-2 font-mono uppercase tracking-tighter">
             Waiting for transmission...
           </p>
         </div>
@@ -148,7 +148,7 @@ const MessageList = ({ user, messages, viewportHeight }) => {
             {/* Avatar */}
             <Link
               to={`/profile/${metadata.username}`}
-              className={`relative shrink-0 w-9 h-9 rounded-full overflow-hidden border-2 transition-all duration-300 shadow-xl ${isOwn ? "border-primary/20 hover:border-primary" : "border-white/5 hover:border-white/20"
+              className={`relative shrink-0 w-7 h-7 rounded-full overflow-hidden border transition-all duration-300 shadow-sm ${isOwn ? "border-emerald-500/20 hover:border-emerald-500" : "border-white/5 hover:border-white/20"
                 }`}
             >
               <ChatAvatar isOwn={isOwn} avatarUrl={formattedAvatar} username={metadata.username} />
@@ -157,15 +157,15 @@ const MessageList = ({ user, messages, viewportHeight }) => {
             {/* Message Content */}
             <div className={`flex flex-col gap-1.5 max-w-[80%] ${isOwn ? "items-end" : "items-start"}`}>
               {/* Username & Time */}
-              <div className={`flex items-center gap-2 px-1 ${isOwn ? "flex-row-reverse" : "flex-row"}`}>
+              <div className={`flex items-center gap-1.5 px-1 ${isOwn ? "flex-row-reverse" : "flex-row"}`}>
                 <Link
                   to={`/profile/${metadata.username}`}
-                  className={`text-[10px] font-black uppercase tracking-widest transition-colors ${isOwn ? "text-primary/70 hover:text-primary" : "text-accent/70 hover:text-accent"
+                  className={`text-[9px] font-bold uppercase tracking-wider transition-colors ${isOwn ? "text-emerald-500/70 hover:text-emerald-500" : "text-neutral-500 hover:text-neutral-300"
                     }`}
                 >
                   {isOwn ? "You" : metadata.username}
                 </Link>
-                <span className="text-[9px] font-mono font-bold text-slate-600 tracking-tighter">
+                <span className="text-[8px] font-mono text-neutral-700 tracking-tighter">
                   {new Date(msg.timestamp).toLocaleTimeString("en-US", {
                     hour: "2-digit",
                     minute: "2-digit",
@@ -177,36 +177,31 @@ const MessageList = ({ user, messages, viewportHeight }) => {
               {/* Message Bubble */}
               <div
                 className={`
-                  relative px-3.5 py-2.5 text-[13px] leading-relaxed transition-all duration-300 rounded-2xl
+                  relative px-2.5 py-1.5 text-[11px] leading-normal transition-all duration-300 rounded-lg
                   ${isOwn
-                    ? "bg-primary/20 border border-primary/30 text-white shadow-[0_4px_15px_rgba(0,175,155,0.1)] rounded-tr-sm"
-                    : "bg-white/[0.05] border border-white/[0.1] text-slate-100 shadow-sm rounded-tl-sm hover:bg-white/[0.08]"
+                    ? "bg-emerald-500/10 border border-emerald-500/20 text-emerald-100 rounded-tr-sm"
+                    : "bg-[#161616] border border-[#222] text-neutral-300 rounded-tl-sm hover:bg-[#1a1a1a]"
                   }
-                  ${msg.message?.startsWith("IMAGE:") ? "p-1.5" : ""}
+                  ${msg.message?.startsWith("IMAGE:") ? "p-1" : ""}
                 `}
               >
                 {msg.message?.startsWith("IMAGE:") ? (
                   (() => {
                     const [imageUrl, ownerUsername] = msg.message.replace("IMAGE:", "").split("|");
                     return (
-                      <div className="space-y-2.5">
-                        <Link to={`/profile/${ownerUsername}`} className="block overflow-hidden rounded-xl border border-white/5 shadow-2xl">
-                          <img src={imageUrl} alt="" className="w-full h-auto transition-transform duration-700 hover:scale-105" />
+                      <div className="space-y-2">
+                        <Link to={`/profile/${ownerUsername}`} className="block overflow-hidden rounded-lg border border-white/5 shadow-lg">
+                          <img src={imageUrl} alt="" className="w-full h-auto" />
                         </Link>
-                        <div className="flex items-center justify-between px-1.5 py-0.5">
-                          <p className="text-[9px] font-black uppercase tracking-widest text-slate-500">Shared Transmission</p>
-                          <Link to={`/profile/${ownerUsername}`} className="text-[9px] font-black uppercase tracking-widest text-primary hover:underline">Verify</Link>
+                        <div className="flex items-center justify-between px-1 py-0.5">
+                          <p className="text-[8px] font-bold uppercase tracking-widest text-neutral-600">Transmission</p>
+                          <Link to={`/profile/${ownerUsername}`} className="text-[8px] font-bold uppercase tracking-widest text-emerald-500 hover:underline">Verify</Link>
                         </div>
                       </div>
                     );
                   })()
                 ) : (
                   <p className="break-words font-medium">{msg.message}</p>
-                )}
-
-                {/* Glassy reflection for own messages */}
-                {isOwn && (
-                  <div className="absolute inset-0 bg-linear-to-tr from-white/5 to-transparent rounded-2xl pointer-events-none" />
                 )}
               </div>
             </div>

@@ -270,7 +270,7 @@ const CertificateModal = ({ isOpen, onClose, certificate, isLoading = false }) =
                   <button
                     onClick={handleDownload}
                     disabled={downloading}
-                    className="flex-1 bg-white text-black font-bold text-sm rounded-xl hover:bg-slate-200 active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-white/5"
+                    className="flex-1 bg-white text-black font-bold text-sm rounded-xl hover:bg-neutral-200 active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-white/5"
                   >
                     {downloading ? "Generating..." : "Download"}
                   </button>

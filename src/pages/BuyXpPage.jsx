@@ -127,11 +127,23 @@ const BuyXpPage = () => {
           className="relative w-full pb-20 sm:pb-0 text-white flex flex-col pt-0 mt-0"
         >
 
+          {/* Page Header */}
+          <div className="sticky top-14 z-20 border-b border-[#1e1e1e] bg-[#0a0a0a]/90 backdrop-blur-xl">
+            <div className="w-full px-4 sm:px-6 lg:px-8 py-3">
+              <div className="flex items-center gap-3">
+                <div>
+                  <p className="ds-eyebrow text-neutral-600 mb-0.5">XP Shop</p>
+                  <h1 className="text-[13px] font-semibold text-neutral-200">Purchase Experience Points</h1>
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* Main Content */}
           <main className="relative z-10 flex-1 w-full px-4 sm:px-6 lg:px-8 py-6 min-w-0">
             <div className="w-full">
               {/* Grid */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
                 {XP_PACKAGES.map((pkg) => {
                   const Icon = pkg.icon;
                   const isPurchasing = purchasing === pkg.amount;
@@ -145,7 +157,7 @@ const BuyXpPage = () => {
                           ? "bg-gradient-to-br from-[#ffa116]/10 to-[#ffa116]/[0.02] border border-[#ffa116]/30 border-t-[#ffa116]/50 shadow-[0_8px_32px_rgba(255,161,22,0.12)] -translate-y-1"
                           : pkg.bestValue
                             ? "bg-gradient-to-br from-[#00af9b]/10 to-[#00af9b]/[0.02] border border-[#00af9b]/30 border-t-[#00af9b]/50 shadow-[0_8px_32px_rgba(0,175,155,0.08)]"
-                            : "bg-[#0f1b2e]/70 border border-[#7ea3d9]/20 hover:border-[#7ea3d9]/50 hover:bg-[#162338]/80 hover:-translate-y-1 hover:shadow-[0_12px_40px_-15px_rgba(126,163,217,0.2)]"
+                            : "bg-[#141414]/70 border border-[#404040]/20 hover:border-[#404040]/50 hover:bg-[#1a1a1a]/80 hover:-translate-y-1 hover:shadow-[0_12px_40px_-15px_rgba(126,163,217,0.2)]"
                         }
                       `}
                     >
@@ -180,7 +192,7 @@ const BuyXpPage = () => {
                                 ? "text-[#ffa116]"
                                 : pkg.bestValue
                                   ? "text-[#00af9b]"
-                                  : "text-slate-400"
+                                  : "text-neutral-400"
                             }
                           />
                         </div>
@@ -220,7 +232,7 @@ const BuyXpPage = () => {
                               ? "bg-[#ffa116]/90 border-[#ffa116]/50 text-black hover:bg-[#e69114] hover:border-[#e69114] shadow-[0_4px_12px_rgba(255,161,22,0.2)] hover:shadow-[0_4px_16px_rgba(255,161,22,0.3)]"
                               : pkg.bestValue
                                 ? "bg-[#00af9b]/90 border-[#00af9b]/50 text-black hover:bg-[#009483] hover:border-[#009483] shadow-[0_4px_12px_rgba(0,175,155,0.2)] hover:shadow-[0_4px_16px_rgba(0,175,155,0.3)]"
-                                : "bg-white text-black border-transparent hover:bg-slate-200"
+                                : "bg-white text-black border-transparent hover:bg-neutral-200"
                             }
                           `}
                         >

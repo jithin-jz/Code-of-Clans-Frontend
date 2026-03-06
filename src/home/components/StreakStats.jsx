@@ -1,28 +1,38 @@
 import React, { memo } from 'react';
 import { Flame } from 'lucide-react';
-import { Card, CardContent } from '../../components/ui/card';
 
 const StreakStats = ({ checkInStatus }) => {
-    return (
-        <div className="grid grid-cols-1 gap-4">
-          <Card className="bg-linear-to-r from-orange-500/20 to-red-500/15 border-orange-400/30 backdrop-blur-md shadow-[0_8px_30px_rgba(0,0,0,0.25)]">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-orange-500/25 border border-orange-300/20 rounded-lg">
-                  <Flame className="text-orange-400 h-5 w-5" />
-                </div>
-                <div className="flex-1">
-                  <p className="text-xs text-gray-400 uppercase tracking-wider">Current Cycle</p>
-                  <p className="text-lg font-bold text-white">
-                    Day {checkInStatus?.cycle_day || 1}{' '}
-                    <span className="text-gray-500">/ 7</span>
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+  const day = checkInStatus?.cycle_day || 1;
+  return (
+    <div className="relative overflow-hidden px-5 py-5 rounded-xl bg-white/[0.02] border border-white/5">
+      <div className="absolute top-0 right-0 p-3 opacity-20 pointer-events-none">
+        <div className="text-[40px] font-black font-mono leading-none tracking-tighter text-white/10">0{day}</div>
+      </div>
+
+      <div className="relative flex flex-col">
+        <div className="flex items-center gap-2">
+          <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-[0.2em] font-mono">
+            Core Progress
+          </span>
+          <div className="h-px flex-1 bg-white/5" />
         </div>
-    );
+
+        <div className="flex items-end gap-3 mt-3">
+          <div className="flex items-baseline gap-1">
+            <span className="text-3xl font-black text-white leading-none tracking-tight font-mono">
+              {day}
+            </span>
+            <span className="text-sm font-bold text-neutral-500 font-mono">/ 07</span>
+          </div>
+
+          <div className="flex items-center gap-2 mb-1 px-2.5 py-1 rounded-md bg-emerald-500/10 border border-emerald-500/20">
+            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)] animate-pulse" />
+            <span className="text-[9px] font-bold text-emerald-400 uppercase tracking-widest font-mono">Active Sync</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default memo(StreakStats);

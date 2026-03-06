@@ -5,7 +5,6 @@ import {
   Shield,
   Layers,
   ShoppingBag,
-  TrendingUp,
 } from "lucide-react";
 import { Button } from "../components/ui/button";
 
@@ -20,19 +19,19 @@ const AdminSidebar = ({ user, activeTab, setActiveTab, handleLogout }) => {
   ];
 
   return (
-    <aside className="w-full md:w-64 md:h-full bg-[#0d1525] border-b md:border-b-0 md:border-r border-white/5 flex flex-col shrink-0">
+    <aside className="app-surface w-full shrink-0 border-b border-border/70 md:h-full md:w-64 md:border-b-0 md:border-r">
       {/* Header */}
-      <div className="h-14 flex items-center justify-between px-4 md:px-6 border-b border-white/10">
+      <div className="app-top-nav flex h-14 items-center justify-between border-b border-border/65 px-4 md:px-6">
         <div className="flex items-center gap-2 min-w-0">
-          <Shield className="text-slate-100" size={20} />
-          <span className="font-semibold text-sm tracking-tight text-slate-100 truncate">
+          <Shield className="text-cyan-300" size={18} />
+          <span className="truncate text-sm font-semibold tracking-tight text-slate-100">
             Admin Panel
           </span>
         </div>
         <Button
           onClick={handleLogout}
           variant="ghost"
-          className="md:hidden h-8 gap-2 rounded-md text-slate-300 hover:text-white hover:bg-white/10 text-xs px-2"
+          className="h-8 gap-2 rounded-md px-2 text-xs text-slate-300 hover:bg-slate-800/65 hover:text-white md:hidden"
         >
           <LogOut size={14} />
           <span>Logout</span>
@@ -40,9 +39,9 @@ const AdminSidebar = ({ user, activeTab, setActiveTab, handleLogout }) => {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-2 md:p-3 overflow-x-auto md:overflow-y-auto">
+      <nav className="custom-scrollbar flex-1 overflow-x-auto p-2 md:overflow-y-auto md:p-3">
         <div className="hidden md:block px-3 mb-2">
-          <p className="text-[10px] font-medium uppercase tracking-wider text-slate-500">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-slate-500">
             Main Menu
           </p>
         </div>
@@ -51,13 +50,13 @@ const AdminSidebar = ({ user, activeTab, setActiveTab, handleLogout }) => {
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id)}
-              className={`shrink-0 md:w-full flex items-center gap-2.5 px-3 py-2 rounded-md text-xs md:text-sm transition-colors duration-200 ${activeTab === item.id
-                ? "bg-[#162338] text-white border border-white/15"
-                : "text-slate-300 hover:text-white hover:bg-white/10"
+              className={`shrink-0 md:w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs md:text-sm transition-all duration-200 ${activeTab === item.id
+                ? "border border-cyan-300/25 bg-cyan-400/10 text-cyan-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]"
+                : "text-slate-300 hover:text-white hover:bg-slate-800/55 hover:border hover:border-border/55"
                 }`}
             >
               <span
-                className={`${activeTab === item.id ? "text-white" : "text-slate-500"
+                className={`${activeTab === item.id ? "text-cyan-300" : "text-slate-500"
                   }`}
               >
                 {item.icon}
@@ -69,9 +68,9 @@ const AdminSidebar = ({ user, activeTab, setActiveTab, handleLogout }) => {
       </nav>
 
       {/* Profile Section */}
-      <div className="hidden md:block p-4 border-t border-white/10">
+      <div className="hidden border-t border-border/65 p-4 md:block">
         <div className="flex items-center gap-3 mb-4 px-2">
-          <div className="w-8 h-8 rounded-full bg-[#162338] flex items-center justify-center text-white border border-white/15">
+          <div className="flex h-8 w-8 items-center justify-center rounded-full border border-border/70 bg-secondary/70 text-white">
             {user?.profile?.avatar_url ? (
               <img
                 src={user.profile.avatar_url}
@@ -79,13 +78,13 @@ const AdminSidebar = ({ user, activeTab, setActiveTab, handleLogout }) => {
                 className="w-full h-full object-cover rounded-full"
               />
             ) : (
-              <span className="text-[10px] font-bold">
+              <span className="text-[10px] font-bold text-slate-100">
                 {user?.username?.[0]?.toUpperCase()}
               </span>
             )}
           </div>
           <div className="flex flex-col min-w-0">
-            <span className="text-xs font-medium text-slate-100 truncate">
+            <span className="truncate text-xs font-medium text-slate-100">
               {user?.username}
             </span>
             <span className="text-[10px] text-slate-500">Administrator</span>
@@ -95,7 +94,7 @@ const AdminSidebar = ({ user, activeTab, setActiveTab, handleLogout }) => {
         <Button
           onClick={handleLogout}
           variant="ghost"
-          className="w-full justify-start gap-2.5 h-9 rounded-md text-slate-300 hover:text-white hover:bg-white/10 text-xs px-2"
+          className="h-9 w-full justify-start gap-2.5 rounded-md px-2 text-xs text-slate-300 hover:bg-slate-800/65 hover:text-white"
         >
           <LogOut size={14} />
           <span>Logout</span>

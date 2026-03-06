@@ -5,26 +5,26 @@ import { cva } from "class-variance-authority"
 import { cn } from "../../lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-semibold tracking-[0.01em] transition-[transform,background-color,border-color,color,box-shadow,opacity,filter] duration-200 ease-out active:scale-[0.985] will-change-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/45 disabled:pointer-events-none disabled:opacity-55 disabled:active:scale-100 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-semibold transition-[transform,background-color,border-color,color,box-shadow,opacity] duration-150 ease-out active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/40 disabled:pointer-events-none disabled:opacity-50 disabled:active:scale-100 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
         default:
-          "bg-[linear-gradient(180deg,hsl(var(--primary))_0%,hsl(var(--primary)/0.86)_100%)] text-primary-foreground shadow-[0_10px_24px_hsl(var(--primary)/0.28)] hover:brightness-[1.05]",
+          "bg-white text-[#0a0a0a] hover:bg-neutral-200",
         destructive:
-          "bg-[linear-gradient(180deg,hsl(var(--destructive))_0%,hsl(var(--destructive)/0.88)_100%)] text-destructive-foreground shadow-[0_10px_24px_hsl(var(--destructive)/0.3)] hover:brightness-[1.04]",
+          "bg-red-600 text-white hover:bg-red-500",
         outline:
-          "border border-border/80 bg-background/70 text-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] hover:bg-secondary/70",
+          "border border-[#262626] bg-transparent text-neutral-300 hover:bg-[#1a1a1a] hover:text-white",
         secondary:
-          "bg-secondary/95 text-secondary-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] hover:bg-secondary/75",
-        ghost: "text-muted-foreground hover:bg-secondary/60 hover:text-foreground",
-        link: "text-primary underline-offset-4 hover:underline",
+          "bg-[#1a1a1a] text-neutral-300 hover:bg-[#262626] hover:text-white",
+        ghost: "text-neutral-500 hover:bg-[#1a1a1a] hover:text-neutral-200",
+        link: "text-neutral-300 underline-offset-4 hover:underline hover:text-white",
       },
       size: {
-        default: "h-10 px-4 py-2",
-        sm: "h-9 rounded-md px-3 text-xs",
-        lg: "h-11 rounded-lg px-8",
-        icon: "h-10 w-10",
+        default: "h-9 px-4 py-2",
+        sm: "h-8 rounded-md px-3 text-xs",
+        lg: "h-10 rounded-md px-6",
+        icon: "h-9 w-9",
       },
     },
     defaultVariants: {

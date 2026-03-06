@@ -154,9 +154,9 @@ const CreatePostDialog = ({
     <Dialog open={isDialogOpen} onOpenChange={handleDialogOpenChange}>
       <DialogContent
         showClose={false}
-        className="bg-zinc-900 border border-white/10 text-white sm:max-w-[500px] gap-0 p-0 overflow-hidden"
+        className="bg-[#111] border border-[#222] text-white sm:max-w-[500px] gap-0 p-0 overflow-hidden rounded-xl"
       >
-        <DialogHeader className="p-4 border-b border-white/10 flex flex-row items-center justify-between space-y-0">
+        <DialogHeader className="h-11 px-4 border-b border-[#1e1e1e] flex flex-row items-center justify-between space-y-0">
           {isCropping ? (
             <Button
               variant="ghost"
@@ -175,7 +175,7 @@ const CreatePostDialog = ({
           {isCropping ? (
             <Button
               variant="ghost"
-              className="text-[#00af9b] font-semibold hover:text-[#00af9b] hover:bg-transparent px-0"
+              className="text-white font-semibold hover:bg-[#1c1c1c] px-3 text-xs"
               onClick={handleCreateCroppedImage}
             >
               Next
@@ -204,7 +204,7 @@ const CreatePostDialog = ({
               <p className="text-xl font-light">Drag photos and videos here</p>
               <Button
                 onClick={() => fileInputRef.current?.click()}
-                className="bg-[#00af9b] hover:bg-[#008f7a] font-semibold px-6"
+                className="bg-white text-[#0a0a0a] hover:bg-neutral-200 font-semibold px-6 text-sm"
               >
                 Select from computer
               </Button>
@@ -231,7 +231,7 @@ const CreatePostDialog = ({
                   <X size={20} />
                 </button>
               </div>
-              <div className="p-4 flex-1 border-t border-white/10">
+              <div className="p-4 flex-1 border-t border-[#1e1e1e]">
                 <div className="flex gap-3">
                   <div className="w-8 h-8 rounded-full bg-zinc-700 shrink-0 overflow-hidden">
                     {/* User Avatar Placeholder */}
@@ -244,11 +244,11 @@ const CreatePostDialog = ({
                   />
                 </div>
               </div>
-              <div className="p-4 border-t border-white/10 flex justify-end">
+              <div className="p-4 border-t border-[#1e1e1e] flex justify-end">
                 <Button
                   onClick={handleSubmit}
                   disabled={loading}
-                  className="bg-[#00af9b] hover:bg-[#008f7a] text-white font-semibold px-8"
+                  className="bg-white text-[#0a0a0a] hover:bg-neutral-200 font-semibold px-8 text-sm"
                 >
                   {loading ? "Sharing..." : "Share"}
                 </Button>

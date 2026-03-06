@@ -78,19 +78,19 @@ const AIAssistantPane = ({
   );
 
   return (
-    <section className="flex-1 min-h-0 flex flex-col bg-[#0f1b2e] overflow-hidden m-0">
-      <header className="border-b border-white/10 px-4 py-2 flex items-center justify-between bg-[#111d30]">
+    <section className="flex-1 min-h-0 flex flex-col bg-black overflow-hidden m-0">
+      <header className="border-b border-white/5 px-4 py-2.5 flex items-center justify-between bg-black">
         <div className="flex items-center gap-2">
-          <Sparkles size={14} className="text-[#00af9b]" />
-          <h2 className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest font-sans">
+          <Sparkles size={12} className="text-neutral-600" />
+          <h2 className="text-[10px] font-semibold text-neutral-600 uppercase tracking-widest font-sans">
             Assistant
           </h2>
         </div>
         <div className="flex items-center gap-3">
           {userXp !== undefined && (
             <div className="flex items-center gap-1">
-              <Gem size={10} className="text-[#a78bfa]" />
-              <span className="text-[#a78bfa] text-[10px] font-bold">
+              <Gem size={10} className="text-neutral-700" />
+              <span className="text-neutral-500 text-[10px] font-mono tabular-nums">
                 {userXp}
               </span>
             </div>
@@ -98,15 +98,15 @@ const AIAssistantPane = ({
         </div>
       </header>
 
-      <div className="flex-1 min-h-0 relative bg-[#0f1b2e] overflow-y-auto custom-scrollbar-thin">
+      <div className="flex-1 min-h-0 relative bg-black overflow-y-auto custom-scrollbar-thin">
         <div className="min-h-full flex flex-col">
           {review ? (
-            <div className="mx-4 mt-4 mb-3 rounded-xl border border-[#7ea3d9]/25 bg-[#0a1220]/75 backdrop-blur-md p-4 shadow-[0_10px_30px_rgba(0,0,0,0.35)] flex flex-col">
-              <div className="text-[10px] font-bold uppercase tracking-widest text-[#7ea3d9] mb-2">
+            <div className="mx-4 mt-4 mb-3 rounded-lg border border-[#2a2a2a] bg-[#161616] p-4 flex flex-col">
+              <div className="text-[10px] font-semibold uppercase tracking-widest text-neutral-700 mb-2">
                 AI Review
               </div>
               <div className="max-h-[50vh] min-h-[180px] overflow-y-auto custom-scrollbar-thin pr-2">
-                <div className="prose prose-invert prose-sm max-w-none prose-headings:text-slate-100 prose-h3:text-[13px] prose-h3:font-semibold prose-h3:mb-2 prose-h3:mt-4 first:prose-h3:mt-0 prose-p:text-slate-300 prose-p:text-[12px] prose-p:leading-relaxed prose-ul:text-slate-300 prose-ol:text-slate-300 prose-li:text-[12px] prose-strong:text-white prose-code:text-[#00af9b] prose-code:bg-[#111d30]/70 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:before:content-none prose-code:after:content-none">
+                <div className="prose prose-invert prose-sm max-w-none prose-headings:text-neutral-100 prose-h3:text-[13px] prose-h3:font-semibold prose-h3:mb-2 prose-h3:mt-4 first:prose-h3:mt-0 prose-p:text-neutral-400 prose-p:text-[12px] prose-p:leading-relaxed prose-ul:text-neutral-400 prose-ol:text-neutral-400 prose-li:text-[12px] prose-strong:text-white prose-code:text-neutral-300 prose-code:bg-[#1c1c1c] prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:before:content-none prose-code:after:content-none">
                   <ReactMarkdown>{formattedReview}</ReactMarkdown>
                 </div>
               </div>
@@ -128,23 +128,23 @@ const AIAssistantPane = ({
                     className="flex-none w-full h-full min-h-0 snap-start p-4 flex flex-col"
                   >
                     <div className="flex items-center gap-2 mb-3">
-                      <div className="w-4 h-4 rounded-none bg-[#00af9b]/10 flex items-center justify-center border border-[#00af9b]/20">
-                        <span className="text-[9px] font-bold text-[#00af9b]">
+                      <div className="w-4 h-4 rounded-sm bg-black flex items-center justify-center border border-white/5">
+                        <span className="text-[9px] font-bold text-neutral-600">
                           {i + 1}
                         </span>
                       </div>
-                      <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">
-                        Hint Phase {i + 1}
+                      <span className="text-[10px] font-semibold text-neutral-600 uppercase tracking-widest">
+                        Hint {i + 1}
                       </span>
                     </div>
 
-                    <div className="flex-1 min-h-0 bg-white/[0.03] border border-white/10 rounded-xl p-4 overflow-y-auto custom-scrollbar-thin">
+                    <div className="flex-1 min-h-0 bg-black border border-white/5 rounded-lg p-4 overflow-y-auto custom-scrollbar-thin">
                       <div
                         className="prose prose-invert prose-sm max-w-none 
-                              prose-p:text-gray-400 prose-p:leading-relaxed prose-p:text-[12px]
+                              prose-p:text-neutral-500 prose-p:leading-relaxed prose-p:text-[12px]
                               prose-strong:text-white prose-strong:font-semibold
-                              prose-pre:bg-black prose-pre:border prose-pre:border-white/5 prose-pre:rounded-none prose-pre:p-0
-                              prose-code:text-[#00af9b] prose-code:bg-[#0a1220]/60 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:font-mono prose-code:text-[11px] prose-code:before:content-none prose-code:after:content-none
+                              prose-pre:bg-[#0f0f0f] prose-pre:border prose-pre:border-[#222] prose-pre:rounded-md prose-pre:p-0
+                              prose-code:text-neutral-300 prose-code:bg-[#1c1c1c] prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:font-mono prose-code:text-[11px] prose-code:before:content-none prose-code:after:content-none
                           "
                       >
                         <ReactMarkdown
@@ -227,9 +227,9 @@ const AIAssistantPane = ({
       </div>
 
       {/* Action Bar - Fixed at absolute bottom of Card */}
-      <div className="p-4 border-t border-white/10 bg-[#111d30] space-y-2 shrink-0">
+      <div className="p-3 border-t border-white/5 bg-black space-y-2 shrink-0">
         {isMaxReached ? (
-          <div className="w-full bg-red-500/10 text-red-300 border border-red-500/25 text-[10px] font-bold h-10 rounded-xl cursor-not-allowed flex items-center justify-center gap-2 uppercase tracking-widest">
+          <div className="w-full bg-[#0a0a0a] text-neutral-600 border border-white/5 text-[10px] font-semibold h-10 rounded-lg cursor-not-allowed flex items-center justify-center gap-2 uppercase tracking-wider">
             Max Hints Reached
           </div>
         ) : isLocked ? (
@@ -240,9 +240,9 @@ const AIAssistantPane = ({
               disabled={
                 isHintLoading || (userXp !== undefined && userXp < nextCost)
               }
-              className={`w-full text-[10px] font-bold h-10 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 group relative overflow-hidden uppercase tracking-widest ${userXp !== undefined && userXp < nextCost
-                ? "bg-red-500/10 border border-red-500/25 text-red-300 cursor-not-allowed"
-                : "bg-[#ffa116] text-black hover:bg-[#ff8f00] border border-[#ffb347]/40 shadow-lg shadow-[#ffa116]/20"
+              className={`w-full text-[10px] font-semibold h-10 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 group relative overflow-hidden uppercase tracking-wider ${userXp !== undefined && userXp < nextCost
+                ? "bg-black border border-white/5 text-neutral-700 cursor-not-allowed"
+                : "bg-white text-[#0a0a0a] hover:bg-neutral-200 border border-transparent"
                 }`}
             >
               {/* Shimmer effect overlay */}
@@ -271,7 +271,7 @@ const AIAssistantPane = ({
             type="button"
             onClick={onGetHint}
             disabled={isHintLoading}
-            className="w-full bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white border border-white/10 text-[10px] font-bold h-10 rounded-xl transition-all flex items-center justify-center gap-2 uppercase tracking-widest"
+            className="w-full bg-black hover:bg-[#0a0a0a] text-neutral-500 hover:text-neutral-200 border border-white/5 hover:border-white/10 text-[10px] font-semibold h-10 rounded-lg transition-all flex items-center justify-center gap-2 uppercase tracking-wider"
           >
             {isHintLoading ? (
               <SkeletonCircle className="w-3 h-3 bg-white/40" />
@@ -286,7 +286,7 @@ const AIAssistantPane = ({
           type="button"
           onClick={onAnalyze}
           disabled={isReviewLoading}
-          className="w-full bg-white/[0.06] hover:bg-white/[0.12] text-slate-200 hover:text-white border border-white/15 text-[10px] font-bold h-10 rounded-xl transition-all flex items-center justify-center gap-2 uppercase tracking-widest disabled:opacity-60"
+          className="w-full bg-black hover:bg-[#0a0a0a] text-neutral-600 hover:text-neutral-200 border border-white/5 hover:border-white/10 text-[10px] font-semibold h-10 rounded-lg transition-all flex items-center justify-center gap-2 uppercase tracking-wider disabled:opacity-40"
         >
           {isReviewLoading ? (
             <SkeletonCircle className="w-3 h-3 bg-white/40" />

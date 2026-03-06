@@ -1,30 +1,35 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Gem, User, LogOut, Calendar, Trophy, Bell, Play, ShoppingBag, MessageSquare, Home } from "lucide-react";
-import { motion as Motion, AnimatePresence } from "framer-motion";
+import {
+  Gem, User, LogOut, Calendar, Trophy, Bell,
+  ShoppingBag, MessageSquare, Home, Play,
+} from "lucide-react";
 import useNotificationStore from "../../stores/useNotificationStore";
 
-const NavIcon = ({
-  onClick,
-  title,
-  icon,
-  className = "",
-  badge = null,
-}) => (
+/* ─── Reusable icon button ─── */
+const NavBtn = ({ onClick, title, children, className = "", badge = null, active = false }) => (
   <button
     type="button"
     onClick={onClick}
     title={title}
-    className={`group relative inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-transparent bg-transparent text-slate-400 transition-all duration-200 hover:border-slate-500/35 hover:bg-slate-800/55 hover:text-slate-100 ${className}`}
+    aria-label={title}
+    className={`
+      group relative inline-flex h-8 w-8 shrink-0 items-center justify-center
+      rounded-md border transition-all duration-150
+      ${active
+        ? "border-[#333] bg-[#1c1c1c] text-white"
+        : "border-transparent bg-transparent text-neutral-600 hover:border-[#282828] hover:bg-[#161616] hover:text-neutral-200"
+      }
+      ${className}
+    `}
   >
-    <span className="inline-flex items-center justify-center">{icon}</span>
+    <span className="inline-flex items-center justify-center">{children}</span>
     {badge}
   </button>
 );
 
 const HomeTopNav = ({
   user,
-  levels,
   handleLogout,
   setChatOpen,
   isChatOpen,
@@ -32,322 +37,267 @@ const HomeTopNav = ({
   setLeaderboardOpen,
   setNotificationOpen,
   hasUnclaimedReward,
+  levels: navLevels,
 }) => {
   const navigate = useNavigate();
   const userId = user?.id;
-  const [hasNewNotification, setHasNewNotification] = useState(false);
-  const prevUnreadCountRef = useRef(0);
-
   const { unreadCount, fetchNotifications } = useNotificationStore();
 
   useEffect(() => {
     if (userId) fetchNotifications();
   }, [userId, fetchNotifications]);
 
-  useEffect(() => {
-    if (
-      unreadCount > prevUnreadCountRef.current &&
-      prevUnreadCountRef.current > 0
-    ) {
-      const triggerTimeout = setTimeout(() => setHasNewNotification(true), 10);
-      const resetTimeout = setTimeout(() => setHasNewNotification(false), 3000);
-      return () => {
-        clearTimeout(triggerTimeout);
-        clearTimeout(resetTimeout);
-      };
-    }
-    prevUnreadCountRef.current = unreadCount;
-  }, [unreadCount]);
-
-
-  const normalLevels = (levels || [])
-    .filter((l) => l.slug !== "certificate" && l.type !== "CERTIFICATE")
-    .sort((a, b) => (a.order ?? 9999) - (b.order ?? 9999));
-
-  const isLevelCompleted = (level) =>
-    level?.completed === true || level?.status === "COMPLETED";
-
-  const isLevelUnlocked = (level) => {
-    if (level?.unlocked === true) return true;
-    return level?.status === "UNLOCKED" || level?.status === "COMPLETED";
-  };
-
-  const activeLevel = normalLevels.find(
-    (level) => isLevelUnlocked(level) && !isLevelCompleted(level),
-  );
-  const latestUnlockedLevel = [...normalLevels]
-    .reverse()
-    .find((level) => isLevelUnlocked(level));
-  const currentLevel = activeLevel || latestUnlockedLevel || normalLevels[0];
   const xp = user?.profile?.xp || 0;
-
-  // completionPercent removed to fix lint error as it's currently unused in mobile-first nav
-
-
 
   return (
     <>
-      {/* TOP NAV */}
+      {/* ── TOP NAV ── */}
       <div className="fixed top-0 left-0 right-0 z-50 pointer-events-none">
-        <Motion.nav
-          initial={{ y: -10, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          className="app-top-nav pointer-events-auto flex h-14 w-full items-center justify-between gap-3 px-4 sm:grid sm:grid-cols-[1fr_auto_1fr] sm:px-6"
-        >
-          <div className="flex items-center justify-start gap-1 sm:gap-1.5 flex-1">
+        <nav className="app-top-nav pointer-events-auto grid h-12 w-full grid-cols-[1fr_auto_1fr] items-center px-4 sm:px-5">
+          {/* LEFT */}
+          <div className="flex items-center justify-start gap-1.5 min-w-0">
             {user ? (
               <>
-                {/* Notification Bell — mobile only */}
+                {/* Mobile: notifications shortcut */}
                 <button
                   type="button"
-                  onClick={() => setNotificationOpen((prev) => !prev)}
-                  className="relative flex h-8 w-8 items-center justify-center rounded-lg border border-slate-500/25 bg-slate-900/65 text-slate-400 sm:hidden"
+                  onClick={() => setNotificationOpen((p) => !p)}
+                  className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-[#242424] bg-[#161616] text-neutral-600 sm:hidden"
                 >
-                  <Bell size={18} className={unreadCount > 0 ? "text-amber-300" : ""} />
+                  <Bell size={14} className={unreadCount > 0 ? "text-amber-400" : ""} />
                   {unreadCount > 0 && (
-                    <span className="absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full bg-amber-300 ring-2 ring-slate-950" />
+                    <span className="absolute top-0.5 right-0.5 h-1.5 w-1.5 rounded-full bg-amber-400 ring-1 ring-black" />
                   )}
                 </button>
 
-                {/* XP / Purchase — desktop & mobile */}
+                {/* XP chip */}
                 <button
                   type="button"
                   onClick={() => navigate("/shop")}
                   title="Buy XP"
-                  className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-lg border border-cyan-400/35 bg-cyan-400/10 px-2.5 transition-colors hover:bg-cyan-400/16"
+                  className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-md border border-[#242424]
+                             bg-[#161616] px-2.5 transition-colors hover:bg-[#1c1c1c] hover:border-[#333]"
                 >
-                  <Gem size={13} className="text-cyan-300" />
-                  <span className="text-white font-bold text-xs">{xp.toLocaleString()}</span>
+                  <Gem size={11} className="text-neutral-600" />
+                  <span className="text-white font-semibold text-[11px] tabular-nums font-['Geist_Mono',monospace]">
+                    {xp.toLocaleString()}
+                  </span>
+                  <span className="text-[9px] text-neutral-700 font-mono">XP</span>
                 </button>
 
-                {/* Daily Check-in & Store — desktop only (moved from right) */}
-                <div className="hidden sm:flex items-center gap-1">
-                  <NavIcon
+                {/* Desktop: extra actions */}
+                <div className="hidden sm:flex items-center gap-0.5 ml-0.5">
+                  <NavBtn
                     onClick={() => setCheckInOpen(true)}
                     title="Daily Check-in"
-                    icon={<Calendar size={16} />}
                     badge={
                       hasUnclaimedReward ? (
-                        <span className="pointer-events-none absolute -right-0.5 -top-0.5 z-10 h-2 w-2 animate-pulse rounded-full bg-amber-300 ring-2 ring-slate-950" />
+                        <span className="pointer-events-none absolute -right-0.5 -top-0.5 z-10 h-2 w-2 rounded-full bg-amber-400 ring-1 ring-black" />
                       ) : null
                     }
-                  />
-
-                  <NavIcon
-                    onClick={() => navigate("/store")}
-                    title="Store"
-                    icon={<ShoppingBag size={16} />}
-                  />
+                  >
+                    <Calendar size={14} />
+                  </NavBtn>
+                  <NavBtn onClick={() => navigate("/store")} title="Store">
+                    <ShoppingBag size={14} />
+                  </NavBtn>
+                  <NavBtn
+                    onClick={() => {
+                      const allChallenges = navLevels || [];
+                      const nonCert = allChallenges.filter(l => l.slug !== "certificate");
+                      // The current level is the last one that is not LOCKED
+                      const current = [...nonCert].reverse().find(l => l.status !== "LOCKED");
+                      if (current) {
+                        const targetId = current.slug || current.id || current.order;
+                        navigate(`/level/${targetId}`);
+                      } else if (nonCert.length > 0) {
+                        navigate(`/level/${nonCert[0].slug || nonCert[0].id || nonCert[0].order}`);
+                      }
+                    }}
+                    title="Play"
+                    className="!text-emerald-500 hover:!bg-emerald-500/10"
+                  >
+                    <Play size={14} fill="currentColor" />
+                  </NavBtn>
                 </div>
               </>
             ) : null}
           </div>
 
-          {/* CENTER: Title */}
-          <div className="flex items-center justify-center shrink-0">
-            <h1 className="app-title truncate px-2 text-center text-[0.7rem] font-semibold text-slate-100 sm:text-xs lg:text-sm">
-              CLASH OF CODE
-            </h1>
+          {/* CENTER: Text wordmark */}
+          <div className="flex items-center justify-center px-2">
+            <button
+              type="button"
+              onClick={() => navigate(user ? "/home" : "/")}
+              className="group overflow-hidden"
+              title="Home"
+            >
+              <span className="text-[11px] sm:text-[11px] font-bold tracking-[0.2em] text-neutral-200 hover:text-white transition-colors uppercase font-['Geist_Mono',monospace] truncate block max-w-[140px] sm:max-w-none">
+                Clash of Code
+              </span>
+            </button>
           </div>
 
-          {/* RIGHT: Actions */}
-          <div className="flex items-center justify-end gap-1.5 flex-1">
+          {/* RIGHT */}
+          <div className="flex items-center justify-end gap-1.5">
             {user ? (
               <>
-                {/* Chat — mobile only */}
+                {/* Mobile Check-in shortcut */}
                 <button
                   type="button"
-                  onClick={() => setChatOpen((prev) => !prev)}
-                  className={`relative flex h-8 w-8 items-center justify-center rounded-lg border transition-colors sm:hidden ${isChatOpen
-                      ? "border-cyan-300/35 bg-cyan-400/15 text-cyan-300"
-                      : "border-slate-500/25 bg-slate-900/65 text-slate-400"
-                    }`}
+                  onClick={() => setCheckInOpen(true)}
+                  className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-[#242424] bg-[#161616] text-neutral-600 sm:hidden"
                 >
-                  <MessageSquare size={18} strokeWidth={isChatOpen ? 2.5 : 1.75} />
+                  <Calendar size={14} />
+                  {hasUnclaimedReward && (
+                    <span className="absolute top-0.5 right-0.5 h-1.5 w-1.5 rounded-full bg-amber-400 ring-1 ring-black" />
+                  )}
                 </button>
 
-                {/* DESKTOP NAV ICONS — hidden on mobile */}
-                <div className="hidden sm:flex items-center gap-1">
-                  <NavIcon
-                    onClick={() => setChatOpen((prev) => !prev)}
+                {/* Mobile chat toggle */}
+                <button
+                  type="button"
+                  onClick={() => setChatOpen((p) => !p)}
+                  className={`relative flex h-8 w-8 shrink-0 items-center justify-center rounded-md border transition-colors sm:hidden ${isChatOpen
+                    ? "border-[#333] bg-[#1c1c1c] text-white"
+                    : "border-[#242424] bg-[#161616] text-neutral-600"
+                    }`}
+                >
+                  <MessageSquare size={14} strokeWidth={isChatOpen ? 2.5 : 1.75} />
+                </button>
+
+                <div className="hidden sm:flex items-center gap-0.5">
+                  <NavBtn
+                    onClick={() => setChatOpen((p) => !p)}
                     title="Chat"
-                    icon={<MessageSquare size={16} />}
-                    className={isChatOpen ? "border-cyan-300/30 bg-cyan-400/10 text-cyan-300" : ""}
-                  />
-
-                  <NavIcon
-                    onClick={() => setLeaderboardOpen((prev) => !prev)}
-                    title="Leaderboard"
-                    icon={<Trophy size={16} />}
-                  />
-
-                  <NavIcon
+                    active={isChatOpen}
+                  >
+                    <MessageSquare size={14} />
+                  </NavBtn>
+                  <NavBtn onClick={() => setLeaderboardOpen((p) => !p)} title="Leaderboard">
+                    <Trophy size={14} />
+                  </NavBtn>
+                  <NavBtn
                     onClick={() => {
                       if (Notification.permission === "default") {
                         useNotificationStore.getState().requestPermission();
                       }
-                      setNotificationOpen((prev) => !prev);
+                      setNotificationOpen((p) => !p);
                     }}
                     title="Notifications"
-                    icon={
-                      <Motion.div
-                        animate={
-                          hasNewNotification
-                            ? { rotate: [0, -10, 10, -10, 10, 0], scale: [1, 1.1, 1] }
-                            : {}
-                        }
-                        transition={{ duration: 0.5 }}
-                      >
-                        <Bell size={16} className={unreadCount > 0 ? "text-amber-300" : ""} />
-                      </Motion.div>
-                    }
-                    className={unreadCount > 0 ? "text-amber-300" : ""}
+                    className={unreadCount > 0 ? "!text-amber-400" : ""}
                     badge={
                       unreadCount > 0 ? (
-                        <AnimatePresence>
-                          <Motion.span
-                            initial={{ scale: 0, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            exit={{ scale: 0, opacity: 0 }}
-                            className="pointer-events-none absolute -right-0.5 -top-0.5 z-10 h-2 w-2 rounded-full bg-amber-300 ring-2 ring-slate-950"
-                          />
-                        </AnimatePresence>
+                        <span className="pointer-events-none absolute -right-0.5 -top-0.5 z-10 h-1.5 w-1.5 rounded-full bg-amber-400 ring-1 ring-black" />
                       ) : null
                     }
-                  />
+                  >
+                    <Bell size={14} />
+                  </NavBtn>
 
-                  <div className="mx-1 h-5 w-px bg-slate-500/35" />
+                  <div className="mx-1.5 h-4 w-px bg-[#242424]" />
 
-                  {/* Profile */}
+                  {/* Avatar */}
                   <button
                     type="button"
                     onClick={() => navigate("/profile")}
                     title="Profile"
-                    className="h-8 w-8 rounded-lg overflow-hidden border border-slate-500/35 hover:border-slate-200/55 transition-all shrink-0 bg-slate-900/55"
+                    className="h-7 w-7 rounded-md overflow-hidden border border-[#242424] hover:border-[#333] transition-all shrink-0"
                   >
                     {user?.profile?.avatar_url ? (
-                      <img
-                        src={user.profile.avatar_url}
-                        alt="profile"
-                        className="w-full h-full object-cover"
-                      />
+                      <img src={user.profile.avatar_url} alt="profile" className="w-full h-full object-cover" />
                     ) : (
-                      <div className="flex h-full w-full items-center justify-center bg-slate-800/65">
-                        <User size={14} className="text-slate-400" />
+                      <div className="flex h-full w-full items-center justify-center bg-[#1c1c1c]">
+                        <User size={12} className="text-neutral-600" />
                       </div>
                     )}
                   </button>
 
-                  <NavIcon
+                  <NavBtn
                     onClick={handleLogout}
                     title="Logout"
-                    icon={<LogOut size={14} />}
-                    className="text-slate-500 hover:text-rose-300"
-                  />
-
-                  <div className="mx-1 h-5 w-px bg-slate-500/35" />
+                    className="!text-neutral-700 hover:!text-red-400"
+                  >
+                    <LogOut size={12} />
+                  </NavBtn>
                 </div>
-
-                {/* Play CTA — hidden on mobile */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (currentLevel?.slug) {
-                      navigate(`/level/${currentLevel.slug}`);
-                    }
-                  }}
-                  title="Play"
-                  className="hidden h-8 shrink-0 items-center gap-1.5 rounded-lg border border-emerald-300/35 bg-emerald-400/18 px-3 text-xs font-semibold tracking-wide text-emerald-50 transition-all duration-200 hover:bg-emerald-400/26 sm:inline-flex"
-                >
-                  <Play size={12} fill="currentColor" />
-                  Play
-                </button>
               </>
             ) : (
               <button
                 type="button"
                 onClick={() => navigate("/login")}
-                className="h-8 rounded-lg border border-slate-500/25 bg-slate-900/50 px-3 text-xs font-medium text-slate-300 transition-colors hover:border-slate-300/40 hover:text-white"
+                className="h-7 rounded-md bg-white px-3.5 text-[11px] font-semibold text-[#0a0a0a]
+                           transition-colors hover:bg-neutral-200"
               >
-                Log in
+                Sign in
               </button>
             )}
           </div>
-        </Motion.nav>
+        </nav>
       </div>
 
-      {/* MOBILE BOTTOM NAV — Instagram style */}
+      {/* ── MOBILE BOTTOM NAV ── */}
       {user && (
-        <Motion.nav
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.1 }}
-          className="sm:hidden fixed bottom-0 left-0 right-0 z-50 pointer-events-auto"
-        >
-          {/* Top border line */}
-          <div className="absolute left-0 right-0 top-0 h-px bg-slate-400/20" />
-          <div className="app-top-nav px-2 pb-safe">
-            <div className="flex items-center justify-around h-16">
-
-              {/* Home */}
-              <button
-                type="button"
-                onClick={() => navigate("/home")}
-                className="flex h-12 w-12 items-center justify-center rounded-xl text-slate-500 transition-colors hover:bg-slate-800/55 hover:text-slate-300"
-                title="Home"
-              >
-                <Home size={24} strokeWidth={1.75} />
-              </button>
-
-              {/* Leaderboard */}
-              <button
-                type="button"
-                onClick={() => setLeaderboardOpen((prev) => !prev)}
-                className="flex h-12 w-12 items-center justify-center rounded-xl text-slate-500 transition-colors hover:bg-slate-800/55 hover:text-slate-300"
-                title="Ranks"
-              >
-                <Trophy size={24} strokeWidth={1.75} />
-              </button>
-
-              {/* Play — center button (now normal like others) */}
-              <button
-                type="button"
-                onClick={() => {
-                  if (currentLevel?.slug) navigate(`/level/${currentLevel.slug}`);
-                }}
-                className="flex h-12 w-12 flex-col items-center justify-center rounded-xl text-slate-500 transition-colors hover:bg-emerald-400/12 hover:text-emerald-300"
-                title="Play"
-              >
-                <Play size={24} fill="none" strokeWidth={1.75} />
-              </button>
-
-              {/* Store */}
-              <button
-                type="button"
-                onClick={() => navigate("/store")}
-                className="flex h-12 w-12 items-center justify-center rounded-xl text-slate-400 transition-colors hover:bg-slate-800/55 hover:text-slate-300"
-                title="Store"
-              >
-                <ShoppingBag size={24} strokeWidth={1.75} />
-              </button>
-
-              {/* Profile */}
+        <nav className="sm:hidden fixed bottom-0 left-0 right-0 z-50 pointer-events-auto">
+          <div className="absolute left-0 right-0 top-0 h-px bg-white/5" />
+          <div className="bg-black px-2 pb-safe">
+            <div className="flex items-center justify-around h-14">
+              {[
+                { Icon: Home, label: "Home", action: () => navigate("/home") },
+                { Icon: Trophy, label: "Ranks", action: () => setLeaderboardOpen((p) => !p) },
+                {
+                  Icon: Play,
+                  label: "Play",
+                  action: () => {
+                    const allChallenges = navLevels || [];
+                    const nonCert = allChallenges.filter(l => l.slug !== "certificate");
+                    const current = [...nonCert].reverse().find(l => l.status !== "LOCKED");
+                    if (current) {
+                      const targetId = current.slug || current.id || current.order;
+                      navigate(`/level/${targetId}`);
+                    } else if (nonCert.length > 0) {
+                      navigate(`/level/${nonCert[0].slug || nonCert[0].id || nonCert[0].order}`);
+                    }
+                  }
+                },
+                { Icon: ShoppingBag, label: "Store", action: () => navigate("/store") },
+              ].map((item) => {
+                const Icon = item.Icon;
+                return (
+                  <button
+                    key={item.label}
+                    type="button"
+                    onClick={item.action}
+                    title={item.label}
+                    className="flex flex-col items-center gap-0.5 h-10 w-12 justify-center rounded-lg
+                               text-neutral-700 hover:text-neutral-300 transition-colors"
+                  >
+                    <Icon size={18} strokeWidth={1.6} />
+                    <span className="text-[9px] font-mono tracking-wide uppercase">{item.label}</span>
+                  </button>
+                );
+              })}
               <button
                 type="button"
                 onClick={() => navigate("/profile")}
-                className="flex h-12 w-12 items-center justify-center rounded-xl text-slate-500 transition-colors hover:bg-slate-800/55 hover:text-slate-300"
                 title="Profile"
+                className="flex flex-col items-center gap-0.5 h-10 w-12 justify-center rounded-lg
+                           text-neutral-700 hover:text-neutral-300 transition-colors"
               >
                 {user?.profile?.avatar_url ? (
-                  <img src={user.profile.avatar_url} alt="profile" className="h-6 w-6 rounded-full object-cover ring-1 ring-slate-200/30" />
+                  <img
+                    src={user.profile.avatar_url}
+                    alt="profile"
+                    className="h-5 w-5 rounded-full object-cover ring-1 ring-[#333]"
+                  />
                 ) : (
-                  <User size={24} strokeWidth={1.75} />
+                  <User size={18} strokeWidth={1.6} />
                 )}
+                <span className="text-[9px] font-mono tracking-wide uppercase">You</span>
               </button>
-
             </div>
           </div>
-        </Motion.nav>
+        </nav>
       )}
     </>
   );

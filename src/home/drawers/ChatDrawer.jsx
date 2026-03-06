@@ -87,32 +87,26 @@ const ChatDrawer = ({ isOpen, setOpen, user }) => {
           {/* Drawer Wrapper (Flexible Height Control) */}
           <Motion.div
             ref={drawerRef}
-            initial={{ x: "100%" }}
+            initial={{ x: "-100%" }}
             animate={{ x: 0 }}
-            exit={{ x: "100%" }}
-            transition={{ type: "spring", damping: 25, stiffness: 200 }}
+            exit={{ x: "-100%" }}
+            transition={{ type: "spring", damping: 30, stiffness: 300 }}
             style={{
               height: isKeyboardVisible ? `${viewportHeight}px` : "100dvh",
               bottom: 0,
             }}
-            className="fixed right-0 z-[60] w-full max-w-[440px] bg-[#03070c] shadow-2xl flex flex-col border-l border-white/[0.08]"
+            className="fixed left-0 z-[60] w-full md:max-w-[360px] bg-[#050505] shadow-2xl flex flex-col md:border-r border-[#1a1a1a]"
           >
             {/* Glossy Header */}
-            <header className="relative shrink-0 h-14 bg-[#0a0f18]/95 backdrop-blur-2xl flex items-center justify-between px-6 border-b border-white/[0.08] group">
-              <div className="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-transparent via-primary/30 to-transparent" />
-
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center relative overflow-hidden">
-                  <MessageSquare size={18} className="text-primary animate-pulse" />
-                  <div className="absolute inset-0 bg-primary/20 blur-xl opacity-20" />
-                </div>
-                <div>
-                  <h2 className="text-sm font-black tracking-widest text-white uppercase font-sans">
-                    Live Forge
-                  </h2>
-                  <div className="flex items-center gap-1.5 leading-none mt-0.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse shadow-[0_0_8px_rgba(0,175,155,0.6)]" />
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">
+            <header className="shrink-0 h-12 flex items-center justify-between px-4 border-b border-[#1a1a1a] bg-[#0a0a0a]">
+              <div className="flex items-center gap-2">
+                <div className="flex flex-col">
+                  <span className="text-[10px] font-bold tracking-[0.2em] text-[#444] uppercase font-mono">
+                    Live Chat
+                  </span>
+                  <div className="flex items-center gap-1 leading-none">
+                    <span className="w-1 h-1 rounded-full bg-emerald-500" />
+                    <span className="text-[8px] font-bold text-neutral-600 uppercase tracking-tighter">
                       {onlineCount || 0} online
                     </span>
                   </div>
@@ -122,17 +116,14 @@ const ChatDrawer = ({ isOpen, setOpen, user }) => {
               <button
                 type="button"
                 onClick={() => setOpen(false)}
-                className="h-9 w-9 rounded-xl flex items-center justify-center text-slate-500 hover:text-white hover:bg-white/[0.06] transition-all"
+                className="h-6 w-6 rounded-md flex items-center justify-center text-neutral-600 hover:text-white hover:bg-[#1a1a1a] transition-all"
               >
-                <X size={20} strokeWidth={2.5} />
+                <X size={14} />
               </button>
             </header>
 
             {/* Messages Area - Constrained for scrolling */}
-            <main className="flex-1 min-h-0 relative flex flex-col bg-[#03070c]">
-              {/* Ambient background glow */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] bg-primary/5 blur-[100px] rounded-full pointer-events-none" />
-              <div className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(255,255,255,0.1) 1px, transparent 0)', backgroundSize: '24px 24px' }} />
+            <main className="flex-1 min-h-0 relative flex flex-col bg-[#050505]">
 
               <div className="relative z-10 flex-1 min-h-0 h-full">
                 <MessageList user={user} messages={messages} viewportHeight={viewportHeight} />
@@ -153,7 +144,7 @@ const ChatDrawer = ({ isOpen, setOpen, user }) => {
             </div>
 
             {/* Safety padding for non-keyboard mobile states */}
-            {!isKeyboardVisible && <div className="h-safe sm:h-0 bg-[#03070c]" />}
+            {!isKeyboardVisible && <div className="h-safe sm:h-0 bg-[#050505]" />}
           </Motion.div>
         </>
       )}

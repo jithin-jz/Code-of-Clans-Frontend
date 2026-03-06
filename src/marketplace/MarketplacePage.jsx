@@ -24,6 +24,7 @@ import {
 import { motion as Motion, AnimatePresence } from "framer-motion";
 import MarketplacePageSkeleton from "./MarketplacePageSkeleton";
 import { useMarketplace } from "../hooks/useMarketplace";
+import SiteFooter from "../home/sections/SiteFooter";
 
 const CATEGORIES = [
   { id: "THEME", label: "Themes", icon: Palette },
@@ -100,7 +101,7 @@ const MarketplacePage = memo(() => {
         >
 
           {/* Controls & Category Tabs (Unified Row) */}
-          <div className="sticky top-14 z-20 border-b border-white/5 bg-[#0a0f18]/85 backdrop-blur-xl">
+          <div className="sticky top-14 z-20 border-b border-[#1e1e1e] bg-[#0a0a0a]/92 backdrop-blur-xl">
             <div className="w-full px-4 sm:px-6 lg:px-8 min-w-0">
               <div className="flex items-center gap-2 sm:gap-4 py-2 sm:py-3">
                 {/* Back Button */}
@@ -108,15 +109,15 @@ const MarketplacePage = memo(() => {
                   variant="ghost"
                   size="icon"
                   onClick={() => navigate(-1)}
-                  className="h-8 w-8 text-slate-400 hover:text-white hover:bg-white/10 shrink-0 -ml-1.5"
+                  className="h-8 w-8 text-neutral-600 hover:text-white hover:bg-[#1c1c1c] shrink-0 -ml-1"
                 >
-                  <ArrowLeft size={18} />
+                  <ArrowLeft size={16} />
                 </Button>
 
-                <div className="w-px h-5 bg-white/10 shrink-0 hidden sm:block" />
+                <div className="w-px h-4 bg-[#222] shrink-0 hidden sm:block" />
 
                 {/* Scrollable Tabs */}
-                <div className="flex items-center gap-1 sm:gap-2 flex-1 overflow-x-auto no-scrollbar">
+                <div className="flex items-center gap-1 sm:gap-1.5 flex-1 overflow-x-auto no-scrollbar">
                   {CATEGORIES.map((cat) => {
                     const isActive = activeCategory === cat.id;
                     const Icon = cat.icon;
@@ -126,27 +127,27 @@ const MarketplacePage = memo(() => {
                         onClick={() => setActiveCategory(cat.id)}
                         title={cat.label}
                         className={`
-                        flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-colors border flex-1 sm:flex-none sm:whitespace-nowrap
+                        flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md text-[10px] font-bold uppercase tracking-wider transition-all border font-mono flex-1 sm:flex-none sm:whitespace-nowrap
                         ${isActive
-                            ? "bg-white/[0.14] text-white border-white/25"
-                            : "text-slate-400 border-transparent hover:text-white hover:bg-white/10 hover:border-white/15"
+                            ? "bg-[#161616] text-white border-[#333] shadow-sm"
+                            : "text-neutral-500 border-transparent hover:text-neutral-300 hover:bg-[#111] hover:border-[#1a1a1a]"
                           }
                       `}
                       >
-                        <Icon size={14} />
+                        <Icon size={12} />
                         <span className="hidden sm:inline">{cat.label}</span>
                       </button>
                     );
                   })}
                 </div>
 
-                {/* Get XP Button (Optional mobile hide, clear call to action) */}
+                {/* Get XP Button */}
                 <div className="shrink-0 ml-1">
                   <button
                     onClick={() => navigate("/buy-xp")}
-                    className="flex items-center gap-1.5 px-3 py-1.5 bg-[#162338] rounded-full border border-[#7ea3d9]/20 hover:bg-[#1b2a40] transition-colors"
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-[#0d0d0d] rounded-md border border-[#1a1a1a] hover:bg-[#141414] hover:border-[#222] transition-colors"
                   >
-                    <span className="text-xs font-semibold text-slate-300">Get XP</span>
+                    <span className="text-[9px] font-bold uppercase tracking-widest text-neutral-500 font-mono">Get XP</span>
                   </button>
                 </div>
 
@@ -157,7 +158,7 @@ const MarketplacePage = memo(() => {
           {/* Items Grid */}
           <main className="relative z-10 w-full px-4 sm:px-6 lg:px-8 py-6 min-w-0">
             {filteredItems.length === 0 ? (
-              <div className="h-64 flex flex-col items-center justify-center text-slate-400 gap-3">
+              <div className="h-64 flex flex-col items-center justify-center text-neutral-400 gap-3">
                 <Package size={32} className="opacity-30" />
                 <p className="text-sm">No items in this category</p>
               </div>
@@ -180,23 +181,23 @@ const MarketplacePage = memo(() => {
                       >
                         <Card
                           className={`
-                            rounded-xl overflow-hidden backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.3)] transition-all duration-300 group flex flex-col h-full
+                            rounded-lg overflow-hidden transition-all duration-300 group flex flex-col h-full bg-[#0d0d0d] border border-[#1a1a1a]
                             ${isActive
-                              ? "bg-gradient-to-br from-emerald-500/10 to-emerald-500/[0.02] border border-emerald-500/30 border-t-emerald-400/50 shadow-[0_8px_32px_rgba(16,185,129,0.08)]"
-                              : "bg-[#0f1b2e]/70 border border-[#7ea3d9]/20 hover:border-[#7ea3d9]/50 hover:bg-[#162338]/80 hover:-translate-y-1 hover:shadow-[0_12px_40px_-15px_rgba(126,163,217,0.2)]"
+                              ? "border-emerald-500/30 shadow-[0_0_20px_rgba(16,185,129,0.05)]"
+                              : "hover:border-[#333] hover:bg-[#111]"
                             }
                           `}
                         >
-                          {/* Icon/Preview - Glass Area */}
-                          <div className={`h-32 flex items-center justify-center border-b transition-colors relative shrink-0 ${isActive ? "bg-emerald-500/[0.05] border-emerald-500/20" : "bg-[#162338]/80 border-[#7ea3d9]/20 group-hover:bg-[#1a2940]"}`}>
+                          {/* Icon/Preview */}
+                          <div className={`h-28 flex items-center justify-center border-b transition-colors relative shrink-0 ${isActive ? "bg-emerald-500/[0.03] border-emerald-500/10" : "bg-black border-[#1a1a1a] group-hover:bg-[#080808]"}`}>
                             {item.image ? (
                               <img
                                 src={item.image}
                                 alt={item.name}
-                                className="w-full h-full object-cover mix-blend-overlay"
+                                className="w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity"
                               />
                             ) : (
-                              <div className={`${isActive ? "text-emerald-400" : "text-[#d3deee]"}`}>
+                              <div className={`${isActive ? "text-emerald-500" : "text-neutral-600 group-hover:text-neutral-400"}`}>
                                 {renderIcon(item.icon_name)}
                               </div>
                             )}
@@ -205,30 +206,27 @@ const MarketplacePage = memo(() => {
                             <div className="absolute top-2 right-2 flex gap-1.5">
                               {isOwned && (
                                 <Badge
-                                  variant="secondary"
-                                  className={`text-[10px] px-2 py-0.5 rounded border font-semibold ${isActive ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" : "bg-[#162338]/80 text-[#d3deee] border-[#7ea3d9]/20"}`}
+                                  className={`text-[8px] px-1.5 py-0.5 rounded-sm border font-bold uppercase tracking-[0.1em] font-mono ${isActive ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" : "bg-[#1a1a1a] text-neutral-500 border-[#222]"}`}
                                 >
-                                  {isActive && <Check size={10} className="mr-1" />}
-                                  {isActive ? "Active" : "Owned"}
+                                  {isActive ? "Equipped" : "Owned"}
                                 </Badge>
                               )}
                             </div>
 
                             {/* Category Badge */}
                             <Badge
-                              variant="outline"
-                              className={`absolute top-2 left-2 text-[10px] px-2 py-0.5 rounded border ${isActive ? "bg-emerald-500/10 text-emerald-400/80 border-emerald-500/20" : "bg-black/20 text-[#a3b8d9] border-[#7ea3d9]/10"}`}
+                              className={`absolute top-2 left-2 text-[7px] px-1 py-0.5 rounded-sm border font-bold uppercase tracking-[0.2em] font-mono ${isActive ? "bg-emerald-500/10 text-emerald-400/60 border-emerald-500/20" : "bg-black/40 text-neutral-700 border-[#222]/20"}`}
                             >
                               {item.category}
                             </Badge>
                           </div>
 
-                          {/* Content - Compact Padding */}
-                          <div className="flex flex-col flex-1 p-3.5 pb-2.5">
-                            <h3 className={`text-sm tracking-tight truncate ${isActive ? "text-emerald-400 font-bold" : "text-slate-100 font-semibold"}`}>
+                          {/* Content */}
+                          <div className="flex flex-col flex-1 p-3">
+                            <h3 className={`text-[11px] uppercase tracking-wider font-bold truncate font-mono ${isActive ? "text-emerald-400" : "text-neutral-300"}`}>
                               {item.name}
                             </h3>
-                            <p className={`text-[11px] mt-1 line-clamp-2 leading-relaxed ${isActive ? "text-emerald-400/70" : "text-[#7ea3d9]/70"}`}>
+                            <p className="text-[9px] mt-1 line-clamp-2 leading-snug text-neutral-600 font-bold uppercase tracking-tight">
                               {item.description}
                             </p>
                           </div>
@@ -237,10 +235,10 @@ const MarketplacePage = memo(() => {
                             {isOwned ? (
                               <Button
                                 className={`
-                                  w-full h-9 text-xs font-semibold tracking-wide transition-all
+                                  w-full h-8 text-[9px] font-bold uppercase tracking-widest transition-all rounded-md font-mono
                                   ${isActive
-                                    ? "bg-transparent border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10"
-                                    : "bg-[#162338] border border-[#7ea3d9]/20 text-slate-200 hover:bg-[#1a2940] hover:text-white"
+                                    ? "bg-transparent border border-emerald-500/20 text-emerald-500 hover:bg-emerald-500/5 shadow-none"
+                                    : "bg-[#111] border border-[#222] text-neutral-500 hover:bg-[#161616] hover:text-neutral-200"
                                   }
                                 `}
                                 onClick={() =>
@@ -249,17 +247,17 @@ const MarketplacePage = memo(() => {
                                     : handleEquip(item)
                                 }
                               >
-                                {isActive ? "Unequip" : "Equip"}
+                                {isActive ? "Offline" : "Connect"}
                               </Button>
                             ) : (
                               <Button
                                 className={`
-                                  w-full h-9 text-xs font-semibold tracking-wide transition-all border
-                                  ${canAfford
-                                    ? "bg-[#0ea5e9]/90 border-[#0ea5e9]/50 text-white hover:bg-[#0284c7] hover:border-[#0284c7] shadow-[0_4px_12px_rgba(14,165,233,0.3)] hover:shadow-[0_4px_16px_rgba(14,165,233,0.4)]"
-                                    : "bg-[#0a0f18]/80 text-[#7ea3d9]/40 border-[#7ea3d9]/10 cursor-not-allowed"
+                                    w-full h-8 text-[10px] font-bold tracking-widest transition-all border rounded-md font-mono
+                                    ${canAfford
+                                    ? "bg-white text-black border-[#1a1a1a] hover:bg-neutral-200"
+                                    : "bg-black text-[#222] border-[#111] cursor-not-allowed shadow-none"
                                   }
-                                `}
+                                  `}
                                 disabled={
                                   !canAfford ||
                                   (isMutating &&
@@ -269,17 +267,17 @@ const MarketplacePage = memo(() => {
                               >
                                 {isMutating &&
                                   activeMutationItemId === item.id ? (
-                                  <span className="text-[10px] font-semibold">
-                                    Processing...
+                                  <span className="text-[8px] uppercase">
+                                    Processing
                                   </span>
                                 ) : (
                                   <span className="flex items-center gap-1.5">
                                     {canAfford ? (
-                                      <Gem size={12} className="text-white/80" />
+                                      <Gem size={10} className="text-black/60" />
                                     ) : (
-                                      <Lock size={12} className="opacity-50" />
+                                      <Lock size={10} className="opacity-20" />
                                     )}
-                                    {item.cost}
+                                    {item.cost.toLocaleString()}
                                   </span>
                                 )}
                               </Button>
@@ -293,6 +291,7 @@ const MarketplacePage = memo(() => {
               </div>
             )}
           </main>
+          <SiteFooter />
         </Motion.div>
       )}
     </AnimatePresence>

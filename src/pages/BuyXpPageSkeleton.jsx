@@ -9,14 +9,14 @@ import {
 
 const BuyXpPageSkeleton = () => {
   return (
-    <SkeletonPage className="bg-[#060a11]">
+    <SkeletonPage className="bg-[#000000]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12">
 
         {/* Page Header */}
         <div className="text-center space-y-4 max-w-2xl mx-auto">
-          <SkeletonBase className="h-6 w-32 mx-auto rounded-full bg-blue-500/10 border border-blue-500/20" />
-          <SkeletonText width="100%" height="2.5rem" />
-          <SkeletonText width="80%" height="1.1rem" className="mx-auto opacity-40" />
+          <SkeletonBase className="h-6 w-32 mx-auto rounded-full bg-white/[0.05] border border-white/10" />
+          <SkeletonText width="100%" height="2.5rem" className="bg-white/5" />
+          <SkeletonText width="80%" height="1.1rem" className="mx-auto opacity-20" />
         </div>
 
         {/* Pricing Grid */}
@@ -24,7 +24,7 @@ const BuyXpPageSkeleton = () => {
           {[...Array(8)].map((_, i) => (
             <SkeletonCard
               key={i}
-              className="flex flex-col h-[320px] p-6 bg-[#0f1b2e]/40 border border-white/5 relative group"
+              className="flex flex-col h-[320px] p-6 bg-black border border-white/5 relative group"
             >
               {/* Card Header */}
               <div className="space-y-6 flex-1">

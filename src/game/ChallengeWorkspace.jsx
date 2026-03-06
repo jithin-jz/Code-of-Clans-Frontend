@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { BookOpen, Code2, Bot } from "lucide-react";
+import { BookOpen, Terminal, Bot } from "lucide-react";
 import { Sparkles } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
@@ -21,7 +21,7 @@ import AIAssistantPane from "./components/AIAssistantPane";
 
 const MOBILE_TABS = [
   { id: "problem", label: "Problem", Icon: BookOpen },
-  { id: "code", label: "Code", Icon: Code2 },
+  { id: "code", label: "Code", Icon: Terminal },
   { id: "ai", label: "AI", Icon: Bot },
 ];
 
@@ -423,7 +423,7 @@ const ChallengeWorkspace = () => {
       const monacoThemeName = themeNameMap[activeTheme] || activeTheme;
       monaco.editor.setTheme(monacoThemeName);
     } else {
-      monaco.editor.setTheme("vs-dark");
+      monaco.editor.setTheme("industrial");
     }
 
     const fontAliasMap = {
@@ -458,6 +458,28 @@ const ChallengeWorkspace = () => {
       monacoRef.current = monaco;
 
       // --- THEME DEFINITIONS ---
+
+      // Industrial Elite
+      monaco.editor.defineTheme("industrial", {
+        base: "vs-dark",
+        inherit: true,
+        rules: [
+          { token: "comment", foreground: "444444" },
+          { token: "keyword", foreground: "ffffff", fontStyle: "bold" },
+          { token: "string", foreground: "a3a3a3" },
+          { token: "number", foreground: "e8e8e8" },
+          { token: "type", foreground: "ffffff" },
+        ],
+        colors: {
+          "editor.background": "#000000",
+          "editor.foreground": "#e8e8e8",
+          "editorCursor.foreground": "#ffffff",
+          "editor.lineHighlightBackground": "#0a0a0a",
+          "editor.selectionBackground": "#141414",
+          "editorLineNumber.foreground": "#333333",
+          "editorLineNumber.activeForeground": "#666666",
+        },
+      });
 
       // Dracula
       monaco.editor.defineTheme("dracula", {
@@ -636,19 +658,8 @@ const ChallengeWorkspace = () => {
   }
 
   return (
-    <div className="h-dvh flex flex-col bg-[#0b1119] text-white overflow-hidden relative font-sans selection:bg-primary/20">
-      <div className="absolute inset-0 pointer-events-none bg-[#0b1119]" />
-      <div className="absolute inset-0 pointer-events-none bg-linear-to-b from-[#101928] via-[#0d141f] to-[#0a0f17]" />
-      <div
-        className="absolute inset-0 pointer-events-none opacity-[0.06]"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(148,163,184,0.35) 1px, transparent 1px), linear-gradient(90deg, rgba(148,163,184,0.35) 1px, transparent 1px)",
-          backgroundSize: "52px 52px",
-        }}
-      />
-      <div className="absolute top-0 left-[8%] w-[26rem] h-[26rem] rounded-full bg-[#2563eb]/10 blur-3xl pointer-events-none" />
-      <div className="absolute bottom-[-8rem] right-[10%] w-[22rem] h-[22rem] rounded-full bg-[#0ea5e9]/10 blur-3xl pointer-events-none" />
+    <div className="h-dvh flex flex-col bg-[#0a0a0a] text-white overflow-hidden relative font-sans selection:bg-white/10">
+      <div className="absolute inset-0 pointer-events-none bg-[#0a0a0a]" />
       <CursorEffects effectType={user?.profile?.active_effect} />
 
       {/* Completion Modal */}
@@ -658,10 +669,9 @@ const ChallengeWorkspace = () => {
           <Motion.div
             initial={{ scale: 0.98, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="bg-[#0c0c0e]/95 backdrop-blur-md border border-white/10 rounded-3xl p-6 sm:p-10 max-w-sm w-full flex flex-col items-center text-center shadow-2xl relative overflow-hidden"
+            className="bg-[#111]/95 backdrop-blur-md border border-[#222] rounded-2xl p-6 sm:p-10 max-w-sm w-full flex flex-col items-center text-center shadow-2xl relative overflow-hidden"
           >
-            {/* Glossy overlay */}
-            <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-transparent via-[#10b981] to-transparent opacity-50" />
+            <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
             <div className="relative z-10 flex flex-col items-center gap-6">
               <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-2 bg-green-500/10 border border-green-500/20">
                 <Sparkles size={32} className="text-green-500" />
@@ -745,22 +755,15 @@ const ChallengeWorkspace = () => {
       {/* Main Content - Minimalist Boxy Layout */}
       <div className="flex-1 flex flex-col lg:flex-row overflow-hidden relative z-10 p-0 sm:p-3 gap-0 sm:gap-3">
         {/* LEFT CARD: Problem — desktop always visible, mobile only when tab=problem */}
-        <div
-          className={`lg:flex flex-1 lg:flex-none w-full lg:w-[24rem] min-h-0 flex-col bg-[#0f1827]/64 backdrop-blur-xl border-y sm:border border-white/12 sm:rounded-2xl shadow-[0_22px_60px_rgba(0,0,0,0.3)] overflow-y-auto custom-scrollbar ${mobileTab === "problem" ? "flex" : "hidden"
-            }`}
-        >
+        <div className={`lg:flex flex-1 lg:flex-none w-full lg:w-[24rem] min-h-0 flex-col bg-black border-y sm:border border-white/5 sm:rounded-xl shadow-2xl overflow-y-auto custom-scrollbar ${mobileTab === "problem" ? "flex" : "hidden"}`}>
           <div className="flex-1 min-h-0 relative">
             <ProblemPane challenge={challenge} loading={!challenge} />
           </div>
         </div>
 
         {/* MIDDLE COLUMN: Editor & Console Cards — desktop always visible, mobile only when tab=code */}
-        <div
-          className={`lg:flex flex-1 flex-col min-w-0 sm:rounded-2xl sm:border border-white/12 shadow-[0_22px_60px_rgba(0,0,0,0.3)] overflow-hidden bg-[#0f1827]/64 backdrop-blur-xl ${mobileTab === "code" ? "flex" : "hidden"
-            }`}
-        >
-          {/* Editor Card */}
-          <div className="flex-1 flex flex-col bg-[#0b1526]/85 overflow-hidden relative group">
+        <div className={`lg:flex flex-1 flex-col min-w-0 sm:rounded-xl sm:border border-white/5 shadow-2xl overflow-hidden bg-black ${mobileTab === "code" ? "flex" : "hidden"}`}>
+          <div className="flex-1 flex flex-col bg-black overflow-hidden relative group">
             <div className="flex-1 relative">
               <EditorPane
                 code={code}
@@ -778,8 +781,8 @@ const ChallengeWorkspace = () => {
           </div>
 
           {/* Console Card */}
-          <div className="h-[35%] sm:h-[32%] min-h-[180px] flex flex-col bg-[#0b1526]/90 border-t border-white/10">
-            <div className="px-3 py-2 border-b border-white/10 bg-[#111d30] flex justify-between items-center h-8">
+          <div className="h-[35%] sm:h-[32%] min-h-[180px] flex flex-col bg-black border-t border-white/5">
+            <div className="px-3 py-2 border-b border-white/5 bg-black flex justify-between items-center h-8">
               <span className="text-[10px] font-bold tracking-widest text-zinc-500 uppercase font-sans">
                 Terminal
               </span>
@@ -796,10 +799,7 @@ const ChallengeWorkspace = () => {
         </div>
 
         {/* RIGHT CARD: AI Assistant — desktop always visible, mobile only when tab=ai */}
-        <div
-          className={`lg:flex flex-1 lg:flex-none w-full lg:w-[24rem] xl:w-[26rem] flex-col bg-[#0f1827]/64 backdrop-blur-xl border-y sm:border border-white/12 sm:rounded-2xl shadow-[0_22px_60px_rgba(0,0,0,0.3)] overflow-hidden ${mobileTab === "ai" ? "flex" : "hidden"
-            }`}
-        >
+        <div className={`lg:flex flex-1 lg:flex-none w-full lg:w-[24rem] xl:w-[26rem] flex-col bg-black border-y sm:border border-white/5 sm:rounded-xl shadow-2xl overflow-hidden ${mobileTab === "ai" ? "flex" : "hidden"}`}>
           <div className="flex-1 flex flex-col overflow-hidden relative">
             <AIAssistantPane
               onGetHint={handleGetHint}
@@ -818,7 +818,7 @@ const ChallengeWorkspace = () => {
       </div>
 
       {/* MOBILE TAB BAR — only shown on mobile */}
-      <div className="lg:hidden shrink-0 relative z-20 bg-[#0a1220]/95 backdrop-blur-xl border-t border-white/10 pb-[env(safe-area-inset-bottom,0px)]">
+      <div className="lg:hidden shrink-0 relative z-20 bg-black/95 border-t border-white/5 pb-safe">
         <div className="flex items-stretch h-14">
           {MOBILE_TABS.map((tab) => (
             <button
@@ -826,8 +826,8 @@ const ChallengeWorkspace = () => {
               type="button"
               onClick={() => setMobileTab(tab.id)}
               className={`flex-1 flex flex-col items-center justify-center gap-1.5 transition-all duration-200 ${mobileTab === tab.id
-                ? "text-[#10b981] bg-[#10b981]/5 relative after:absolute after:top-0 after:left-1/2 after:-translate-x-1/2 after:w-10 after:h-0.5 after:bg-[#10b981] after:rounded-full"
-                : "text-slate-500 hover:text-slate-300"
+                ? "text-white bg-white/5 relative"
+                : "text-neutral-700 hover:text-neutral-400"
                 }`}
             >
               <tab.Icon

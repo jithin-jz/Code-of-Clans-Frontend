@@ -10,15 +10,15 @@ import {
 
 const ProfileSkeleton = () => {
   return (
-    <SkeletonPage className="bg-[#060a11]">
+    <SkeletonPage className="bg-black">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
 
         {/* Banner + Profile Header */}
-        <div className="relative rounded-[2.5rem] overflow-hidden bg-[#0f1b2e]/60 border border-white/10">
+        <div className="relative rounded-[2.5rem] overflow-hidden bg-black border border-white/10">
           <SkeletonBase className="h-48 sm:h-64 w-full rounded-none" />
           <div className="relative px-8 pb-8 pt-0 -mt-20 flex flex-col items-center sm:items-start text-center sm:text-left gap-6">
             <div className="flex flex-col sm:flex-row items-end gap-6 w-full">
-              <SkeletonAvatar size="xl" className="h-32 w-32 sm:h-40 sm:w-40 rounded-[2.5rem] border-4 border-[#060a11] shadow-2xl" />
+              <SkeletonAvatar size="xl" className="h-32 w-32 sm:h-40 sm:w-40 rounded-[2.5rem] border-4 border-[#000000] shadow-2xl" />
               <div className="flex-1 pb-4 space-y-3">
                 <SkeletonText width="280px" height="2rem" className="mx-auto sm:mx-0" />
                 <SkeletonText width="160px" height="1rem" className="mx-auto sm:mx-0 opacity-50" />
@@ -34,7 +34,7 @@ const ProfileSkeleton = () => {
         {/* Stats Grid */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {[...Array(4)].map((_, i) => (
-            <SkeletonStats key={i} className="bg-[#0f1b2e]/40" />
+            <SkeletonStats key={i} className="bg-black" />
           ))}
         </div>
 
@@ -42,7 +42,7 @@ const ProfileSkeleton = () => {
 
           {/* Left Side: Info & About */}
           <div className="lg:col-span-1 space-y-6">
-            <SkeletonCard title="About" className="space-y-4 bg-[#0f1b2e]/40">
+            <SkeletonCard title="About" className="space-y-4 bg-black">
               <SkeletonText width="100%" />
               <SkeletonText width="90%" />
               <SkeletonText width="40%" />
@@ -58,7 +58,7 @@ const ProfileSkeleton = () => {
               </div>
             </SkeletonCard>
 
-            <SkeletonCard title="Skills" className="bg-[#0f1b2e]/40 p-6">
+            <SkeletonCard title="Skills" className="bg-black p-6">
               <SkeletonText width="80px" className="mb-4" />
               <div className="flex flex-wrap gap-2">
                 {[...Array(6)].map((_, i) => (
@@ -77,7 +77,7 @@ const ProfileSkeleton = () => {
             </div>
 
             {[...Array(3)].map((_, i) => (
-              <SkeletonCard key={i} className="p-6 bg-[#0f1b2e]/40 border-white/5">
+              <SkeletonCard key={i} className="p-6 bg-black border-white/5">
                 <div className="flex gap-4 mb-6">
                   <SkeletonAvatar size="md" className="rounded-xl" />
                   <div className="space-y-2 flex-1">

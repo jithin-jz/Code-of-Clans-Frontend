@@ -9,9 +9,9 @@ import {
 
 const MarketplacePageSkeleton = () => {
   return (
-    <SkeletonPage className="flex flex-col bg-[#060a11]">
+    <SkeletonPage className="flex flex-col bg-black">
       {/* Category Tabs Skeleton */}
-      <div className="sticky top-0 z-30 border-b border-white/5 bg-[#060a11]/90 backdrop-blur-xl">
+      <div className="sticky top-0 z-30 border-b border-white/5 bg-black/90 backdrop-blur-xl">
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-6 py-4 overflow-x-auto no-scrollbar">
             <SkeletonBase className="h-10 w-10 rounded-xl shrink-0 border border-white/10" />
@@ -26,7 +26,7 @@ const MarketplacePageSkeleton = () => {
       </div>
 
       {/* Main Content Grid */}
-      <div className="max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
 
         {/* Section Heading */}
         <div className="space-y-4">
@@ -39,7 +39,7 @@ const MarketplacePageSkeleton = () => {
           {[...Array(10)].map((_, i) => (
             <SkeletonCard
               key={i}
-              className="group p-0 border border-white/5 bg-[#0f1b2e]/40 hover:border-white/10 transition-colors"
+              className="group p-0 border border-white/5 bg-black hover:border-white/10 transition-colors"
             >
               {/* Item Preview Skeleton */}
               <div className="aspect-video relative overflow-hidden bg-white/[0.02]">

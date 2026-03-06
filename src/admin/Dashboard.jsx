@@ -254,7 +254,7 @@ const AdminDashboard = () => {
   if (!user?.is_staff && !user?.is_superuser) return <AdminPageSkeleton />;
 
   return (
-    <div className="relative h-screen overflow-hidden font-sans antialiased text-slate-200 bg-[#0a0f18]">
+    <div className="relative h-screen overflow-hidden bg-background font-sans antialiased text-foreground">
       <AppBackdrop />
       <div className="relative z-10 flex h-full flex-col md:flex-row">
         <AdminSidebar
@@ -270,7 +270,7 @@ const AdminDashboard = () => {
               <div className="space-y-8 animate-in slide-in-from-bottom-4 duration-500">
                 <div className="space-y-6">
                   <div className="grid grid-cols-1 gap-6">
-                    <div className="p-6 rounded-xl bg-[#0d1525] border border-white/5 shadow-sm flex flex-col justify-between group/card">
+                    <div className="app-panel flex flex-col justify-between p-6">
                       <div>
                         <div className="flex items-center justify-between mb-2">
                           <h3 className="text-sm font-semibold text-slate-100">
@@ -278,66 +278,66 @@ const AdminDashboard = () => {
                           </h3>
                           <Badge
                             variant="outline"
-                            className="bg-[#00af9b]/5 text-[#00af9b] border-[#00af9b]/10 text-[9px] font-medium uppercase tracking-wider h-5"
+                            className="h-5 border-cyan-300/25 bg-cyan-400/10 text-[9px] font-medium uppercase tracking-wider text-cyan-200"
                           >
                             Operational
                           </Badge>
                         </div>
                         <div className="grid grid-cols-2 lg:grid-cols-6 gap-3 mt-6">
-                          <div className="p-3 rounded-lg bg-[#0a1220]/65 border border-white/10 text-center">
-                            <p className="text-[9px] uppercase font-semibold text-slate-500 mb-1">
+                          <div className="rounded-lg border border-border/70 bg-secondary/45 p-3 text-center">
+                            <p className="mb-1 text-[9px] font-semibold uppercase text-slate-500">
                               Users
                             </p>
-                            <p className="text-xl font-bold text-slate-100 tracking-tight">
+                            <p className="text-xl font-bold tracking-tight text-slate-100">
                               {integrity?.users || 0}
                             </p>
                           </div>
-                          <div className="p-3 rounded-lg bg-[#0a1220]/65 border border-white/10 text-center">
-                            <p className="text-[9px] uppercase font-semibold text-slate-500 mb-1">
+                          <div className="rounded-lg border border-border/70 bg-secondary/45 p-3 text-center">
+                            <p className="mb-1 text-[9px] font-semibold uppercase text-slate-500">
                               Sessions
                             </p>
-                            <p className="text-xl font-bold text-slate-100 tracking-tight">
+                            <p className="text-xl font-bold tracking-tight text-slate-100">
                               {rawStats.active_sessions || 0}
                             </p>
                           </div>
-                          <div className="p-3 rounded-lg bg-[#0a1220]/65 border border-white/10 text-center">
-                            <p className="text-[9px] uppercase font-semibold text-slate-500 mb-1">
+                          <div className="rounded-lg border border-border/70 bg-secondary/45 p-3 text-center">
+                            <p className="mb-1 text-[9px] font-semibold uppercase text-slate-500">
                               Challenges
                             </p>
-                            <p className="text-xl font-bold text-slate-100 tracking-tight">
+                            <p className="text-xl font-bold tracking-tight text-slate-100">
                               {integrity?.challenges || 0}
                             </p>
                           </div>
-                          <div className="p-3 rounded-lg bg-[#0a1220]/65 border border-white/10 text-center">
-                            <p className="text-[9px] uppercase font-semibold text-slate-500 mb-1">
+                          <div className="rounded-lg border border-border/70 bg-secondary/45 p-3 text-center">
+                            <p className="mb-1 text-[9px] font-semibold uppercase text-slate-500">
                               Inventory
                             </p>
-                            <p className="text-xl font-bold text-slate-100 tracking-tight">
+                            <p className="text-xl font-bold tracking-tight text-slate-100">
                               {integrity?.store_items || 0}
                             </p>
                           </div>
-                          <div className="p-3 rounded-lg bg-[#0a1220]/65 border border-white/10 text-center">
-                            <p className="text-[9px] uppercase font-semibold text-slate-500 mb-1">
+                          <div className="rounded-lg border border-border/70 bg-secondary/45 p-3 text-center">
+                            <p className="mb-1 text-[9px] font-semibold uppercase text-slate-500">
                               Audit Logs
                             </p>
-                            <p className="text-xl font-bold text-slate-100 tracking-tight">
+                            <p className="text-xl font-bold tracking-tight text-slate-100">
                               {integrity?.audit_logs || 0}
                             </p>
                           </div>
-                          <div className="p-3 rounded-lg bg-[#0a1220]/65 border border-white/10 text-center">
-                            <p className="text-[9px] uppercase font-semibold text-slate-500 mb-1">
+                          <div className="rounded-lg border border-border/70 bg-secondary/45 p-3 text-center">
+                            <p className="mb-1 text-[9px] font-semibold uppercase text-slate-500">
                               XP Spent
                             </p>
-                            <p className="text-xl font-bold text-slate-100 tracking-tight">
+                            <p className="text-xl font-bold tracking-tight text-slate-100">
                               {rawStats.total_gems || 0}
                             </p>
                           </div>
                         </div>
                       </div>
-                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mt-6 pt-4 border-t border-white/10">
+                      <div className="mt-6 flex flex-col gap-3 border-t border-border/60 pt-4 sm:flex-row sm:items-center sm:justify-between">
                         <div className="flex items-center gap-2">
-                          <Shield className="text-[#00af9b]" size={12} />
-                          <span className="text-[9px] font-medium text-slate-500 uppercase tracking-wider">
+                          <Shield className="text-cyan-300" size={12} />
+                          <span className="text-[9px] font-medium uppercase tracking-wider text-slate-500">
                             Real-time synchronization active
                           </span>
                         </div>
@@ -345,7 +345,7 @@ const AdminDashboard = () => {
                           variant="ghost"
                           size="sm"
                           onClick={() => setActiveTab("audit")}
-                          className="text-slate-500 hover:text-white text-[9px] h-7 px-3 font-medium uppercase tracking-wider rounded-md hover:bg-white/10"
+                          className="h-7 rounded-md px-3 text-[9px] font-medium uppercase tracking-wider text-slate-400 hover:bg-slate-800/65 hover:text-white"
                         >
                           View Logs
                         </Button>

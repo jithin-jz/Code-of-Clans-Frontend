@@ -168,7 +168,7 @@ const AdminStore = () => {
   return (
     <div className="space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <h2 className="text-xl font-semibold text-slate-100 tracking-tight">
+        <h2 className="text-xl font-semibold text-neutral-100 tracking-tight">
           Store Management
         </h2>
         <Button
@@ -180,23 +180,23 @@ const AdminStore = () => {
         </Button>
       </div>
 
-      <div className="rounded-lg border border-white/5 bg-[#0d1525] shadow-sm overflow-hidden">
+      <div className="rounded-lg border border-white/5 bg-[#0a0a0a] shadow-sm overflow-hidden">
         <Table className="min-w-[760px]">
           <TableHeader>
             <TableRow className="border-white/10 hover:bg-transparent bg-white/[0.02]">
-              <TableHead className="w-[80px] text-[10px] font-medium uppercase tracking-wider text-slate-400 py-3 px-6">
+              <TableHead className="w-[80px] text-[10px] font-medium uppercase tracking-wider text-neutral-400 py-3 px-6">
                 Icon
               </TableHead>
-              <TableHead className="text-[10px] font-medium uppercase tracking-wider text-slate-400 py-3">
+              <TableHead className="text-[10px] font-medium uppercase tracking-wider text-neutral-400 py-3">
                 Item Details
               </TableHead>
-              <TableHead className="text-[10px] font-medium uppercase tracking-wider text-slate-400 py-3">
+              <TableHead className="text-[10px] font-medium uppercase tracking-wider text-neutral-400 py-3">
                 Category
               </TableHead>
-              <TableHead className="text-[10px] font-medium uppercase tracking-wider text-slate-400 py-3">
+              <TableHead className="text-[10px] font-medium uppercase tracking-wider text-neutral-400 py-3">
                 Price
               </TableHead>
-              <TableHead className="text-right text-[10px] font-medium uppercase tracking-wider text-slate-400 py-3 px-6">
+              <TableHead className="text-right text-[10px] font-medium uppercase tracking-wider text-neutral-400 py-3 px-6">
                 Actions
               </TableHead>
             </TableRow>
@@ -219,16 +219,16 @@ const AdminStore = () => {
                           className="w-full h-full object-cover"
                         />
                       ) : (
-                        <ImageIcon size={18} className="text-slate-600" />
+                        <ImageIcon size={18} className="text-neutral-600" />
                       )}
                     </div>
                   </TableCell>
                   <TableCell className="py-3">
                     <div className="flex flex-col">
-                      <span className="text-sm font-medium text-slate-100 tracking-tight">
+                      <span className="text-sm font-medium text-neutral-100 tracking-tight">
                         {item.name}
                       </span>
-                      <span className="text-[11px] text-slate-500 line-clamp-1">
+                      <span className="text-[11px] text-neutral-500 line-clamp-1">
                         {item.description}
                       </span>
                     </div>
@@ -236,12 +236,12 @@ const AdminStore = () => {
                   <TableCell className="py-3">
                     <Badge
                       variant="outline"
-                      className="bg-white/[0.04]/60 border-white/10 text-[9px] font-medium uppercase tracking-wider px-2 py-0.5 rounded-md text-slate-300"
+                      className="bg-white/[0.04]/60 border-white/10 text-[9px] font-medium uppercase tracking-wider px-2 py-0.5 rounded-md text-neutral-300"
                     >
                       {item.category}
                     </Badge>
                   </TableCell>
-                  <TableCell className="py-3 font-mono text-xs text-slate-300">
+                  <TableCell className="py-3 font-mono text-xs text-neutral-300">
                     {item.cost} XP
                   </TableCell>
                   <TableCell className="text-right py-3 px-6">
@@ -250,7 +250,7 @@ const AdminStore = () => {
                         variant="ghost"
                         size="icon"
                         onClick={() => handleOpenDialog(item)}
-                        className="h-8 w-8 text-slate-400 hover:text-white hover:bg-white/10 rounded-md"
+                        className="h-8 w-8 text-neutral-400 hover:text-white hover:bg-white/10 rounded-md"
                       >
                         <Pencil size={16} />
                       </Button>
@@ -258,7 +258,7 @@ const AdminStore = () => {
                         variant="ghost"
                         size="icon"
                         onClick={() => handleDelete(item.id)}
-                        className="h-8 w-8 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-md"
+                        className="h-8 w-8 text-neutral-400 hover:text-red-400 hover:bg-red-500/10 rounded-md"
                       >
                         <Trash2 size={16} />
                       </Button>
@@ -271,7 +271,7 @@ const AdminStore = () => {
         </Table>
       </div>
       {!loading && (
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs text-slate-500">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs text-neutral-500">
           <div className="flex flex-wrap items-center gap-2">
             <span>
               Showing {totalCount === 0 ? 0 : (page - 1) * pageSize + 1}-
@@ -283,7 +283,7 @@ const AdminStore = () => {
                 setPageSize(Number(e.target.value));
                 setPage(1);
               }}
-              className="h-7 rounded-md bg-white/[0.04] border border-white/10 text-slate-300 text-xs px-2"
+              className="h-7 rounded-md bg-white/[0.04] border border-white/10 text-neutral-300 text-xs px-2"
             >
               <option value="10">10 / page</option>
               <option value="25">25 / page</option>
@@ -294,19 +294,19 @@ const AdminStore = () => {
             <Button
               variant="outline"
               size="sm"
-              className="h-7 px-2 border-white/10 bg-white/[0.04] text-slate-300 hover:text-white hover:bg-white/10"
+              className="h-7 px-2 border-white/10 bg-white/[0.04] text-neutral-300 hover:text-white hover:bg-white/10"
               disabled={page <= 1}
               onClick={() => setPage((p) => Math.max(1, p - 1))}
             >
               Prev
             </Button>
-            <span className="text-slate-400">
+            <span className="text-neutral-400">
               Page {page} / {totalPages}
             </span>
             <Button
               variant="outline"
               size="sm"
-              className="h-7 px-2 border-white/10 bg-white/[0.04] text-slate-300 hover:text-white hover:bg-white/10"
+              className="h-7 px-2 border-white/10 bg-white/[0.04] text-neutral-300 hover:text-white hover:bg-white/10"
               disabled={page >= totalPages}
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             >
@@ -318,16 +318,16 @@ const AdminStore = () => {
 
       {/* Edit/Create Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="bg-[#0d1525] border-white/10 text-white max-w-[calc(100vw-2rem)] sm:max-w-md shadow-2xl">
+        <DialogContent className="bg-[#0a0a0a] border-white/10 text-white max-w-[calc(100vw-2rem)] sm:max-w-md shadow-2xl">
           <DialogHeader>
-            <DialogTitle className="text-lg font-semibold text-slate-100">
+            <DialogTitle className="text-lg font-semibold text-neutral-100">
               {currentItem ? "Edit Item" : "New Item"}
             </DialogTitle>
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-4 pt-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-slate-500">
+                <label className="text-xs font-medium text-neutral-500">
                   Name
                 </label>
                 <Input
@@ -340,7 +340,7 @@ const AdminStore = () => {
                 />
               </div>
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-slate-500">
+                <label className="text-xs font-medium text-neutral-500">
                   Category
                 </label>
                 <select
@@ -359,7 +359,7 @@ const AdminStore = () => {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-slate-500">
+              <label className="text-xs font-medium text-neutral-500">
                 Description
               </label>
               <Textarea
@@ -373,7 +373,7 @@ const AdminStore = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-slate-500">
+                <label className="text-xs font-medium text-neutral-500">
                   Cost (XP)
                 </label>
                 <Input
@@ -387,7 +387,7 @@ const AdminStore = () => {
                 />
               </div>
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-slate-500">
+                <label className="text-xs font-medium text-neutral-500">
                   Icon Name
                 </label>
                 <Input
@@ -402,7 +402,7 @@ const AdminStore = () => {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-slate-500">
+              <label className="text-xs font-medium text-neutral-500">
                 Configuration (JSON)
               </label>
               <Textarea
@@ -416,7 +416,7 @@ const AdminStore = () => {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-slate-500">
+              <label className="text-xs font-medium text-neutral-500">
                 Asset URL
               </label>
               <div className="flex flex-col sm:flex-row gap-2">
@@ -458,7 +458,7 @@ const AdminStore = () => {
                   type="button"
                   variant="outline"
                   size="sm"
-                  className="h-9 border-white/10 bg-white/[0.04] text-slate-300 hover:text-white hover:bg-white/10"
+                  className="h-9 border-white/10 bg-white/[0.04] text-neutral-300 hover:text-white hover:bg-white/10"
                   onClick={() =>
                     document.getElementById("image-upload").click()
                   }
@@ -473,7 +473,7 @@ const AdminStore = () => {
                 type="button"
                 variant="ghost"
                 onClick={() => setIsDialogOpen(false)}
-                className="text-slate-400 hover:text-white hover:bg-white/10 h-9"
+                className="text-neutral-400 hover:text-white hover:bg-white/10 h-9"
               >
                 Cancel
               </Button>

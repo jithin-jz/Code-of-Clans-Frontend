@@ -71,14 +71,14 @@ const UserTable = ({
             value={searchValue}
             onChange={(e) => setSearchValue(e.target.value)}
             placeholder="Search username or email..."
-            className="h-8 w-full min-w-0 sm:w-64 bg-white/[0.04] border-white/10 text-slate-200 placeholder:text-slate-500"
+            className="h-8 w-full min-w-0 sm:w-64 bg-white/[0.04] border-white/10 text-neutral-200 placeholder:text-neutral-500"
           />
           <select
             value={userFilters?.role || ""}
             onChange={(e) =>
               onUsersQueryChange?.({ role: e.target.value })
             }
-            className="h-8 w-full sm:w-auto rounded-md bg-white/[0.04] border border-white/10 text-slate-300 text-xs px-2"
+            className="h-8 w-full sm:w-auto rounded-md bg-white/[0.04] border border-white/10 text-neutral-300 text-xs px-2"
           >
             <option value="">All Roles</option>
             <option value="user">Users</option>
@@ -90,7 +90,7 @@ const UserTable = ({
             onChange={(e) =>
               onUsersQueryChange?.({ status: e.target.value })
             }
-            className="h-8 w-full sm:w-auto rounded-md bg-white/[0.04] border border-white/10 text-slate-300 text-xs px-2"
+            className="h-8 w-full sm:w-auto rounded-md bg-white/[0.04] border border-white/10 text-neutral-300 text-xs px-2"
           >
             <option value="">All Status</option>
             <option value="active">Active</option>
@@ -102,7 +102,7 @@ const UserTable = ({
               setPageSize(Number(e.target.value));
               setPage(1);
             }}
-            className="h-8 w-full sm:w-auto rounded-md bg-white/[0.04] border border-white/10 text-slate-300 text-xs px-2"
+            className="h-8 w-full sm:w-auto rounded-md bg-white/[0.04] border border-white/10 text-neutral-300 text-xs px-2"
           >
             <option value="10">10 / page</option>
             <option value="25">25 / page</option>
@@ -115,7 +115,7 @@ const UserTable = ({
           size="sm"
           onClick={() => fetchUsers(userFilters)}
           disabled={tableLoading}
-          className="h-8 gap-2 bg-white/[0.04] border-white/10 text-slate-300 hover:text-white hover:bg-white/10 transition-colors rounded-md"
+          className="h-8 gap-2 bg-white/[0.04] border-white/10 text-neutral-300 hover:text-white hover:bg-white/10 transition-colors rounded-md"
         >
           <RefreshCw className="h-3.5 w-3.5" />
           <span className="text-xs font-medium uppercase tracking-wider">
@@ -124,23 +124,23 @@ const UserTable = ({
         </Button>
       </div>
 
-      <div className="rounded-lg border border-white/5 bg-[#0d1525] shadow-sm overflow-hidden">
+      <div className="rounded-lg border border-white/5 bg-[#0a0a0a] shadow-sm overflow-hidden">
         <Table className="min-w-[760px]">
           <TableHeader>
             <TableRow className="border-white/10 hover:bg-transparent bg-white/[0.02]">
-              <TableHead className="w-[80px] text-[10px] font-medium uppercase tracking-wider text-slate-400 py-3">
+              <TableHead className="w-[80px] text-[10px] font-medium uppercase tracking-wider text-neutral-400 py-3">
                 Avatar
               </TableHead>
-              <TableHead className="text-[10px] font-medium uppercase tracking-wider text-slate-400 py-3">
+              <TableHead className="text-[10px] font-medium uppercase tracking-wider text-neutral-400 py-3">
                 User
               </TableHead>
-              <TableHead className="text-[10px] font-medium uppercase tracking-wider text-slate-400 py-3">
+              <TableHead className="text-[10px] font-medium uppercase tracking-wider text-neutral-400 py-3">
                 Role
               </TableHead>
-              <TableHead className="text-[10px] font-medium uppercase tracking-wider text-slate-400 py-3">
+              <TableHead className="text-[10px] font-medium uppercase tracking-wider text-neutral-400 py-3">
                 Status
               </TableHead>
-              <TableHead className="text-right text-[10px] font-medium uppercase tracking-wider text-slate-400 py-3">
+              <TableHead className="text-right text-[10px] font-medium uppercase tracking-wider text-neutral-400 py-3">
                 Actions
               </TableHead>
             </TableRow>
@@ -152,7 +152,7 @@ const UserTable = ({
               <TableRow>
                 <TableCell
                   colSpan={5}
-                  className="h-24 text-center text-slate-500 text-sm italic"
+                  className="h-24 text-center text-neutral-500 text-sm italic"
                 >
                   No users found.
                 </TableCell>
@@ -172,7 +172,7 @@ const UserTable = ({
                           className="h-full w-full object-cover"
                         />
                       ) : (
-                        <span className="text-[10px] font-bold text-slate-500">
+                        <span className="text-[10px] font-bold text-neutral-500">
                           {usr.username[0]?.toUpperCase()}
                         </span>
                       )}
@@ -180,15 +180,15 @@ const UserTable = ({
                   </TableCell>
                   <TableCell className="py-3">
                     <div className="flex flex-col">
-                      <span className="text-sm font-medium text-slate-100 tracking-tight">
+                      <span className="text-sm font-medium text-neutral-100 tracking-tight">
                         {usr.username}
                         {currentUser.username === usr.username && (
-                          <span className="ml-2 text-[10px] text-slate-500 font-normal">
+                          <span className="ml-2 text-[10px] text-neutral-500 font-normal">
                             (You)
                           </span>
                         )}
                       </span>
-                      <span className="text-[11px] text-slate-500">
+                      <span className="text-[11px] text-neutral-500">
                         {usr.email}
                       </span>
                     </div>
@@ -204,7 +204,7 @@ const UserTable = ({
                           Staff
                         </div>
                       ) : (
-                        <div className="px-2 py-0.5 rounded-md bg-white/[0.04]/65 text-slate-300 border border-white/10 text-[10px] font-medium uppercase tracking-wider">
+                        <div className="px-2 py-0.5 rounded-md bg-white/[0.04]/65 text-neutral-300 border border-white/10 text-[10px] font-medium uppercase tracking-wider">
                           User
                         </div>
                       )}
@@ -217,8 +217,8 @@ const UserTable = ({
                         Active
                       </div>
                     ) : (
-                      <div className="flex items-center gap-1.5 text-slate-500">
-                        <div className="w-1 h-1 rounded-full bg-slate-600" />
+                      <div className="flex items-center gap-1.5 text-neutral-500">
+                        <div className="w-1 h-1 rounded-full bg-neutral-600" />
                         Blocked
                       </div>
                     )}
@@ -229,7 +229,7 @@ const UserTable = ({
                         variant="ghost"
                         size="sm"
                         asChild
-                        className="h-8 w-8 p-0 text-slate-400 hover:text-white hover:bg-white/10 rounded-md"
+                        className="h-8 w-8 p-0 text-neutral-400 hover:text-white hover:bg-white/10 rounded-md"
                       >
                         <Link to={`/profile/${usr.username}`} target="_blank">
                           <Eye className="h-3.5 w-3.5" />
@@ -242,7 +242,7 @@ const UserTable = ({
                         onClick={() => handleBlockToggle(usr.username)}
                         disabled={currentUser.username === usr.username}
                         className={`h-8 px-2 text-[10px] font-semibold uppercase tracking-wider rounded-md transition-colors ${usr.is_active
-                          ? "text-slate-400 hover:text-red-400 hover:bg-red-500/10"
+                          ? "text-neutral-400 hover:text-red-400 hover:bg-red-500/10"
                           : "text-[#00af9b] hover:bg-[#00af9b]/5"
                           }`}
                       >
@@ -254,7 +254,7 @@ const UserTable = ({
                         size="sm"
                         onClick={() => handleDeleteUser(usr.username)}
                         disabled={currentUser.username === usr.username}
-                        className="h-8 w-8 p-0 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-md"
+                        className="h-8 w-8 p-0 text-neutral-400 hover:text-red-400 hover:bg-red-500/10 rounded-md"
                       >
                         <Trash className="h-3.5 w-3.5" />
                       </Button>
@@ -267,7 +267,7 @@ const UserTable = ({
         </Table>
       </div>
 
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs text-slate-500">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs text-neutral-500">
         <span>
           Showing {start}-{end} of {count}
         </span>
@@ -275,19 +275,19 @@ const UserTable = ({
           <Button
             variant="outline"
             size="sm"
-            className="h-7 px-2 border-white/10 bg-white/[0.04]/50 text-slate-300 hover:text-white hover:bg-white/10"
+            className="h-7 px-2 border-white/10 bg-white/[0.04]/50 text-neutral-300 hover:text-white hover:bg-white/10"
             disabled={page <= 1 || tableLoading}
             onClick={() => setPage((prev) => Math.max(1, prev - 1))}
           >
             Prev
           </Button>
-          <span className="text-slate-400">
+          <span className="text-neutral-400">
             Page {page} / {Math.max(totalPages, 1)}
           </span>
           <Button
             variant="outline"
             size="sm"
-            className="h-7 px-2 border-white/10 bg-white/[0.04]/50 text-slate-300 hover:text-white hover:bg-white/10"
+            className="h-7 px-2 border-white/10 bg-white/[0.04]/50 text-neutral-300 hover:text-white hover:bg-white/10"
             disabled={page >= totalPages || tableLoading}
             onClick={() => setPage((prev) => Math.min(totalPages, prev + 1))}
           >

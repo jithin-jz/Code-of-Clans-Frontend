@@ -13,21 +13,21 @@ const Toaster = ({ ...props }) => {
       toastOptions={{
         classNames: {
           toast:
-            "group toast group-[.toaster]:rounded-xl group-[.toaster]:border group-[.toaster]:border-border/80 group-[.toaster]:bg-[linear-gradient(180deg,rgba(18,27,42,0.96)_0%,rgba(9,16,29,0.98)_100%)] group-[.toaster]:p-4 group-[.toaster]:text-foreground group-[.toaster]:shadow-[0_20px_45px_rgba(2,8,18,0.6)]",
+            "group toast group-[.toaster]:rounded-lg group-[.toaster]:border group-[.toaster]:border-[#262626] group-[.toaster]:bg-[#141414] group-[.toaster]:p-4 group-[.toaster]:text-neutral-200",
           description:
-            "group-[.toast]:text-xs group-[.toast]:text-muted-foreground",
+            "group-[.toast]:text-xs group-[.toast]:text-neutral-500",
           actionButton:
-            "group-[.toast]:bg-primary group-[.toast]:text-primary-foreground group-[.toast]:shadow-[0_8px_18px_hsl(var(--primary)/0.24)]",
+            "group-[.toast]:bg-white group-[.toast]:text-[#0a0a0a]",
           cancelButton:
-            "group-[.toast]:bg-secondary/90 group-[.toast]:text-secondary-foreground",
+            "group-[.toast]:bg-[#1a1a1a] group-[.toast]:text-neutral-400",
           success:
-            "group-[.toaster]:border-emerald-300/35 group-[.toaster]:bg-emerald-400/10",
+            "group-[.toaster]:border-emerald-800 group-[.toaster]:bg-emerald-950/50",
           error:
-            "group-[.toaster]:border-destructive/35 group-[.toaster]:bg-destructive/10",
+            "group-[.toaster]:border-red-800 group-[.toaster]:bg-red-950/50",
           warning:
-            "group-[.toaster]:border-amber-300/35 group-[.toaster]:bg-amber-400/10",
+            "group-[.toaster]:border-amber-800 group-[.toaster]:bg-amber-950/50",
           info:
-            "group-[.toaster]:border-sky-300/35 group-[.toaster]:bg-sky-400/10",
+            "group-[.toaster]:border-sky-800 group-[.toaster]:bg-sky-950/50",
         },
       }}
       {...props}

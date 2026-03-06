@@ -1,5 +1,5 @@
 import React from "react";
-import { Play, Sparkles, Star, Gem } from "lucide-react";
+import { Play, Sparkles, Star, Gem, X } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -25,77 +25,79 @@ const LevelModal = ({ selectedLevel, onClose }) => {
 
   return (
     <Dialog open={!!selectedLevel} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-[24rem] p-0 overflow-hidden rounded-2xl border border-white/18 bg-[#0f1827]/74 text-white backdrop-blur-2xl shadow-[0_26px_78px_rgba(0,0,0,0.58)]">
-        <div className="relative">
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_0%,rgba(59,130,246,0.24),transparent_46%),radial-gradient(circle_at_85%_100%,rgba(14,165,233,0.18),transparent_44%)]" />
-          <div className="pointer-events-none absolute inset-0 opacity-[0.08] bg-[linear-gradient(rgba(148,163,184,0.5)_1px,transparent_1px),linear-gradient(90deg,rgba(148,163,184,0.5)_1px,transparent_1px)] bg-[size:26px_26px]" />
-
-          <div className="relative border-b border-white/12 px-5 pb-4 pt-5">
-            <span className="mb-3 inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-300">
-              <Sparkles size={12} className="text-sky-300" />
-              Level Brief
-            </span>
-
-            <DialogHeader className="space-y-2 text-left">
-              <DialogTitle className="text-3xl font-black tracking-tight text-white">
-                Level {levelNumber}
-              </DialogTitle>
-              <p className="text-xl font-bold leading-tight text-slate-100">
-                {levelTitle}
-              </p>
-              <p className="text-sm text-slate-400">
-                Clear test cases, earn stars, and unlock the next challenge.
-              </p>
-            </DialogHeader>
+      <DialogContent
+        className="sm:max-w-[340px] p-0 overflow-hidden rounded-lg border border-[#1a1a1a] bg-[#050505] text-white shadow-2xl"
+        showClose={false}
+      >
+        <div className="p-5">
+          {/* Header */}
+          <div className="flex items-center justify-between mb-5">
+            <div className="flex flex-col">
+              <span className="text-[10px] font-bold tracking-[0.2em] text-[#444] uppercase font-mono">
+                Mission Brief
+              </span>
+              <div className="flex items-center gap-1.5 mt-[-1px]">
+                <span className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="text-neutral-600 text-[9px] font-bold uppercase tracking-tighter">
+                  Sector {levelNumber} Analysis
+                </span>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={onClose}
+              className="h-6 w-6 rounded flex items-center justify-center text-neutral-700 hover:text-white hover:bg-[#1a1a1a] transition-all"
+            >
+              <X size={14} />
+            </button>
           </div>
 
-          <div className="relative space-y-4 px-5 py-4">
-            <div className="flex items-center justify-between gap-3">
-              <div className="relative h-20 w-20 shrink-0 rounded-xl border border-white/16 bg-[#101a29]/80 backdrop-blur-md shadow-[0_12px_30px_rgba(0,0,0,0.45)]">
-                <div className="absolute inset-0 rounded-xl bg-linear-to-br from-[#3b82f6]/18 via-transparent to-[#0ea5e9]/18" />
-                <div className="relative flex h-full w-full items-center justify-center text-white">
-                  {selectedLevel.icon && React.isValidElement(selectedLevel.icon)
-                    ? React.cloneElement(selectedLevel.icon, {
-                      size: 38,
-                      strokeWidth: 1.9,
-                    })
-                    : null}
+          <div className="space-y-4">
+            {/* Title Area */}
+            <div className="px-1">
+              <h2 className="text-xl font-bold tracking-tight text-white mb-1 uppercase font-mono">
+                {levelTitle}
+              </h2>
+              <p className="text-[11px] text-neutral-500 font-medium leading-relaxed">
+                Analyze patterns, clear test cases, and earn XP to advance through the core.
+              </p>
+            </div>
+
+            {/* Stats Row */}
+            <div className="grid grid-cols-2 gap-2">
+              <div className="p-3 rounded-md bg-[#0d0d0d] border border-[#1a1a1a]">
+                <span className="text-[8px] font-bold tracking-[0.1em] text-[#333] uppercase font-mono block mb-1">XP Reward</span>
+                <div className="flex items-center gap-1.5">
+                  <Gem size={12} className="text-neutral-600" />
+                  <span className="text-sm font-bold text-neutral-200 font-mono tracking-tight">
+                    {xpReward.toLocaleString()}
+                  </span>
                 </div>
               </div>
-
-              <div className="w-full rounded-xl border border-white/14 bg-[#101a29]/70 p-2.5 backdrop-blur-md">
-                <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400">
-                  Reward
-                </p>
-                <div className="mt-1 flex items-center gap-2">
-                  <Gem size={14} className="text-[#a78bfa]" />
-                  <p className="text-xl font-black text-white">
-                    {xpReward.toLocaleString()}
-                  </p>
-                </div>
-                <span className="mt-2 inline-flex rounded-full border border-sky-300/35 bg-sky-300/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-sky-200">
+              <div className="p-3 rounded-md bg-[#0d0d0d] border border-[#1a1a1a]">
+                <span className="text-[8px] font-bold tracking-[0.1em] text-[#333] uppercase font-mono block mb-1">Complexity</span>
+                <span className="text-[10px] font-bold text-amber-500/80 uppercase tracking-tighter">
                   {difficulty.label}
                 </span>
               </div>
             </div>
 
-            <div className="rounded-xl border border-white/14 bg-[#101a29]/70 p-3 backdrop-blur-md">
-              <div className="flex items-center justify-between gap-2">
-                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-300">
-                  Star Progress
-                </p>
-                <p className="text-xs font-semibold text-slate-400">{stars}/3 earned</p>
+            {/* Star Progress */}
+            <div className="p-3 rounded-md bg-[#0d0d0d] border border-[#1a1a1a]">
+              <div className="flex items-center justify-between gap-2 mb-2">
+                <span className="text-[8px] font-bold tracking-[0.1em] text-[#333] uppercase font-mono">Completion Status</span>
+                <span className="text-[9px] font-bold text-neutral-500 tabular-nums uppercase">{stars}/3 Units</span>
               </div>
-              <div className="mt-2 flex items-center gap-2">
+              <div className="flex items-center gap-1.5">
                 {[1, 2, 3].map((star) => (
                   <Star
                     key={star}
-                    size={20}
+                    size={14}
                     className={cn(
                       "transition-all duration-300",
                       star <= stars
-                        ? "text-[#7dd3fc] fill-[#38bdf8]"
-                        : "text-slate-600 fill-slate-800",
+                        ? "text-emerald-500 fill-emerald-500/20"
+                        : "text-neutral-800 fill-transparent",
                     )}
                   />
                 ))}
@@ -104,10 +106,10 @@ const LevelModal = ({ selectedLevel, onClose }) => {
 
             <Button
               onClick={() => navigate(`/level/${selectedLevel.slug || selectedLevel.id}`)}
-              className="h-12 w-full rounded-xl border border-white/20 bg-linear-to-r from-[#1e3a8a] to-[#1d4ed8] text-white text-base font-black tracking-wide shadow-[0_12px_28px_rgba(30,64,175,0.38)] hover:from-[#1e40af] hover:to-[#2563eb] transition-all"
+              className="h-10 w-full rounded-md border border-[#222] bg-white text-[#0a0a0a] text-xs font-bold tracking-widest uppercase hover:bg-neutral-200 transition-all shadow-md group"
             >
-              <Play size={17} fill="currentColor" />
-              <span>START LEVEL</span>
+              <Play size={14} fill="currentColor" className="group-hover:scale-110 transition-transform" />
+              <span>Initiate Sync</span>
             </Button>
           </div>
         </div>

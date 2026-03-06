@@ -50,10 +50,11 @@ const MainLayout = memo(({ children }) => {
     const hideNav = useMemo(() =>
         location.pathname.startsWith("/level/") || location.pathname.startsWith("/admin/"),
         [location.pathname]);
-    const showFooter = useMemo(
-        () => location.pathname === "/" || location.pathname === "/home",
-        [location.pathname],
-    );
+    const showFooter = useMemo(() => {
+        const footerPaths = ["/", "/home", "/profile", "/marketplace", "/store", "/buy-xp", "/shop", "/game"];
+        const isProfilePath = location.pathname.startsWith("/profile/");
+        return footerPaths.includes(location.pathname) || isProfilePath;
+    }, [location.pathname]);
     const isPublicLanding = useMemo(
         () => location.pathname === "/" && !user,
         [location.pathname, user],
@@ -158,19 +159,18 @@ const MainLayout = memo(({ children }) => {
     if (hideNav) return children;
 
     return (
-        <div className="relative min-h-screen w-full max-w-[100vw] overflow-x-hidden bg-background text-foreground selection:bg-primary/30">
-            {/* Global fixed background */}
-            <div className="fixed inset-0 z-0 pointer-events-none bg-[linear-gradient(180deg,#060b13_0%,#070d17_100%)]" />
+        <div className="relative min-h-screen w-full max-w-[100vw] overflow-x-hidden bg-black text-foreground selection:bg-primary/20">
+            {/* Global pure-black background */}
+            <div className="fixed inset-0 z-0 pointer-events-none bg-black" />
 
-            {/* Subtle texture overlay */}
-            <div className="app-noise-overlay fixed inset-0 z-0 pointer-events-none opacity-[0.018] mix-blend-overlay" />
-
+            {/* Dot grid texture — landing only */}
             {isPublicLanding && (
-                <div className="fixed inset-x-0 bottom-0 top-14 z-0 pointer-events-none bg-[radial-gradient(circle_at_18%_20%,rgba(34,211,238,0.18),transparent_45%),radial-gradient(circle_at_78%_84%,rgba(14,165,233,0.12),transparent_42%)]" />
+                <div className="ds-dot-grid fixed inset-x-0 bottom-0 top-0 z-0 pointer-events-none opacity-80" />
             )}
 
+            {/* Subtle purple glow — landing only */}
             {isPublicLanding && (
-                <div className="app-grid-overlay fixed inset-x-0 bottom-0 top-14 z-0 pointer-events-none opacity-[0.07]" />
+                <div className="fixed inset-x-0 bottom-0 top-0 z-0 pointer-events-none bg-[radial-gradient(ellipse_60%_40%_at_50%_-5%,rgba(108,99,255,0.07),transparent)]" />
             )}
 
             <div className="relative z-10 flex min-h-screen flex-col">
