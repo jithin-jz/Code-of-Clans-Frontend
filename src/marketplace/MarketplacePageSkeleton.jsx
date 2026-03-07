@@ -11,16 +11,17 @@ const MarketplacePageSkeleton = () => {
   return (
     <SkeletonPage className="flex flex-col bg-black">
       {/* Category Tabs Skeleton */}
-      <div className="sticky top-0 z-30 border-b border-white/5 bg-black/90 backdrop-blur-xl">
-        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-6 py-4 overflow-x-auto no-scrollbar">
-            <SkeletonBase className="h-10 w-10 rounded-xl shrink-0 border border-white/10" />
-            <div className="flex items-center gap-2 flex-1">
-              {[...Array(6)].map((_, i) => (
-                <SkeletonBase key={i} className="h-9 w-24 rounded-full border border-white/5 bg-white/[0.02] shrink-0" />
+      <div className="sticky top-14 z-20 border-b border-[#1e1e1e] bg-[#0a0a0a]/92 backdrop-blur-xl">
+        <div className="w-full px-4 sm:px-6 lg:px-8 min-w-0">
+          <div className="flex items-center gap-2 sm:gap-4 py-2 sm:py-3">
+            <SkeletonBase className="h-8 w-8 rounded-md bg-white/5 shrink-0" />
+            <div className="hidden sm:block w-px h-4 bg-[#222] shrink-0" />
+            <div className="flex items-center gap-1 sm:gap-1.5 flex-1 overflow-x-auto no-scrollbar">
+              {[...Array(4)].map((_, i) => (
+                <SkeletonBase key={i} className="h-7 w-20 rounded-md bg-white/5 border border-white/5 shrink-0" />
               ))}
             </div>
-            <SkeletonBase className="h-10 w-32 rounded-xl shrink-0" />
+            <SkeletonBase className="h-7 w-16 bg-white/5 rounded-md border border-white/5 shrink-0" />
           </div>
         </div>
       </div>

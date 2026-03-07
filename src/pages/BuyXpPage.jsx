@@ -34,15 +34,9 @@ const XP_PACKAGES = [
 ];
 
 const BuyXpPage = () => {
-  const [loading, setLoading] = useState(true);
   const [purchasing, setPurchasing] = useState(null);
   const { user } = useAuthStore();
   const { fetchCurrentUser } = useUserStore();
-
-  React.useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 500);
-    return () => clearTimeout(timer);
-  }, []);
 
   const handleBuy = async (pkg) => {
     setPurchasing(pkg.amount);
@@ -106,154 +100,128 @@ const BuyXpPage = () => {
   };
 
   return (
-    <AnimatePresence mode="wait">
-      {loading ? (
-        <Motion.div
-          key="skeleton"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
-          className="fixed inset-0 z-50 overflow-hidden"
-        >
-          <BuyXpPageSkeleton />
-        </Motion.div>
-      ) : (
-        <Motion.div
-          key="content"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.3 }}
-          className="relative w-full pb-20 sm:pb-0 text-white flex flex-col pt-0 mt-0"
-        >
+    <Motion.div
+      key="content"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
+      className="relative w-full pb-20 sm:pb-0 text-white flex flex-col pt-0 mt-0"
+    >
 
-          {/* Page Header */}
-          <div className="sticky top-14 z-20 border-b border-[#1e1e1e] bg-[#0a0a0a]/90 backdrop-blur-xl">
-            <div className="w-full px-4 sm:px-6 lg:px-8 py-3">
-              <div className="flex items-center gap-3">
-                <div>
-                  <p className="ds-eyebrow text-neutral-600 mb-0.5">XP Shop</p>
-                  <h1 className="text-[13px] font-semibold text-neutral-200">Purchase Experience Points</h1>
-                </div>
-              </div>
-            </div>
-          </div>
 
-          {/* Main Content */}
-          <main className="relative z-10 flex-1 w-full px-4 sm:px-6 lg:px-8 py-6 min-w-0">
-            <div className="w-full">
-              {/* Grid */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-                {XP_PACKAGES.map((pkg) => {
-                  const Icon = pkg.icon;
-                  const isPurchasing = purchasing === pkg.amount;
+      {/* Main Content */}
+      <main className="relative z-10 flex-1 w-full px-4 sm:px-6 lg:px-8 py-6 min-w-0">
+        <div className="w-full">
+          {/* Grid */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+            {XP_PACKAGES.map((pkg) => {
+              const Icon = pkg.icon;
+              const isPurchasing = purchasing === pkg.amount;
 
-                  return (
-                    <Card
-                      key={pkg.amount}
-                      className={`
+              return (
+                <Card
+                  key={pkg.amount}
+                  className={`
                         rounded-xl overflow-hidden backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.3)] transition-all duration-300 group flex flex-col relative
                         ${pkg.popular
-                          ? "bg-gradient-to-br from-[#ffa116]/10 to-[#ffa116]/[0.02] border border-[#ffa116]/30 border-t-[#ffa116]/50 shadow-[0_8px_32px_rgba(255,161,22,0.12)] -translate-y-1"
-                          : pkg.bestValue
-                            ? "bg-gradient-to-br from-[#00af9b]/10 to-[#00af9b]/[0.02] border border-[#00af9b]/30 border-t-[#00af9b]/50 shadow-[0_8px_32px_rgba(0,175,155,0.08)]"
-                            : "bg-[#141414]/70 border border-[#404040]/20 hover:border-[#404040]/50 hover:bg-[#1a1a1a]/80 hover:-translate-y-1 hover:shadow-[0_12px_40px_-15px_rgba(126,163,217,0.2)]"
-                        }
+                      ? "bg-gradient-to-br from-[#ffa116]/10 to-[#ffa116]/[0.02] border border-[#ffa116]/30 border-t-[#ffa116]/50 shadow-[0_8px_32px_rgba(255,161,22,0.12)] -translate-y-1"
+                      : pkg.bestValue
+                        ? "bg-gradient-to-br from-[#00af9b]/10 to-[#00af9b]/[0.02] border border-[#00af9b]/30 border-t-[#00af9b]/50 shadow-[0_8px_32px_rgba(0,175,155,0.08)]"
+                        : "bg-[#141414]/70 border border-[#404040]/20 hover:border-[#404040]/50 hover:bg-[#1a1a1a]/80 hover:-translate-y-1 hover:shadow-[0_12px_40px_-15px_rgba(126,163,217,0.2)]"
+                    }
                       `}
+                >
+                  {/* Badge */}
+                  {(pkg.popular || pkg.bestValue) && (
+                    <div className="absolute top-3 right-3">
+                      <Badge
+                        className={`text-[9px] px-1.5 py-0 ${pkg.popular
+                          ? "bg-[#ffa116]/10 text-[#ffa116] border-[#ffa116]/20"
+                          : "bg-[#00af9b]/10 text-[#00af9b] border-[#00af9b]/20"
+                          }`}
+                      >
+                        {pkg.popular ? "Popular" : "Best Value"}
+                      </Badge>
+                    </div>
+                  )}
+
+                  <CardHeader className="p-5 pb-3">
+                    {/* Icon */}
+                    <div
+                      className={`w-10 h-10 rounded-lg flex items-center justify-center mb-4 ${pkg.popular
+                        ? "bg-[#ffa116]/10"
+                        : pkg.bestValue
+                          ? "bg-[#00af9b]/10"
+                          : "bg-white/[0.06]"
+                        }`}
                     >
-                      {/* Badge */}
-                      {(pkg.popular || pkg.bestValue) && (
-                        <div className="absolute top-3 right-3">
-                          <Badge
-                            className={`text-[9px] px-1.5 py-0 ${pkg.popular
-                              ? "bg-[#ffa116]/10 text-[#ffa116] border-[#ffa116]/20"
-                              : "bg-[#00af9b]/10 text-[#00af9b] border-[#00af9b]/20"
-                              }`}
-                          >
-                            {pkg.popular ? "Popular" : "Best Value"}
-                          </Badge>
-                        </div>
-                      )}
-
-                      <CardHeader className="p-5 pb-3">
-                        {/* Icon */}
-                        <div
-                          className={`w-10 h-10 rounded-lg flex items-center justify-center mb-4 ${pkg.popular
-                            ? "bg-[#ffa116]/10"
+                      <Icon
+                        size={20}
+                        className={
+                          pkg.popular
+                            ? "text-[#ffa116]"
                             : pkg.bestValue
-                              ? "bg-[#00af9b]/10"
-                              : "bg-white/[0.06]"
-                            }`}
-                        >
-                          <Icon
-                            size={20}
-                            className={
-                              pkg.popular
-                                ? "text-[#ffa116]"
-                                : pkg.bestValue
-                                  ? "text-[#00af9b]"
-                                  : "text-neutral-400"
-                            }
-                          />
-                        </div>
+                              ? "text-[#00af9b]"
+                              : "text-neutral-400"
+                        }
+                      />
+                    </div>
 
-                        <CardTitle className="text-base font-medium text-white">
-                          {pkg.label}
-                        </CardTitle>
+                    <CardTitle className="text-base font-medium text-white">
+                      {pkg.label}
+                    </CardTitle>
 
-                        {/* XP Amount */}
-                        <div className="flex items-baseline gap-1 mt-2">
-                          <span className="text-3xl font-bold text-white">
-                            {pkg.xp.toLocaleString()}
-                          </span>
-                          <span className="text-sm text-zinc-500 font-medium">
+                    {/* XP Amount */}
+                    <div className="flex items-baseline gap-1 mt-2">
+                      <span className="text-3xl font-bold text-white">
+                        {pkg.xp.toLocaleString()}
+                      </span>
+                      <span className="text-sm text-zinc-500 font-medium">
 
-                          </span>
-                        </div>
-                      </CardHeader>
+                      </span>
+                    </div>
+                  </CardHeader>
 
-                      <CardContent className="p-5 pt-2 mt-auto">
-                        {/* Bonus indicator */}
-                        {pkg.xp > pkg.amount && (
-                          <div className="flex items-center gap-1.5 mb-4">
-                            <Check size={14} className="text-[#00af9b]" />
-                            <span className="text-xs font-medium text-[#00af9b] tracking-tight">
-                              +{Math.round((pkg.xp / pkg.amount - 1) * 100)}% bonus
-                            </span>
-                          </div>
-                        )}
+                  <CardContent className="p-5 pt-2 mt-auto">
+                    {/* Bonus indicator */}
+                    {pkg.xp > pkg.amount && (
+                      <div className="flex items-center gap-1.5 mb-4">
+                        <Check size={14} className="text-[#00af9b]" />
+                        <span className="text-xs font-medium text-[#00af9b] tracking-tight">
+                          +{Math.round((pkg.xp / pkg.amount - 1) * 100)}% bonus
+                        </span>
+                      </div>
+                    )}
 
-                        <Button
-                          onClick={() => handleBuy(pkg)}
-                          disabled={isPurchasing}
-                          className={`
+                    <Button
+                      onClick={() => handleBuy(pkg)}
+                      disabled={isPurchasing}
+                      className={`
                             w-full h-10 text-sm font-bold tracking-wide transition-all border
                             ${pkg.popular
-                              ? "bg-[#ffa116]/90 border-[#ffa116]/50 text-black hover:bg-[#e69114] hover:border-[#e69114] shadow-[0_4px_12px_rgba(255,161,22,0.2)] hover:shadow-[0_4px_16px_rgba(255,161,22,0.3)]"
-                              : pkg.bestValue
-                                ? "bg-[#00af9b]/90 border-[#00af9b]/50 text-black hover:bg-[#009483] hover:border-[#009483] shadow-[0_4px_12px_rgba(0,175,155,0.2)] hover:shadow-[0_4px_16px_rgba(0,175,155,0.3)]"
-                                : "bg-white text-black border-transparent hover:bg-neutral-200"
-                            }
+                          ? "bg-[#ffa116]/90 border-[#ffa116]/50 text-black hover:bg-[#e69114] hover:border-[#e69114] shadow-[0_4px_12px_rgba(255,161,22,0.2)] hover:shadow-[0_4px_16px_rgba(255,161,22,0.3)]"
+                          : pkg.bestValue
+                            ? "bg-[#00af9b]/90 border-[#00af9b]/50 text-black hover:bg-[#009483] hover:border-[#009483] shadow-[0_4px_12px_rgba(0,175,155,0.2)] hover:shadow-[0_4px_16px_rgba(0,175,155,0.3)]"
+                            : "bg-white text-black border-transparent hover:bg-neutral-200"
+                        }
                           `}
-                        >
-                          {isPurchasing ? (
-                            <span className="text-xs font-semibold">
-                              Processing...
-                            </span>
-                          ) : (
-                            <span>₹{pkg.amount}</span>
-                          )}
-                        </Button>
-                      </CardContent>
-                    </Card>
-                  );
-                })}
-              </div>
-            </div>
-          </main>
-        </Motion.div>
-      )}
-    </AnimatePresence>
+                    >
+                      {isPurchasing ? (
+                        <span className="text-xs font-semibold">
+                          Processing...
+                        </span>
+                      ) : (
+                        <span>₹{pkg.amount}</span>
+                      )}
+                    </Button>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        </div>
+      </main>
+    </Motion.div>
   );
 };
 

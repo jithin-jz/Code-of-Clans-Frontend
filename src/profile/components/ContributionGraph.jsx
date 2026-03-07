@@ -13,8 +13,12 @@ const ContributionGraph = ({ data, loading }) => {
 
   const contributionMap = React.useMemo(() => {
     const map = {};
+    if (!Array.isArray(data)) return map;
     data.forEach((item) => {
-      map[item.date] = item.count;
+      if (!item.date) return;
+      // Normalize any date format to YYYY-MM-DD
+      const dateStr = new Date(item.date).toISOString().split("T")[0];
+      map[dateStr] = (map[dateStr] || 0) + (item.count || 0);
     });
     return map;
   }, [data]);
@@ -52,7 +56,6 @@ const ContributionGraph = ({ data, loading }) => {
           level: getLevel(count),
         });
         currentDate.setDate(currentDate.getDate() + 1);
-        if (currentDate > today) break;
       }
       weeks.push(days);
       if (currentDate > today) break;
@@ -60,18 +63,66 @@ const ContributionGraph = ({ data, loading }) => {
     return weeks;
   }, [contributionMap]);
 
+  // Dynamic Streak Calculation
+  const longestStreak = React.useMemo(() => {
+    if (!Array.isArray(data) || data.length === 0) return 0;
+
+    const activeDates = new Set(
+      data
+        .filter((d) => d.count > 0)
+        .map((d) => new Date(d.date).toISOString().split("T")[0]),
+    );
+    const sortedDates = Array.from(activeDates).sort();
+
+    let longest = 0;
+    let tempStreak = 0;
+    for (let i = 0; i < sortedDates.length; i++) {
+      if (i === 0) {
+        tempStreak = 1;
+      } else {
+        const current = new Date(sortedDates[i]);
+        const prev = new Date(sortedDates[i - 1]);
+        const diffTime = Math.abs(current - prev);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        if (diffDays === 1) {
+          tempStreak++;
+        } else {
+          tempStreak = 1;
+        }
+      }
+      longest = Math.max(longest, tempStreak);
+    }
+    return longest;
+  }, [data]);
+
   const colors = [
-    "bg-zinc-800/50", // Level 0
-    "bg-[#1f1f1f]/40", // Level 1
-    "bg-[#007a68]/60", // Level 2
-    "bg-[#00af9b]/80", // Level 3
-    "bg-[#00af9b] shadow-[0_0_10px_rgba(96,165,250,0.5)]", // Level 4
+    "bg-[#1a1a1a]", // Level 0 (Empty)
+    "bg-[#004d40]", // Level 1 (Low) - Dark Teal
+    "bg-[#007a68]", // Level 2 (Medium) - Medium Teal
+    "bg-[#00af9b]", // Level 3 (High) - Bright Teal
+    "bg-[#00ffcc] shadow-[0_0_10px_rgba(0,255,204,0.4)]", // Level 4 (Ultimate) - Neon Teal
   ];
 
   if (loading) {
     return (
-      <Card className="bg-zinc-900/50 border-white/5 animate-pulse">
-        <div className="h-40 w-full" />
+      <Card className="bg-zinc-900/50 border-white/5 p-4 animate-pulse">
+        <div className="flex justify-between items-center mb-6">
+          <div className="h-4 w-32 bg-white/5 rounded" />
+          <div className="h-3 w-20 bg-white/5 rounded" />
+        </div>
+        <div className="flex gap-1 overflow-hidden h-[80px]">
+          {[...Array(24)].map((_, w) => (
+            <div key={w} className="flex flex-col gap-1 shrink-0">
+              {[...Array(7)].map((_, d) => (
+                <div key={d} className="w-[11px] h-[11px] rounded-[1px] bg-white/5" />
+              ))}
+            </div>
+          ))}
+        </div>
+        <div className="flex justify-between items-center pt-6 mt-2 border-t border-white/5">
+          <div className="h-3 w-40 bg-white/5 rounded" />
+          <div className="h-3 w-20 bg-white/5 rounded" />
+        </div>
       </Card>
     );
   }
@@ -112,7 +163,8 @@ const ContributionGraph = ({ data, loading }) => {
                 </span>
               </span>
               <span>
-                Longest Streak: <span className="text-white">12 Days</span>
+                Longest Streak:{" "}
+                <span className="text-white">{longestStreak} Days</span>
               </span>
             </div>
             <div className="flex items-center gap-1.5 font-mono ml-auto sm:ml-0">

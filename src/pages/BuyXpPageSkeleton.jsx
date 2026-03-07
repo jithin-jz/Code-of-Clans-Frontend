@@ -4,67 +4,39 @@ import {
   SkeletonPage,
   SkeletonCard,
   SkeletonText,
-  SkeletonButton
 } from "../common/SkeletonPrimitives";
 
 const BuyXpPageSkeleton = () => {
   return (
-    <SkeletonPage className="bg-[#000000]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12">
+    <SkeletonPage className="bg-black flex flex-col pt-0 mt-0">
 
-        {/* Page Header */}
-        <div className="text-center space-y-4 max-w-2xl mx-auto">
-          <SkeletonBase className="h-6 w-32 mx-auto rounded-full bg-white/[0.05] border border-white/10" />
-          <SkeletonText width="100%" height="2.5rem" className="bg-white/5" />
-          <SkeletonText width="80%" height="1.1rem" className="mx-auto opacity-20" />
-        </div>
 
-        {/* Pricing Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      {/* Main Content Grid Skeleton */}
+      <main className="relative z-10 flex-1 w-full px-4 sm:px-6 lg:px-8 py-6 min-w-0">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
           {[...Array(8)].map((_, i) => (
             <SkeletonCard
               key={i}
-              className="flex flex-col h-[320px] p-6 bg-black border border-white/5 relative group"
+              className="rounded-xl overflow-hidden bg-[#141414]/70 border border-[#404040]/20 flex flex-col h-[280px]"
             >
-              {/* Card Header */}
-              <div className="space-y-6 flex-1">
-                <div className="flex justify-between items-start">
-                  <SkeletonBase className="h-12 w-12 rounded-2xl bg-white/[0.03] border border-white/5 shadow-xl" />
-                  {i % 4 === 0 && <SkeletonBase className="h-6 w-20 rounded-full bg-[#ffa116]/10 border border-[#ffa116]/20" />}
-                </div>
-
-                <div className="space-y-3">
-                  <SkeletonText width="60%" height="1.25rem" />
-                  <div className="flex items-end gap-2">
-                    <SkeletonText width="120px" height="2.5rem" />
-                    <SkeletonText width="30px" height="1rem" className="pb-2 opacity-30 text-xs" />
-                  </div>
-                </div>
-
-                <div className="pt-2">
-                  <SkeletonText width="50%" height="0.75rem" className="opacity-50" />
+              {/* Card Header Skeleton */}
+              <div className="p-5 pb-3 space-y-4">
+                <SkeletonBase className="w-10 h-10 rounded-lg bg-white/[0.06]" />
+                <SkeletonBase className="h-4 w-20 bg-white/10 rounded-sm" />
+                <div className="flex items-baseline gap-1 mt-2">
+                  <SkeletonBase className="h-8 w-16 bg-white/20 rounded-sm" />
                 </div>
               </div>
 
-              {/* Action Button */}
-              <div className="pt-6 border-t border-white/5">
-                <SkeletonButton className="h-12 bg-white/[0.05] border border-white/10" />
+              {/* Content Skeleton */}
+              <div className="p-5 pt-2 mt-auto space-y-3">
+                <SkeletonBase className="h-3 w-24 bg-white/5 rounded-sm" />
+                <SkeletonBase className="w-full h-10 bg-white/5 border border-white/5 rounded-md" />
               </div>
             </SkeletonCard>
           ))}
         </div>
-
-        {/* Footer Info */}
-        <div className="flex flex-col items-center gap-6 py-10 opacity-30">
-          <div className="flex gap-8">
-            <SkeletonText width="120px" height="0.75rem" />
-            <SkeletonText width="120px" height="0.75rem" />
-            <SkeletonText width="120px" height="0.75rem" />
-          </div>
-          <SkeletonText width="240px" height="0.6rem" />
-        </div>
-
-      </div>
+      </main>
     </SkeletonPage>
   );
 };

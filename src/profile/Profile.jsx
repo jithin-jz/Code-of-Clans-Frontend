@@ -103,6 +103,7 @@ const Profile = () => {
     async (targetUsername) => {
       setLoading(true);
       setUserNotFound(false);
+      setContributionData([]); // Reset stale data
       try {
         const response = await getUserProfile(targetUsername);
         setProfileUser(response.data);
@@ -475,7 +476,7 @@ const Profile = () => {
                     </div>
                   </div>
                   {/* Avatar (Absolute positioned) */}
-                  <div className="absolute -bottom-12 left-1/2 transform -translate-x-1/2">
+                  <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2">
                     <Avatar className="w-24 h-24 border-4 border-[#000000]">
                       <AvatarImage
                         src={profileUser?.profile?.avatar_url}
@@ -510,9 +511,10 @@ const Profile = () => {
                   </div>
                 </div>
 
-                <CardContent className="pt-16 pb-6 px-6 text-center">
-                  {/* Name */}
-                  <h2 className="text-xl font-bold text-white mb-1">
+                <CardContent className="pt-16 sm:pt-20 pb-6 px-6 text-center">
+                  {/* Name and Bio Spacer */}
+                  <div className="h-2 sm:h-4" />
+                  <h2 className="text-xl font-bold text-white mb-1 mt-2 sm:mt-4">
                     {[profileUser?.first_name, profileUser?.last_name]
                       .filter(Boolean)
                       .join(" ")
@@ -524,12 +526,11 @@ const Profile = () => {
                         </p> */}
 
                   {/* Bio */}
-                  {profileUser?.profile?.bio &&
-                    profileUser.profile.bio !== "User" && (
-                      <p className="text-sm text-zinc-400 mt-2 mb-6 max-w-[240px] mx-auto leading-relaxed">
-                        {profileUser.profile.bio}
-                      </p>
-                    )}
+                  {profileUser?.profile?.bio && (
+                    <p className="text-[13px] text-neutral-400 mt-4 mb-6 max-w-[240px] mx-auto leading-relaxed italic">
+                      {profileUser.profile.bio}
+                    </p>
+                  )}
 
                   {!profileUser?.profile?.bio && <div className="mb-4"></div>}
 

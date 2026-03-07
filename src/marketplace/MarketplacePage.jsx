@@ -24,7 +24,6 @@ import {
 import { motion as Motion, AnimatePresence } from "framer-motion";
 import MarketplacePageSkeleton from "./MarketplacePageSkeleton";
 import { useMarketplace } from "../hooks/useMarketplace";
-import SiteFooter from "../home/sections/SiteFooter";
 
 const CATEGORIES = [
   { id: "THEME", label: "Themes", icon: Palette },
@@ -291,7 +290,6 @@ const MarketplacePage = memo(() => {
               </div>
             )}
           </main>
-          <SiteFooter />
         </Motion.div>
       )}
     </AnimatePresence>
