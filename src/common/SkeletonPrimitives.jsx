@@ -30,10 +30,18 @@ export const SkeletonBase = ({ className, children, ...props }) => {
 /* --- Specialized Primitives --- */
 
 export const SkeletonCircle = ({ className, ...props }) => (
-  <SkeletonBase className={cn("rounded-full aspect-square", className)} {...props} />
+  <SkeletonBase
+    className={cn("rounded-full aspect-square", className)}
+    {...props}
+  />
 );
 
-export const SkeletonText = ({ className, width = "100%", height = "1rem", ...props }) => (
+export const SkeletonText = ({
+  className,
+  width = "100%",
+  height = "1rem",
+  ...props
+}) => (
   <SkeletonBase
     className={cn("rounded-md", className)}
     style={{ width, height, ...props.style }}
@@ -42,7 +50,10 @@ export const SkeletonText = ({ className, width = "100%", height = "1rem", ...pr
 );
 
 export const SkeletonButton = ({ className, ...props }) => (
-  <SkeletonBase className={cn("h-11 w-full rounded-xl", className)} {...props} />
+  <SkeletonBase
+    className={cn("h-11 w-full rounded-xl", className)}
+    {...props}
+  />
 );
 
 export const SkeletonAvatar = ({ size = "md", className, ...props }) => {
@@ -55,16 +66,25 @@ export const SkeletonAvatar = ({ size = "md", className, ...props }) => {
   return <SkeletonCircle className={cn(sizes[size], className)} {...props} />;
 };
 
-export const SkeletonCard = ({ className, children, variant = "solid", ...props }) => {
+export const SkeletonCard = ({
+  className,
+  children,
+  variant = "solid",
+  ...props
+}) => {
   const variants = {
     glass: "bg-[#000000]/80 backdrop-blur-md border border-white/5 shadow-2xl",
     solid: "bg-black border border-white/5",
-    plain: "bg-transparent border border-white/5"
+    plain: "bg-transparent border border-white/5",
   };
 
   return (
     <div
-      className={cn("p-4 rounded-xl relative overflow-hidden", variants[variant], className)}
+      className={cn(
+        "p-4 rounded-xl relative overflow-hidden",
+        variants[variant],
+        className,
+      )}
       {...props}
     >
       <Shimmer />
@@ -80,7 +100,10 @@ export const SkeletonCode = ({ lines = 12, className, ...props }) => {
 
   return (
     <div
-      className={cn("bg-black rounded-xl border border-white/5 overflow-hidden font-mono", className)}
+      className={cn(
+        "bg-black rounded-xl border border-white/5 overflow-hidden font-mono",
+        className,
+      )}
       {...props}
     >
       <div className="flex">
@@ -117,12 +140,7 @@ export const SkeletonStats = ({ className, ...props }) => (
 /* --- Layout Wrapper --- */
 
 export const SkeletonPage = ({ children, className }) => (
-  <div
-    className={cn(
-      "w-full min-h-screen text-zinc-400 relative",
-      className,
-    )}
-  >
+  <div className={cn("w-full min-h-screen text-zinc-400 relative", className)}>
     {children}
 
     <style>{`
@@ -146,7 +164,9 @@ export const SkeletonAdminDashboard = () => (
       </div>
     </div>
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      {[...Array(4)].map((_, i) => <SkeletonStats key={i} />)}
+      {[...Array(4)].map((_, i) => (
+        <SkeletonStats key={i} />
+      ))}
     </div>
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <SkeletonCard className="lg:col-span-2 h-[400px]" />

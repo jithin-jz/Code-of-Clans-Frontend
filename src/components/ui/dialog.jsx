@@ -57,10 +57,7 @@ DialogContent.displayName = DialogPrimitive.Content.displayName;
 
 const DialogHeader = ({ className, ...props }) => (
   <div
-    className={cn(
-      "flex flex-col space-y-1.5 text-left",
-      className,
-    )}
+    className={cn("flex flex-col space-y-1.5 text-left", className)}
     {...props}
   />
 );

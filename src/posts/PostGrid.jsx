@@ -3,11 +3,7 @@ import { postsAPI } from "../services/api";
 import { Dialog, DialogContent } from "../components/ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
 import { Button } from "../components/ui/button";
-import {
-  Heart,
-  MoreHorizontal,
-  Share2,
-} from "lucide-react";
+import { Heart, MoreHorizontal, Share2 } from "lucide-react";
 import { notify } from "../services/notification";
 import useAuthStore from "../stores/useAuthStore";
 import useChatStore from "../stores/useChatStore"; // Added useChatStore
@@ -304,7 +300,11 @@ const PostGrid = ({ username, refreshTrigger }) => {
                           >
                             Cancel
                           </Button>
-                          <Button size="sm" onClick={handleUpdate} disabled={isUpdating}>
+                          <Button
+                            size="sm"
+                            onClick={handleUpdate}
+                            disabled={isUpdating}
+                          >
                             Save
                           </Button>
                         </div>
@@ -396,7 +396,8 @@ const PostGrid = ({ username, refreshTrigger }) => {
           <div className="space-y-4">
             <h3 className="text-base font-semibold">Delete Post</h3>
             <p className="text-sm text-zinc-400">
-              Are you sure you want to delete this post? This action cannot be undone.
+              Are you sure you want to delete this post? This action cannot be
+              undone.
             </p>
             <div className="flex justify-end gap-2">
               <Button

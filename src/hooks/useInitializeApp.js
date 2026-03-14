@@ -11,34 +11,34 @@ import useNotificationStore from "../stores/useNotificationStore";
  * auth store mutations (e.g. email/otp field changes on the login page).
  */
 export const useInitializeApp = () => {
-    const { checkAuth, user, authLoading } = useAuthStore(
-        useShallow((s) => ({
-            checkAuth: s.checkAuth,
-            user: s.user,
-            authLoading: s.loading,
-        }))
-    );
-    const initNotifications = useNotificationStore((s) => s.initNotifications);
-    const authInitRef = useRef(false);
-    const notifInitUserIdRef = useRef(null);
+  const { checkAuth, user, authLoading } = useAuthStore(
+    useShallow((s) => ({
+      checkAuth: s.checkAuth,
+      user: s.user,
+      authLoading: s.loading,
+    })),
+  );
+  const initNotifications = useNotificationStore((s) => s.initNotifications);
+  const authInitRef = useRef(false);
+  const notifInitUserIdRef = useRef(null);
 
-    useEffect(() => {
-        if (authInitRef.current) return;
-        authInitRef.current = true;
-        checkAuth();
-    }, [checkAuth]);
+  useEffect(() => {
+    if (authInitRef.current) return;
+    authInitRef.current = true;
+    checkAuth();
+  }, [checkAuth]);
 
-    useEffect(() => {
-        const userId = user?.id;
-        if (!userId) {
-            notifInitUserIdRef.current = null;
-            return;
-        }
-        if (notifInitUserIdRef.current !== userId) {
-            notifInitUserIdRef.current = userId;
-            initNotifications();
-        }
-    }, [user, initNotifications]);
+  useEffect(() => {
+    const userId = user?.id;
+    if (!userId) {
+      notifInitUserIdRef.current = null;
+      return;
+    }
+    if (notifInitUserIdRef.current !== userId) {
+      notifInitUserIdRef.current = userId;
+      initNotifications();
+    }
+  }, [user, initNotifications]);
 
-    return { user, authLoading };
+  return { user, authLoading };
 };

@@ -11,7 +11,7 @@ import {
   UserPlus,
   ArrowRight,
   Shield,
-  Zap
+  Zap,
 } from "lucide-react";
 import { AnimatePresence, motion as Motion } from "framer-motion";
 import { formatDistanceToNow } from "date-fns";
@@ -54,12 +54,47 @@ const NotificationDrawer = ({ isOpen, onClose }) => {
 
   const getVerbConfig = (verb) => {
     const v = verb.toLowerCase();
-    if (v.includes("follow")) return { icon: <UserPlus size={14} />, color: "text-primary", bg: "bg-primary/10", border: "border-primary/20" };
-    if (v.includes("like")) return { icon: <Heart size={14} />, color: "text-rose-400", bg: "bg-rose-400/10", border: "border-rose-400/20" };
-    if (v.includes("comment")) return { icon: <MessageSquare size={14} />, color: "text-blue-400", bg: "bg-blue-400/10", border: "border-blue-400/20" };
-    if (v.includes("gift")) return { icon: <Gift size={14} />, color: "text-accent", bg: "bg-accent/10", border: "border-accent/20" };
-    if (v.includes("verified")) return { icon: <Shield size={14} />, color: "text-green-400", bg: "bg-green-400/10", border: "border-green-400/20" };
-    return { icon: <Bell size={14} />, color: "text-neutral-400", bg: "bg-white/10", border: "border-white/20" };
+    if (v.includes("follow"))
+      return {
+        icon: <UserPlus size={14} />,
+        color: "text-primary",
+        bg: "bg-primary/10",
+        border: "border-primary/20",
+      };
+    if (v.includes("like"))
+      return {
+        icon: <Heart size={14} />,
+        color: "text-rose-400",
+        bg: "bg-rose-400/10",
+        border: "border-rose-400/20",
+      };
+    if (v.includes("comment"))
+      return {
+        icon: <MessageSquare size={14} />,
+        color: "text-blue-400",
+        bg: "bg-blue-400/10",
+        border: "border-blue-400/20",
+      };
+    if (v.includes("gift"))
+      return {
+        icon: <Gift size={14} />,
+        color: "text-accent",
+        bg: "bg-accent/10",
+        border: "border-accent/20",
+      };
+    if (v.includes("verified"))
+      return {
+        icon: <Shield size={14} />,
+        color: "text-green-400",
+        bg: "bg-green-400/10",
+        border: "border-green-400/20",
+      };
+    return {
+      icon: <Bell size={14} />,
+      color: "text-neutral-400",
+      bg: "bg-white/10",
+      border: "border-white/20",
+    };
   };
 
   const getImageUrl = (url) => {
@@ -95,7 +130,9 @@ const NotificationDrawer = ({ isOpen, onClose }) => {
                     Notifications
                   </h2>
                   <div className="flex items-center gap-1.5 mt-[-1px]">
-                    <span className={`w-1 h-1 rounded-full ${unreadCount > 0 ? "bg-amber-500 animate-pulse shadow-[0_0_4px_rgba(245,158,11,0.5)]" : "bg-neutral-600"}`} />
+                    <span
+                      className={`w-1 h-1 rounded-full ${unreadCount > 0 ? "bg-amber-500 animate-pulse shadow-[0_0_4px_rgba(245,158,11,0.5)]" : "bg-neutral-600"}`}
+                    />
                     <span className="text-[8px] font-bold text-neutral-600 uppercase tracking-tighter">
                       {unreadCount} Signal{unreadCount !== 1 ? "s" : ""}
                     </span>
@@ -128,13 +165,18 @@ const NotificationDrawer = ({ isOpen, onClose }) => {
               {isLoading && notifications.length === 0 ? (
                 <div className="space-y-3">
                   {[...Array(6)].map((_, i) => (
-                    <div key={i} className="h-20 rounded-2xl bg-white/[0.02] border border-white/[0.05] animate-pulse" />
+                    <div
+                      key={i}
+                      className="h-20 rounded-2xl bg-white/[0.02] border border-white/[0.05] animate-pulse"
+                    />
                   ))}
                 </div>
               ) : notifications.length === 0 ? (
                 <div className="h-full flex flex-col items-center justify-center text-center opacity-30 mt-20">
                   <Bell size={24} className="text-neutral-700 mb-2" />
-                  <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-neutral-600">Signal Clear</p>
+                  <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-neutral-600">
+                    Signal Clear
+                  </p>
                 </div>
               ) : (
                 <div className="space-y-2">
@@ -147,10 +189,11 @@ const NotificationDrawer = ({ isOpen, onClose }) => {
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: index * 0.03 }}
                         onClick={() => handleNotificationClick(notification)}
-                        className={`group relative flex items-start gap-3 p-3 rounded-lg transition-all border cursor-pointer ${!notification.is_read
-                          ? "bg-amber-500/5 border-amber-500/10"
-                          : "bg-[#111] border-[#1a1a1a] hover:bg-[#161616] hover:border-[#222]"
-                          }`}
+                        className={`group relative flex items-start gap-3 p-3 rounded-lg transition-all border cursor-pointer ${
+                          !notification.is_read
+                            ? "bg-amber-500/5 border-amber-500/10"
+                            : "bg-[#111] border-[#1a1a1a] hover:bg-[#161616] hover:border-[#222]"
+                        }`}
                       >
                         {/* Status Marker */}
                         {!notification.is_read && (
@@ -172,7 +215,9 @@ const NotificationDrawer = ({ isOpen, onClose }) => {
                               </div>
                             )}
                           </div>
-                          <div className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-md flex items-center justify-center border shadow-lg ${config.bg} ${config.border} ${config.color}`}>
+                          <div
+                            className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-md flex items-center justify-center border shadow-lg ${config.bg} ${config.border} ${config.color}`}
+                          >
                             {config.icon}
                           </div>
                         </div>
@@ -180,14 +225,21 @@ const NotificationDrawer = ({ isOpen, onClose }) => {
                         {/* Text Content */}
                         <div className="flex-1 min-w-0 pt-0.5">
                           <p className="text-[12px] leading-snug text-neutral-400">
-                            <span className={`font-bold uppercase tracking-tight ${!notification.is_read ? "text-neutral-200" : "text-neutral-500"}`}>
+                            <span
+                              className={`font-bold uppercase tracking-tight ${!notification.is_read ? "text-neutral-200" : "text-neutral-500"}`}
+                            >
                               {notification.actor?.username || "SYSTEM"}
                             </span>{" "}
-                            <span className="text-neutral-600">{notification.verb}</span>
+                            <span className="text-neutral-600">
+                              {notification.verb}
+                            </span>
                           </p>
                           <div className="flex items-center gap-2 mt-1">
                             <span className="text-[9px] font-bold font-mono text-neutral-700 uppercase tracking-tighter">
-                              {formatDistanceToNow(new Date(notification.created_at), { addSuffix: true })}
+                              {formatDistanceToNow(
+                                new Date(notification.created_at),
+                                { addSuffix: true },
+                              )}
                             </span>
                           </div>
                         </div>

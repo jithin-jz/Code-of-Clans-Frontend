@@ -12,20 +12,23 @@ const useChatStore = create((set, get) => ({
   messages: [],
   onlineCount: 0,
   error: null,
-  
+
   // Actions
   connect: () => {
     const { socket: existingSocket } = get();
-    
+
     // Prevent multiple connections
     if (existingSocket) {
-      if (existingSocket.readyState === WebSocket.OPEN || existingSocket.readyState === WebSocket.CONNECTING) {
+      if (
+        existingSocket.readyState === WebSocket.OPEN ||
+        existingSocket.readyState === WebSocket.CONNECTING
+      ) {
         return;
       }
       // Close stale socket
       existingSocket.close();
     }
-    
+
     const wsUrl = `${WS_URL}/global`;
     const socket = new WebSocket(wsUrl);
 
@@ -36,38 +39,40 @@ const useChatStore = create((set, get) => ({
     socket.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
-        
-        if (data.type === 'chat_message') {
-            set((state) => {
-                // De-duplication check: if message with same ID or same content/user/timestamp exists
-                // We use a looser check for messages without IDs
-                const isDuplicate = state.messages.some(msg => {
-                    if (data.id && msg.id === data.id) return true;
-                    
-                    const msgTime = new Date(msg.timestamp).getTime();
-                    const dataTime = new Date(data.timestamp).getTime();
-                    const isTimeClose = Math.abs(msgTime - dataTime) < 1000;
 
-                    return msg.message === data.message && 
-                           msg.user_id === data.user_id && 
-                           isTimeClose;
-                });
-                
-                if (isDuplicate) {
-                    return state;
-                }
+        if (data.type === "chat_message") {
+          set((state) => {
+            // De-duplication check: if message with same ID or same content/user/timestamp exists
+            // We use a looser check for messages without IDs
+            const isDuplicate = state.messages.some((msg) => {
+              if (data.id && msg.id === data.id) return true;
 
-                return {
-                    messages: [...state.messages, data]
-                };
+              const msgTime = new Date(msg.timestamp).getTime();
+              const dataTime = new Date(data.timestamp).getTime();
+              const isTimeClose = Math.abs(msgTime - dataTime) < 1000;
+
+              return (
+                msg.message === data.message &&
+                msg.user_id === data.user_id &&
+                isTimeClose
+              );
             });
-        } else if (data.type === 'history') {
-             set({ messages: data.messages });
-        } else if (data.type === 'presence') {
-             set({ onlineCount: data.count });
-        } else if (data.type === 'error') {
-             set({ error: data.message });
-             setTimeout(() => set({ error: null }), 3000);
+
+            if (isDuplicate) {
+              return state;
+            }
+
+            return {
+              messages: [...state.messages, data],
+            };
+          });
+        } else if (data.type === "history") {
+          set({ messages: data.messages });
+        } else if (data.type === "presence") {
+          set({ onlineCount: data.count });
+        } else if (data.type === "error") {
+          set({ error: data.message });
+          setTimeout(() => set({ error: null }), 3000);
         }
       } catch (err) {
         console.error("Failed to parse websocket message", err);
@@ -77,7 +82,7 @@ const useChatStore = create((set, get) => ({
     socket.onclose = (event) => {
       set({ isConnected: false, socket: null });
       if (event.code === 1008) {
-          set({ error: "Authentication failed" });
+        set({ error: "Authentication failed" });
       }
     };
 
@@ -101,16 +106,16 @@ const useChatStore = create((set, get) => ({
     const { socket, isConnected } = get();
     if (socket && isConnected && socket.readyState === WebSocket.OPEN) {
       const payload = {
-          type: "chat_message",
-          message: content
+        type: "chat_message",
+        message: content,
       };
       socket.send(JSON.stringify(payload));
     } else {
-        console.error("Cannot send message: Socket not open", socket?.readyState);
+      console.error("Cannot send message: Socket not open", socket?.readyState);
     }
   },
 
-  clearMessages: () => set({ messages: [] })
+  clearMessages: () => set({ messages: [] }),
 }));
 
 export default useChatStore;

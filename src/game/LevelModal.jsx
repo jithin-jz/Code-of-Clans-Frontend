@@ -1,5 +1,4 @@
-import React from "react";
-import { Play, Sparkles, Star, Gem, X } from "lucide-react";
+import { Play, Sparkles, Star, X, Gem } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -26,7 +25,7 @@ const LevelModal = ({ selectedLevel, onClose }) => {
   return (
     <Dialog open={!!selectedLevel} onOpenChange={(open) => !open && onClose()}>
       <DialogContent
-        className="sm:max-w-[340px] p-0 overflow-hidden rounded-lg border border-[#1a1a1a] bg-[#050505] text-white shadow-2xl"
+        className="sm:max-w-[340px] p-0 overflow-hidden rounded-lg border border-white/20 bg-[#050505] text-white shadow-2xl"
         showClose={false}
       >
         <div className="p-5">
@@ -38,7 +37,7 @@ const LevelModal = ({ selectedLevel, onClose }) => {
               </span>
               <div className="flex items-center gap-1.5 mt-[-1px]">
                 <span className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />
-                <span className="text-neutral-600 text-[9px] font-bold uppercase tracking-tighter">
+                <span className="text-white text-[9px] font-bold uppercase tracking-tighter">
                   Sector {levelNumber} Analysis
                 </span>
               </div>
@@ -58,35 +57,44 @@ const LevelModal = ({ selectedLevel, onClose }) => {
               <h2 className="text-xl font-bold tracking-tight text-white mb-1 uppercase font-mono">
                 {levelTitle}
               </h2>
-              <p className="text-[11px] text-neutral-500 font-medium leading-relaxed">
-                Analyze patterns, clear test cases, and earn XP to advance through the core.
+              <p className="text-[11px] text-white/50 font-medium leading-relaxed">
+                Analyze patterns, clear test cases, and earn rewards to advance
+                through the core.
               </p>
             </div>
 
             {/* Stats Row */}
             <div className="grid grid-cols-2 gap-2">
-              <div className="p-3 rounded-md bg-[#0d0d0d] border border-[#1a1a1a]">
-                <span className="text-[8px] font-bold tracking-[0.1em] text-[#333] uppercase font-mono block mb-1">XP Reward</span>
-                <div className="flex items-center gap-1.5">
-                  <Gem size={12} className="text-neutral-600" />
-                  <span className="text-sm font-bold text-neutral-200 font-mono tracking-tight">
+              <div className="p-3 rounded-md bg-black border border-white/10">
+                <span className="text-[8px] font-bold tracking-[0.1em] text-white/30 uppercase font-mono block mb-1.5">
+                  Rewards
+                </span>
+                <div className="flex items-center gap-1.5 leading-none">
+                  <Gem size={14} className="text-red-500 fill-red-500/20" />
+                  <span className="text-sm font-bold text-white font-mono tracking-tight">
                     {xpReward.toLocaleString()}
                   </span>
                 </div>
               </div>
-              <div className="p-3 rounded-md bg-[#0d0d0d] border border-[#1a1a1a]">
-                <span className="text-[8px] font-bold tracking-[0.1em] text-[#333] uppercase font-mono block mb-1">Complexity</span>
-                <span className="text-[10px] font-bold text-amber-500/80 uppercase tracking-tighter">
+              <div className="p-3 rounded-md bg-black border border-white/10">
+                <span className="text-[8px] font-bold tracking-[0.1em] text-white/30 uppercase font-mono block mb-1.5">
+                  Complexity
+                </span>
+                <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-tighter">
                   {difficulty.label}
                 </span>
               </div>
             </div>
 
             {/* Star Progress */}
-            <div className="p-3 rounded-md bg-[#0d0d0d] border border-[#1a1a1a]">
+            <div className="p-3 rounded-md bg-black border border-white/10">
               <div className="flex items-center justify-between gap-2 mb-2">
-                <span className="text-[8px] font-bold tracking-[0.1em] text-[#333] uppercase font-mono">Completion Status</span>
-                <span className="text-[9px] font-bold text-neutral-500 tabular-nums uppercase">{stars}/3 Units</span>
+                <span className="text-[8px] font-bold tracking-[0.1em] text-white/30 uppercase font-mono">
+                  Status
+                </span>
+                <span className="text-[9px] font-bold text-white/50 tabular-nums uppercase">
+                  {stars}/3 Units
+                </span>
               </div>
               <div className="flex items-center gap-1.5">
                 {[1, 2, 3].map((star) => (
@@ -105,10 +113,16 @@ const LevelModal = ({ selectedLevel, onClose }) => {
             </div>
 
             <Button
-              onClick={() => navigate(`/level/${selectedLevel.slug || selectedLevel.id}`)}
+              onClick={() =>
+                navigate(`/level/${selectedLevel.slug || selectedLevel.id}`)
+              }
               className="h-10 w-full rounded-md border border-[#222] bg-white text-[#0a0a0a] text-xs font-bold tracking-widest uppercase hover:bg-neutral-200 transition-all shadow-md group"
             >
-              <Play size={14} fill="currentColor" className="group-hover:scale-110 transition-transform" />
+              <Play
+                size={14}
+                fill="currentColor"
+                className="group-hover:scale-110 transition-transform"
+              />
               <span>Initiate Sync</span>
             </Button>
           </div>

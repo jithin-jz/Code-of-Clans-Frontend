@@ -1,5 +1,5 @@
-import { Navigate } from 'react-router-dom';
-import useAuthStore from '../stores/useAuthStore';
+import { Navigate } from "react-router-dom";
+import useAuthStore from "../stores/useAuthStore";
 import { AdminPageSkeleton } from "../admin/AdminSkeletons";
 
 /**
@@ -7,21 +7,21 @@ import { AdminPageSkeleton } from "../admin/AdminSkeletons";
  * Requires user to be authenticated AND be staff/superuser
  */
 const AdminRoute = ({ children }) => {
-    const { isAuthenticated, user, loading, isInitialized } = useAuthStore();
+  const { isAuthenticated, user, loading, isInitialized } = useAuthStore();
 
-    if (loading || !isInitialized) {
-        return <AdminPageSkeleton />;
-    }
+  if (loading || !isInitialized) {
+    return <AdminPageSkeleton />;
+  }
 
-    if (!isAuthenticated) {
-        return <Navigate to="/login" replace />;
-    }
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
 
-    if (!user?.is_staff && !user?.is_superuser) {
-        return <Navigate to="/home" replace />;
-    }
+  if (!user?.is_staff && !user?.is_superuser) {
+    return <Navigate to="/home" replace />;
+  }
 
-    return children;
+  return children;
 };
 
 export default AdminRoute;

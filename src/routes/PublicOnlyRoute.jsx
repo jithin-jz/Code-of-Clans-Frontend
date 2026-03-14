@@ -1,6 +1,6 @@
-import { Navigate } from 'react-router-dom';
-import useAuthStore from '../stores/useAuthStore';
-import LoginSkeleton from '../auth/LoginSkeleton';
+import { Navigate } from "react-router-dom";
+import useAuthStore from "../stores/useAuthStore";
+import LoginSkeleton from "../auth/LoginSkeleton";
 
 /**
  * PublicOnlyRoute - For login/register pages
@@ -9,21 +9,21 @@ import LoginSkeleton from '../auth/LoginSkeleton';
  * - Regular users → /home
  */
 const PublicOnlyRoute = ({ children }) => {
-    const { isAuthenticated, isInitialized, user, loading } = useAuthStore();
+  const { isAuthenticated, isInitialized, user, loading } = useAuthStore();
 
-    // Wait for auth check to complete before rendering
-    if (!isInitialized || loading) {
-        return <LoginSkeleton />;
+  // Wait for auth check to complete before rendering
+  if (!isInitialized || loading) {
+    return <LoginSkeleton />;
+  }
+
+  if (isAuthenticated) {
+    if (user?.is_staff || user?.is_superuser) {
+      return <Navigate to="/admin/dashboard" replace />;
     }
+    return <Navigate to="/home" replace />;
+  }
 
-    if (isAuthenticated) {
-        if (user?.is_staff || user?.is_superuser) {
-            return <Navigate to="/admin/dashboard" replace />;
-        }
-        return <Navigate to="/home" replace />;
-    }
-
-    return children;
+  return children;
 };
 
 export default PublicOnlyRoute;

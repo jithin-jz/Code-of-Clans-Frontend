@@ -42,10 +42,15 @@ export default defineConfig({
           if (pkg === "monaco-editor" || pkg === "@monaco-editor/react") {
             return "vendor-monaco";
           }
-          if (pkg === "framer-motion" || pkg === "motion") return "vendor-motion";
+          if (pkg === "framer-motion" || pkg === "motion")
+            return "vendor-motion";
           if (pkg.startsWith("@radix-ui/")) return "vendor-radix";
           if (pkg === "emoji-picker-react") return "vendor-emoji";
-          if (pkg === "react-markdown" || pkg.startsWith("remark-") || pkg.startsWith("rehype-")) {
+          if (
+            pkg === "react-markdown" ||
+            pkg.startsWith("remark-") ||
+            pkg.startsWith("rehype-")
+          ) {
             return "vendor-markdown";
           }
           return "vendor";
@@ -57,14 +62,14 @@ export default defineConfig({
     port: 5173,
     strictPort: false, // Allow fallback if 5173 is busy
     proxy: {
-        '/api': {
-            target: 'http://localhost:8000',
-            changeOrigin: true,
-        },
-        '/media': {
-            target: 'http://localhost:8000',
-            changeOrigin: true,
-        }
-    }
+      "/api": {
+        target: "http://localhost:8000",
+        changeOrigin: true,
+      },
+      "/media": {
+        target: "http://localhost:8000",
+        changeOrigin: true,
+      },
+    },
   },
 });

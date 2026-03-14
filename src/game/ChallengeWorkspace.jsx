@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { BookOpen, Terminal, Bot } from "lucide-react";
-import { Sparkles } from "lucide-react";
+import { BookOpen, Terminal, Bot, Sparkles, Gem } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 
@@ -72,7 +71,6 @@ const ChallengeWorkspace = () => {
       setIsHintLoading(false);
     }
   };
-
   const handlePurchaseAIAssist = async () => {
     if (!challenge) return;
     setIsHintLoading(true);
@@ -80,7 +78,7 @@ const ChallengeWorkspace = () => {
       const { challengesApi } = await import("../services/challengesApi");
       const data = await challengesApi.purchaseAIHint(challenge.slug);
 
-      // Update User XP locally
+      // Update User Points locally
       if (data.remaining_xp !== undefined) {
         const { setUser } = useAuthStore.getState();
         const currentUser = useAuthStore.getState().user;
@@ -95,12 +93,11 @@ const ChallengeWorkspace = () => {
         }
       }
 
-      // Sync global challenge cache immediately for responsive UI.
+      // Sync global challenge cache
       useChallengesStore
         .getState()
         .setChallengeHintsPurchased(challenge.slug, data.hints_purchased);
 
-      // Update workspace-local state to reflect purchase
       setChallenge((prev) => ({
         ...prev,
         ai_hints_purchased: data.hints_purchased,
@@ -114,13 +111,13 @@ const ChallengeWorkspace = () => {
             data.message ||
             `🔓 AI Hint Level ${data.hints_purchased} Unlocked!`,
         },
-        {
-          type: "log",
-          content: `XP Remaining: ${data.remaining_xp}`,
-        },
       ]);
 
-      // Automatically fetch the hint after successful purchase (single-click UX)
+      toast.success("AI Hint Unlocked", {
+        description: `Hint Level ${data.hints_purchased} is now available.`,
+      });
+
+      // Automatically fetch the hint after successful purchase
       if (code) {
         try {
           const hintData = await challengesApi.getAIHint(challenge.slug, {
@@ -131,80 +128,47 @@ const ChallengeWorkspace = () => {
           setHintLevel(Math.min(data.hints_purchased + 1, 3));
           setOutput((prev) => [
             ...prev,
-            {
-              type: "success",
-              content: "🤖 AI Hint Generated!",
-            },
+            { type: "success", content: "🤖 AI Hint Generated!" },
           ]);
-          toast.success("AI Hint Generated!", {
-            description: `Hint Level ${data.hints_purchased} unlocked successfully`,
-          });
         } catch (hintErr) {
           console.error("Hint generation error:", hintErr);
           setOutput((prev) => [
             ...prev,
             {
               type: "error",
-              content:
-                "⚠️ Hint unlocked but generation failed. Click 'Receive Intelligence' to retry.",
+              content: "⚠️ Hint unlocked but generation failed. Try again.",
             },
           ]);
-          toast.error("Hint Generation Failed", {
-            description: "Click 'Receive Intelligence' to retry",
-          });
         }
       }
     } catch (err) {
       console.error("Purchase Error:", err);
-
       const errorResponse = err.response?.data;
 
       if (err.response?.status === 402 && errorResponse) {
-        // Insufficient XP - Show detailed message
         setOutput((prev) => [
           ...prev,
           {
             type: "error",
-            content: `❌ ${errorResponse.error}: ${errorResponse.detail || "Insufficient XP"}`,
+            content: `❌ ${errorResponse.error}: ${errorResponse.detail || "Insufficient Balance"}`,
           },
           {
             type: "log",
-            content: `💰 Your XP: ${errorResponse.current_xp} | Required: ${errorResponse.required_xp} | Short by: ${errorResponse.shortage} XP`,
-          },
-          {
-            type: "log",
-            content: `💡 Tip: ${errorResponse.how_to_earn || "Complete challenges to earn XP"}`,
+            content: `💰 Balance: ${errorResponse.current_xp} | Required: ${errorResponse.required_xp} | Short by: ${errorResponse.shortage}`,
           },
         ]);
-        toast.error("Insufficient XP", {
-          description: `You need ${errorResponse.shortage} more XP. Complete challenges to earn XP!`,
+        toast.error("Insufficient Balance", {
+          description: `You need ${errorResponse.shortage} more points.`,
         });
       } else if (
         err.response?.status === 400 &&
         errorResponse?.error === "Maximum AI hints reached"
       ) {
-        // Max hints reached
-        setOutput((prev) => [
-          ...prev,
-          {
-            type: "error",
-            content: `⚠️ ${errorResponse.detail}`,
-          },
-        ]);
-        toast.warning("Maximum Hints Reached", {
-          description: "You've used all 3 AI hints for this challenge",
-        });
+        toast.warning("Maximum Hints Reached");
       } else {
-        // Generic error
         const errorMsg =
-          errorResponse?.error || "Failed to purchase AI Assistance.";
-        setOutput((prev) => [
-          ...prev,
-          { type: "error", content: `❌ Error: ${errorMsg}` },
-        ]);
-        toast.error("Purchase Failed", {
-          description: errorMsg,
-        });
+          errorResponse?.error || "Failed to purchase assistance.";
+        toast.error("Error", { description: errorMsg });
       }
     } finally {
       setIsHintLoading(false);
@@ -305,81 +269,90 @@ const ChallengeWorkspace = () => {
 
   const workerRef = useRef(null);
 
-  const submitCode = useCallback(
-    async () => {
-      const { challengesApi } = await import("../services/challengesApi");
-      const result = await challengesApi.submit(id);
+  const submitCode = useCallback(async () => {
+    const { challengesApi } = await import("../services/challengesApi");
+    const result = await challengesApi.submit(id);
 
-      if (result.xp_earned && result.xp_earned > 0) {
-        const { setUser } = useAuthStore.getState();
-        const currentUser = useAuthStore.getState().user;
-        if (currentUser) {
-          setUser({
-            ...currentUser,
-            profile: {
-              ...currentUser.profile,
-              xp: (currentUser.profile.xp || 0) + result.xp_earned,
-            },
-          });
-        }
-      }
-
-      if (result.status === "completed" || result.status === "already_completed") {
-        // Sync challenge progression cache immediately for responsive navigation/map updates.
-        useChallengesStore.getState().applySubmissionResult(id, result);
-        // Background refresh to reconcile any derived backend annotations.
-        void useChallengesStore.getState().ensureFreshChallenges(0);
-        setChallenge((prev) =>
-          prev ? { ...prev, status: "COMPLETED", stars: result.stars || prev.stars } : prev,
-        );
-
-        const starText = "⭐".repeat(result.stars || 0);
-        setOutput([
-          {
-            type: "success",
-            content: `🎉 Challenge Completed! ${starText}`,
+    if (result.xp_earned && result.xp_earned > 0) {
+      const { setUser } = useAuthStore.getState();
+      const currentUser = useAuthStore.getState().user;
+      if (currentUser) {
+        setUser({
+          ...currentUser,
+          profile: {
+            ...currentUser.profile,
+            xp: (currentUser.profile.xp || 0) + result.xp_earned,
           },
-        ]);
-        if (result.xp_earned > 0) {
-          setOutput((prev) => [
-            ...prev,
-            {
-              type: "success",
-              content: `💪 XP Earned: +${result.xp_earned}`,
-            },
-          ]);
-        }
-        setCompletionData(result);
-      }
-    },
-    [id],
-  );
-
-  const onWorkerMessage = useCallback(async (event) => {
-    const { type, content, passed } = event.data;
-
-    if (type === "ready") {
-      setPyodideReady(true);
-    } else if (type === "log") {
-      setOutput((prev) => [...prev, { type: "log", content }]);
-    } else if (type === "error") {
-      setOutput((prev) => [...prev, { type: "error", content }]);
-    } else if (type === "success") {
-      setOutput((prev) => [...prev, { type: "success", content }]);
-    } else if (type === "completed") {
-      setIsRunning(false);
-      if (passed) {
-        try {
-          await submitCode();
-        } catch (err) {
-          console.error("Submission error:", err);
-          const errorMsg =
-            err.response?.data?.error || "Submission failed. Please try again.";
-          setOutput((prev) => [...prev, { type: "error", content: errorMsg }]);
-        }
+        });
       }
     }
-  }, [submitCode]);
+
+    if (
+      result.status === "completed" ||
+      result.status === "already_completed"
+    ) {
+      // Sync challenge progression cache immediately for responsive navigation/map updates.
+      useChallengesStore.getState().applySubmissionResult(id, result);
+      // Background refresh to reconcile any derived backend annotations.
+      void useChallengesStore.getState().ensureFreshChallenges(0);
+      setChallenge((prev) =>
+        prev
+          ? { ...prev, status: "COMPLETED", stars: result.stars || prev.stars }
+          : prev,
+      );
+
+      const starText = "⭐".repeat(result.stars || 0);
+      setOutput([
+        {
+          type: "success",
+          content: `🎉 Challenge Completed! ${starText}`,
+        },
+      ]);
+      if (result.xp_earned > 0) {
+        setOutput((prev) => [
+          ...prev,
+          {
+            type: "success",
+            content: `💪 Earned: +${result.xp_earned}`,
+          },
+        ]);
+      }
+      setCompletionData(result);
+    }
+  }, [id]);
+
+  const onWorkerMessage = useCallback(
+    async (event) => {
+      const { type, content, passed } = event.data;
+
+      if (type === "ready") {
+        setPyodideReady(true);
+      } else if (type === "log") {
+        setOutput((prev) => [...prev, { type: "log", content }]);
+      } else if (type === "error") {
+        setOutput((prev) => [...prev, { type: "error", content }]);
+      } else if (type === "success") {
+        setOutput((prev) => [...prev, { type: "success", content }]);
+      } else if (type === "completed") {
+        setIsRunning(false);
+        if (passed) {
+          try {
+            await submitCode();
+          } catch (err) {
+            console.error("Submission error:", err);
+            const errorMsg =
+              err.response?.data?.error ||
+              "Submission failed. Please try again.";
+            setOutput((prev) => [
+              ...prev,
+              { type: "error", content: errorMsg },
+            ]);
+          }
+        }
+      }
+    },
+    [submitCode],
+  );
 
   const initWorker = useCallback(() => {
     if (workerRef.current) {
@@ -600,10 +573,7 @@ const ChallengeWorkspace = () => {
       // Apply profile theme/font immediately on mount.
       applyEditorPreferences();
     },
-    [
-      user?.profile?.active_effect,
-      applyEditorPreferences,
-    ],
+    [user?.profile?.active_effect, applyEditorPreferences],
   );
 
   // Apply active theme/font reactively when profile settings change.
@@ -706,8 +676,9 @@ const ChallengeWorkspace = () => {
               </div>
 
               {completionData.xp_earned > 0 && (
-                <div className="text-[#ffa116] text-sm font-mono tracking-tighter">
-                  +{completionData.xp_earned} EARNED
+                <div className="text-white text-sm font-mono tracking-tighter flex items-center gap-1.5">
+                  <Gem size={14} className="text-red-500 fill-red-500/10" />+
+                  {completionData.xp_earned} EARNED
                 </div>
               )}
 
@@ -755,14 +726,18 @@ const ChallengeWorkspace = () => {
       {/* Main Content - Minimalist Boxy Layout */}
       <div className="flex-1 flex flex-col lg:flex-row overflow-hidden relative z-10 p-0 sm:p-3 gap-0 sm:gap-3">
         {/* LEFT CARD: Problem — desktop always visible, mobile only when tab=problem */}
-        <div className={`lg:flex flex-1 lg:flex-none w-full lg:w-[24rem] min-h-0 flex-col bg-black border-y sm:border border-white/5 sm:rounded-xl shadow-2xl overflow-y-auto custom-scrollbar ${mobileTab === "problem" ? "flex" : "hidden"}`}>
+        <div
+          className={`lg:flex flex-1 lg:flex-none w-full lg:w-[24rem] min-h-0 flex-col bg-black border-y sm:border border-white/5 sm:rounded-xl shadow-2xl overflow-y-auto custom-scrollbar ${mobileTab === "problem" ? "flex" : "hidden"}`}
+        >
           <div className="flex-1 min-h-0 relative">
             <ProblemPane challenge={challenge} loading={!challenge} />
           </div>
         </div>
 
         {/* MIDDLE COLUMN: Editor & Console Cards — desktop always visible, mobile only when tab=code */}
-        <div className={`lg:flex flex-1 flex-col min-w-0 sm:rounded-xl sm:border border-white/5 shadow-2xl overflow-hidden bg-black ${mobileTab === "code" ? "flex" : "hidden"}`}>
+        <div
+          className={`lg:flex flex-1 flex-col min-w-0 sm:rounded-xl sm:border border-white/5 shadow-2xl overflow-hidden bg-black ${mobileTab === "code" ? "flex" : "hidden"}`}
+        >
           <div className="flex-1 flex flex-col bg-black overflow-hidden relative group">
             <div className="flex-1 relative">
               <EditorPane
@@ -799,7 +774,9 @@ const ChallengeWorkspace = () => {
         </div>
 
         {/* RIGHT CARD: AI Assistant — desktop always visible, mobile only when tab=ai */}
-        <div className={`lg:flex flex-1 lg:flex-none w-full lg:w-[24rem] xl:w-[26rem] flex-col bg-black border-y sm:border border-white/5 sm:rounded-xl shadow-2xl overflow-hidden ${mobileTab === "ai" ? "flex" : "hidden"}`}>
+        <div
+          className={`lg:flex flex-1 lg:flex-none w-full lg:w-[24rem] xl:w-[26rem] flex-col bg-black border-y sm:border border-white/5 sm:rounded-xl shadow-2xl overflow-hidden ${mobileTab === "ai" ? "flex" : "hidden"}`}
+        >
           <div className="flex-1 flex flex-col overflow-hidden relative">
             <AIAssistantPane
               onGetHint={handleGetHint}
@@ -825,17 +802,22 @@ const ChallengeWorkspace = () => {
               key={tab.id}
               type="button"
               onClick={() => setMobileTab(tab.id)}
-              className={`flex-1 flex flex-col items-center justify-center gap-1.5 transition-all duration-200 ${mobileTab === tab.id
-                ? "text-white bg-white/5 relative"
-                : "text-neutral-700 hover:text-neutral-400"
-                }`}
+              className={`flex-1 flex flex-col items-center justify-center gap-1.5 transition-all duration-200 ${
+                mobileTab === tab.id
+                  ? "text-white bg-white/5 relative"
+                  : "text-neutral-700 hover:text-neutral-400"
+              }`}
             >
               <tab.Icon
                 size={mobileTab === tab.id ? 19 : 18}
                 strokeWidth={mobileTab === tab.id ? 2.5 : 2}
                 className="transition-transform duration-200"
               />
-              <span className={`text-[10px] font-bold uppercase tracking-wider ${mobileTab === tab.id ? "opacity-100" : "opacity-70"}`}>{tab.label}</span>
+              <span
+                className={`text-[10px] font-bold uppercase tracking-wider ${mobileTab === tab.id ? "opacity-100" : "opacity-70"}`}
+              >
+                {tab.label}
+              </span>
             </button>
           ))}
         </div>

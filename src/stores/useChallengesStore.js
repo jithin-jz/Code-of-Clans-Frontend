@@ -125,7 +125,9 @@ const useChallengesStore = create((set, get) => ({
 
       // Unlock next challenge immediately if backend returned it.
       if (result.next_level_slug) {
-        const nextIdx = next.findIndex((c) => c.slug === result.next_level_slug);
+        const nextIdx = next.findIndex(
+          (c) => c.slug === result.next_level_slug,
+        );
         if (nextIdx !== -1 && next[nextIdx].status === "LOCKED") {
           next[nextIdx] = { ...next[nextIdx], status: "UNLOCKED" };
         }

@@ -114,7 +114,10 @@ const ContributionGraph = ({ data, loading }) => {
           {[...Array(24)].map((_, w) => (
             <div key={w} className="flex flex-col gap-1 shrink-0">
               {[...Array(7)].map((_, d) => (
-                <div key={d} className="w-[11px] h-[11px] rounded-[1px] bg-white/5" />
+                <div
+                  key={d}
+                  className="w-[11px] h-[11px] rounded-[1px] bg-white/5"
+                />
               ))}
             </div>
           ))}

@@ -4,7 +4,7 @@ import {
   SkeletonPage,
   SkeletonCard,
   SkeletonText,
-  SkeletonButton
+  SkeletonButton,
 } from "../common/SkeletonPrimitives";
 
 const MarketplacePageSkeleton = () => {
@@ -18,7 +18,10 @@ const MarketplacePageSkeleton = () => {
             <div className="hidden sm:block w-px h-4 bg-[#222] shrink-0" />
             <div className="flex items-center gap-1 sm:gap-1.5 flex-1 overflow-x-auto no-scrollbar">
               {[...Array(4)].map((_, i) => (
-                <SkeletonBase key={i} className="h-7 w-20 rounded-md bg-white/5 border border-white/5 shrink-0" />
+                <SkeletonBase
+                  key={i}
+                  className="h-7 w-20 rounded-md bg-white/5 border border-white/5 shrink-0"
+                />
               ))}
             </div>
             <SkeletonBase className="h-7 w-16 bg-white/5 rounded-md border border-white/5 shrink-0" />
@@ -28,7 +31,6 @@ const MarketplacePageSkeleton = () => {
 
       {/* Main Content Grid */}
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-
         {/* Section Heading */}
         <div className="space-y-4">
           <SkeletonText width="240px" height="2rem" />
@@ -55,7 +57,11 @@ const MarketplacePageSkeleton = () => {
                 <div className="flex justify-between items-start gap-4">
                   <div className="space-y-2 flex-1 min-w-0">
                     <SkeletonText width="80%" height="1.1rem" />
-                    <SkeletonText width="50%" height="0.6rem" className="opacity-40" />
+                    <SkeletonText
+                      width="50%"
+                      height="0.6rem"
+                      className="opacity-40"
+                    />
                   </div>
                   <SkeletonBase className="h-8 w-8 rounded-lg border border-white/5" />
                 </div>

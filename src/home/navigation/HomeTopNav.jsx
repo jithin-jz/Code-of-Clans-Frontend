@@ -1,13 +1,28 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  Gem, User, LogOut, Calendar, Trophy, Bell,
-  ShoppingBag, MessageSquare, Home, Play,
+  User,
+  LogOut,
+  Calendar,
+  Trophy,
+  Bell,
+  ShoppingBag,
+  MessageSquare,
+  Home,
+  Play,
+  Gem,
 } from "lucide-react";
 import useNotificationStore from "../../stores/useNotificationStore";
 
 /* ─── Reusable icon button ─── */
-const NavBtn = ({ onClick, title, children, className = "", badge = null, active = false }) => (
+const NavBtn = ({
+  onClick,
+  title,
+  children,
+  className = "",
+  badge = null,
+  active = false,
+}) => (
   <button
     type="button"
     onClick={onClick}
@@ -16,9 +31,10 @@ const NavBtn = ({ onClick, title, children, className = "", badge = null, active
     className={`
       group relative inline-flex h-8 w-8 shrink-0 items-center justify-center
       rounded-md border transition-all duration-150
-      ${active
-        ? "border-[#333] bg-[#1c1c1c] text-white"
-        : "border-transparent bg-transparent text-neutral-600 hover:border-[#282828] hover:bg-[#161616] hover:text-neutral-200"
+      ${
+        active
+          ? "border-white/30 bg-white/10 text-white"
+          : "border-white/10 bg-white/5 text-white/70 hover:border-white/30 hover:bg-white/10 hover:text-white"
       }
       ${className}
     `}
@@ -53,18 +69,21 @@ const HomeTopNav = ({
     <>
       {/* ── TOP NAV ── */}
       <div className="fixed top-0 left-0 right-0 z-50 pointer-events-none">
-        <nav className="app-top-nav pointer-events-auto grid h-12 w-full grid-cols-[1fr_auto_1fr] items-center px-4 sm:px-5">
+        <nav className="app-top-nav pointer-events-auto grid h-12 w-full grid-cols-[1fr_auto_1fr] items-center px-7 sm:px-9">
           {/* LEFT */}
-          <div className="flex items-center justify-start gap-1.5 min-w-0">
+          <div className="flex items-center justify-start gap-3 min-w-0">
             {user ? (
               <>
                 {/* Mobile: notifications shortcut */}
                 <button
                   type="button"
                   onClick={() => setNotificationOpen((p) => !p)}
-                  className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-[#242424] bg-[#161616] text-neutral-600 sm:hidden"
+                  className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-white/10 bg-white/5 text-white sm:hidden"
                 >
-                  <Bell size={14} className={unreadCount > 0 ? "text-amber-400" : ""} />
+                  <Bell
+                    size={14}
+                    className={unreadCount > 0 ? "text-amber-400" : ""}
+                  />
                   {unreadCount > 0 && (
                     <span className="absolute top-0.5 right-0.5 h-1.5 w-1.5 rounded-full bg-amber-400 ring-1 ring-black" />
                   )}
@@ -74,19 +93,18 @@ const HomeTopNav = ({
                 <button
                   type="button"
                   onClick={() => navigate("/shop")}
-                  title="Buy XP"
-                  className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-md border border-[#242424]
-                             bg-[#161616] px-2.5 transition-colors hover:bg-[#1c1c1c] hover:border-[#333]"
+                  title="Buy Points"
+                  className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-md border border-white/20
+                             bg-white/5 px-2.5 transition-colors hover:bg-white/10 hover:border-white/30"
                 >
-                  <Gem size={11} className="text-neutral-600" />
+                  <Gem size={13} className="text-red-500 fill-red-500/20" />
                   <span className="text-white font-semibold text-[11px] tabular-nums font-['Geist_Mono',monospace]">
                     {xp.toLocaleString()}
                   </span>
-                  <span className="text-[9px] text-neutral-700 font-mono">XP</span>
                 </button>
 
                 {/* Desktop: extra actions */}
-                <div className="hidden sm:flex items-center gap-0.5 ml-0.5">
+                <div className="hidden sm:flex items-center gap-1.5 ml-1">
                   <NavBtn
                     onClick={() => setCheckInOpen(true)}
                     title="Daily Check-in"
@@ -104,18 +122,25 @@ const HomeTopNav = ({
                   <NavBtn
                     onClick={() => {
                       const allChallenges = navLevels || [];
-                      const nonCert = allChallenges.filter(l => l.slug !== "certificate");
+                      const nonCert = allChallenges.filter(
+                        (l) => l.slug !== "certificate",
+                      );
                       // The current level is the last one that is not LOCKED
-                      const current = [...nonCert].reverse().find(l => l.status !== "LOCKED");
+                      const current = [...nonCert]
+                        .reverse()
+                        .find((l) => l.status !== "LOCKED");
                       if (current) {
-                        const targetId = current.slug || current.id || current.order;
+                        const targetId =
+                          current.slug || current.id || current.order;
                         navigate(`/level/${targetId}`);
                       } else if (nonCert.length > 0) {
-                        navigate(`/level/${nonCert[0].slug || nonCert[0].id || nonCert[0].order}`);
+                        navigate(
+                          `/level/${nonCert[0].slug || nonCert[0].id || nonCert[0].order}`,
+                        );
                       }
                     }}
                     title="Play"
-                    className="!text-emerald-500 hover:!bg-emerald-500/10"
+                    className="!text-emerald-400 !border-emerald-500/20 !bg-emerald-500/5 hover:!bg-emerald-500/10 hover:!border-emerald-500/30"
                   >
                     <Play size={14} fill="currentColor" />
                   </NavBtn>
@@ -132,21 +157,21 @@ const HomeTopNav = ({
               className="group overflow-hidden"
               title="Home"
             >
-              <span className="text-[11px] sm:text-[11px] font-bold tracking-[0.2em] text-neutral-200 hover:text-white transition-colors uppercase font-['Geist_Mono',monospace] truncate block max-w-[140px] sm:max-w-none">
+              <span className="text-[11px] sm:text-[11px] font-bold tracking-[0.2em] text-white hover:text-neutral-300 transition-colors uppercase font-['Geist_Mono',monospace] truncate block max-w-[140px] sm:max-w-none">
                 Clash of Code
               </span>
             </button>
           </div>
 
           {/* RIGHT */}
-          <div className="flex items-center justify-end gap-1.5">
+          <div className="flex items-center justify-end gap-3">
             {user ? (
               <>
                 {/* Mobile Check-in shortcut */}
                 <button
                   type="button"
                   onClick={() => setCheckInOpen(true)}
-                  className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-[#242424] bg-[#161616] text-neutral-600 sm:hidden"
+                  className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-white/10 bg-white/5 text-white sm:hidden"
                 >
                   <Calendar size={14} />
                   {hasUnclaimedReward && (
@@ -158,15 +183,19 @@ const HomeTopNav = ({
                 <button
                   type="button"
                   onClick={() => setChatOpen((p) => !p)}
-                  className={`relative flex h-8 w-8 shrink-0 items-center justify-center rounded-md border transition-colors sm:hidden ${isChatOpen
-                    ? "border-[#333] bg-[#1c1c1c] text-white"
-                    : "border-[#242424] bg-[#161616] text-neutral-600"
-                    }`}
+                  className={`relative flex h-8 w-8 shrink-0 items-center justify-center rounded-md border transition-colors sm:hidden ${
+                    isChatOpen
+                      ? "border-white/30 bg-white/10 text-white"
+                      : "border-white/10 bg-white/5 text-white"
+                  }`}
                 >
-                  <MessageSquare size={14} strokeWidth={isChatOpen ? 2.5 : 1.75} />
+                  <MessageSquare
+                    size={14}
+                    strokeWidth={isChatOpen ? 2.5 : 1.75}
+                  />
                 </button>
 
-                <div className="hidden sm:flex items-center gap-0.5">
+                <div className="hidden sm:flex items-center gap-1.5">
                   <NavBtn
                     onClick={() => setChatOpen((p) => !p)}
                     title="Chat"
@@ -174,7 +203,10 @@ const HomeTopNav = ({
                   >
                     <MessageSquare size={14} />
                   </NavBtn>
-                  <NavBtn onClick={() => setLeaderboardOpen((p) => !p)} title="Leaderboard">
+                  <NavBtn
+                    onClick={() => setLeaderboardOpen((p) => !p)}
+                    title="Leaderboard"
+                  >
                     <Trophy size={14} />
                   </NavBtn>
                   <NavBtn
@@ -195,17 +227,21 @@ const HomeTopNav = ({
                     <Bell size={14} />
                   </NavBtn>
 
-                  <div className="mx-1.5 h-4 w-px bg-[#242424]" />
+                  <div className="mx-1.5 h-4 w-px bg-white/10" />
 
                   {/* Avatar */}
                   <button
                     type="button"
                     onClick={() => navigate("/profile")}
                     title="Profile"
-                    className="h-7 w-7 rounded-md overflow-hidden border border-[#242424] hover:border-[#333] transition-all shrink-0"
+                    className="h-8 w-8 rounded-md overflow-hidden border border-white/20 hover:border-white/30 transition-all shrink-0 bg-white/5"
                   >
                     {user?.profile?.avatar_url ? (
-                      <img src={user.profile.avatar_url} alt="profile" className="w-full h-full object-cover" />
+                      <img
+                        src={user.profile.avatar_url}
+                        alt="profile"
+                        className="w-full h-full object-cover"
+                      />
                     ) : (
                       <div className="flex h-full w-full items-center justify-center bg-[#1c1c1c]">
                         <User size={12} className="text-neutral-600" />
@@ -216,9 +252,9 @@ const HomeTopNav = ({
                   <NavBtn
                     onClick={handleLogout}
                     title="Logout"
-                    className="!text-neutral-700 hover:!text-red-400"
+                    className="!text-white/40 hover:!text-red-400 !border-white/5"
                   >
-                    <LogOut size={12} />
+                    <LogOut size={13} />
                   </NavBtn>
                 </div>
               </>
@@ -240,27 +276,42 @@ const HomeTopNav = ({
       {user && (
         <nav className="sm:hidden fixed bottom-0 left-0 right-0 z-50 pointer-events-auto">
           <div className="absolute left-0 right-0 top-0 h-px bg-white/5" />
-          <div className="bg-black px-2 pb-safe">
-            <div className="flex items-center justify-around h-14">
+          <div className="bg-black px-5 sm:px-9 pb-safe">
+            <div className="flex items-center justify-around h-16">
               {[
                 { Icon: Home, label: "Home", action: () => navigate("/home") },
-                { Icon: Trophy, label: "Ranks", action: () => setLeaderboardOpen((p) => !p) },
+                {
+                  Icon: Trophy,
+                  label: "Ranks",
+                  action: () => setLeaderboardOpen((p) => !p),
+                },
                 {
                   Icon: Play,
                   label: "Play",
                   action: () => {
                     const allChallenges = navLevels || [];
-                    const nonCert = allChallenges.filter(l => l.slug !== "certificate");
-                    const current = [...nonCert].reverse().find(l => l.status !== "LOCKED");
+                    const nonCert = allChallenges.filter(
+                      (l) => l.slug !== "certificate",
+                    );
+                    const current = [...nonCert]
+                      .reverse()
+                      .find((l) => l.status !== "LOCKED");
                     if (current) {
-                      const targetId = current.slug || current.id || current.order;
+                      const targetId =
+                        current.slug || current.id || current.order;
                       navigate(`/level/${targetId}`);
                     } else if (nonCert.length > 0) {
-                      navigate(`/level/${nonCert[0].slug || nonCert[0].id || nonCert[0].order}`);
+                      navigate(
+                        `/level/${nonCert[0].slug || nonCert[0].id || nonCert[0].order}`,
+                      );
                     }
-                  }
+                  },
                 },
-                { Icon: ShoppingBag, label: "Store", action: () => navigate("/store") },
+                {
+                  Icon: ShoppingBag,
+                  label: "Store",
+                  action: () => navigate("/store"),
+                },
               ].map((item) => {
                 const Icon = item.Icon;
                 return (
@@ -270,10 +321,12 @@ const HomeTopNav = ({
                     onClick={item.action}
                     title={item.label}
                     className="flex flex-col items-center gap-0.5 h-10 w-12 justify-center rounded-lg
-                               text-neutral-700 hover:text-neutral-300 transition-colors"
+                               text-white/80 hover:text-white transition-colors"
                   >
-                    <Icon size={18} strokeWidth={1.6} />
-                    <span className="text-[9px] font-mono tracking-wide uppercase">{item.label}</span>
+                    <Icon size={20} strokeWidth={1.8} />
+                    <span className="text-[9px] font-mono tracking-wide uppercase">
+                      {item.label}
+                    </span>
                   </button>
                 );
               })}
@@ -282,18 +335,20 @@ const HomeTopNav = ({
                 onClick={() => navigate("/profile")}
                 title="Profile"
                 className="flex flex-col items-center gap-0.5 h-10 w-12 justify-center rounded-lg
-                           text-neutral-700 hover:text-neutral-300 transition-colors"
+                           text-white/80 hover:text-white transition-colors"
               >
                 {user?.profile?.avatar_url ? (
                   <img
                     src={user.profile.avatar_url}
                     alt="profile"
-                    className="h-5 w-5 rounded-full object-cover ring-1 ring-[#333]"
+                    className="h-6 w-6 rounded-full object-cover ring-1 ring-[#333]"
                   />
                 ) : (
                   <User size={18} strokeWidth={1.6} />
                 )}
-                <span className="text-[9px] font-mono tracking-wide uppercase">You</span>
+                <span className="text-[9px] font-mono tracking-wide uppercase">
+                  You
+                </span>
               </button>
             </div>
           </div>

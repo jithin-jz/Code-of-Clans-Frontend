@@ -14,7 +14,7 @@ const openOAuthPopup = (url, name = "OAuth Login") => {
   return window.open(
     url,
     name,
-    `width=${width},height=${height},left=${left},top=${top},scrollbars=yes,status=yes`
+    `width=${width},height=${height},left=${left},top=${top},scrollbars=yes,status=yes`,
   );
 };
 
@@ -116,7 +116,9 @@ const useAuthStore = create((set, get) => ({
     if (storeState.isOAuthLoading) return null;
     if (storeState.oauthCooldownUntil && now < storeState.oauthCooldownUntil) {
       const seconds = Math.ceil((storeState.oauthCooldownUntil - now) / 1000);
-      set({ error: `Please wait ${seconds}s before trying ${provider} login again.` });
+      set({
+        error: `Please wait ${seconds}s before trying ${provider} login again.`,
+      });
       return null;
     }
 
@@ -171,7 +173,8 @@ const useAuthStore = create((set, get) => ({
         loading: false,
         isOAuthLoading: false,
         oauthCooldownUntil: Date.now() + 5000,
-        error: error.response?.data?.error || `Failed to get ${provider} auth URL`,
+        error:
+          error.response?.data?.error || `Failed to get ${provider} auth URL`,
       });
       return null;
     }
@@ -193,11 +196,12 @@ const useAuthStore = create((set, get) => ({
     sessionStorage.removeItem("oauth_state");
 
     if (!savedState || savedState !== returnedState) {
-         set({
-            loading: false,
-            error: "Security Error: State mismatch (CSRF protection). Please try again.",
-         });
-         return false;
+      set({
+        loading: false,
+        error:
+          "Security Error: State mismatch (CSRF protection). Please try again.",
+      });
+      return false;
     }
 
     try {
@@ -236,7 +240,7 @@ const useAuthStore = create((set, get) => ({
 
   handleOAuthMessage: async (event) => {
     const { checkAuth } = useAuthStore.getState();
-    
+
     // Relaxed origin check for development to handle port changes (5173 vs 5174 etc)
     if (event.origin !== window.location.origin) {
       console.warn(
@@ -302,9 +306,11 @@ const useAuthStore = create((set, get) => ({
     } catch (error) {
       const retryAfter = Number(error.response?.headers?.["retry-after"]);
       const cooldownMs =
-        Number.isFinite(retryAfter) && retryAfter > 0 ? retryAfter * 1000 : 60000;
-      set({ 
-        isOtpLoading: false, 
+        Number.isFinite(retryAfter) && retryAfter > 0
+          ? retryAfter * 1000
+          : 60000;
+      set({
+        isOtpLoading: false,
         error: error.response?.data?.error || "Failed to send OTP",
         otpCooldownUntil: Date.now() + cooldownMs,
         lastOtpEmail: email,
@@ -331,9 +337,9 @@ const useAuthStore = create((set, get) => ({
 
       return true;
     } catch (error) {
-      set({ 
-        isOtpLoading: false, 
-        error: error.response?.data?.error || "Invalid OTP" 
+      set({
+        isOtpLoading: false,
+        error: error.response?.data?.error || "Invalid OTP",
       });
       return false;
     }
@@ -345,7 +351,7 @@ const useAuthStore = create((set, get) => ({
     } catch {
       // Continue with logout even if API fails
     }
-    
+
     // Clear caches
     useChallengesStore.getState().clearCache();
     useNotificationStore.getState().clearCache();
@@ -396,7 +402,6 @@ const useAuthStore = create((set, get) => ({
       throw error;
     }
   },
-
 }));
 
 export default useAuthStore;

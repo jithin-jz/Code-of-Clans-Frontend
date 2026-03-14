@@ -22,13 +22,33 @@ const Home = () => {
     userCertificate,
     isCertificateLoading,
     handleCertificateClick,
-    CERTIFICATE_SLUG
+    CERTIFICATE_SLUG,
   } = useHomeData(user);
 
-  // Scroll to top on mount
+  // Scroll position persistence
   useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
+    // 1. Restore scroll position ONLY after loading is finished and levels are ready
+    if (!isLoading && levels?.length > 0) {
+      const savedPosition = sessionStorage.getItem("homeScrollPos");
+      if (savedPosition) {
+        // Small delay to ensure the DOM has rendered the map fully
+        setTimeout(() => {
+          window.scrollTo({
+            top: parseInt(savedPosition, 10),
+            behavior: "instant",
+          });
+        }, 100);
+      }
+    }
+
+    // 2. Save scroll position on scroll
+    const handleScroll = () => {
+      sessionStorage.setItem("homeScrollPos", window.scrollY.toString());
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [isLoading, levels]);
 
   // Local UI State
   const [selectedLevel, setSelectedLevel] = useState(null);
@@ -61,19 +81,14 @@ const Home = () => {
     );
   }
 
-
   return (
     <div className="relative min-h-screen w-full max-w-[100vw] overflow-x-hidden bg-black text-foreground selection:bg-primary/20">
-      {/* Global pure-black background */}
-      <div className="fixed inset-0 z-0 pointer-events-none bg-black" />
       <div className="w-full relative">
         <ChallengeMap
           user={user}
           levels={levels}
           handleLevelClick={handleLevelClick}
         />
-
-
 
         {selectedLevel && (
           <LevelModal

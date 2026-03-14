@@ -50,14 +50,16 @@ const AdminSidebar = ({ user, activeTab, setActiveTab, handleLogout }) => {
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id)}
-              className={`shrink-0 md:w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs md:text-sm transition-all duration-200 ${activeTab === item.id
-                ? "border border-cyan-300/25 bg-cyan-400/10 text-cyan-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]"
-                : "text-slate-300 hover:text-white hover:bg-slate-800/55 hover:border hover:border-border/55"
-                }`}
+              className={`shrink-0 md:w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs md:text-sm transition-all duration-200 ${
+                activeTab === item.id
+                  ? "border border-cyan-300/25 bg-cyan-400/10 text-cyan-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]"
+                  : "text-slate-300 hover:text-white hover:bg-slate-800/55 hover:border hover:border-border/55"
+              }`}
             >
               <span
-                className={`${activeTab === item.id ? "text-cyan-300" : "text-slate-500"
-                  }`}
+                className={`${
+                  activeTab === item.id ? "text-cyan-300" : "text-slate-500"
+                }`}
               >
                 {item.icon}
               </span>

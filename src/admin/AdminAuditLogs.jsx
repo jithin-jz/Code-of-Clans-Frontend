@@ -19,7 +19,8 @@ import { AdminTableLoadingRow } from "./AdminSkeletons";
 const sortLogs = (rows, ordering) => {
   const items = [...rows];
   const byTimestamp = (a, b) =>
-    new Date(a?.timestamp || 0).getTime() - new Date(b?.timestamp || 0).getTime();
+    new Date(a?.timestamp || 0).getTime() -
+    new Date(b?.timestamp || 0).getTime();
   const byAction = (a, b) =>
     String(a?.action || "").localeCompare(String(b?.action || ""));
 
@@ -266,7 +267,9 @@ const AdminAuditLogs = () => {
           </TableHeader>
           <TableBody>
             {loading ? (
-              [...Array(8)].map((_, i) => <AdminTableLoadingRow key={i} colSpan={5} />)
+              [...Array(8)].map((_, i) => (
+                <AdminTableLoadingRow key={i} colSpan={5} />
+              ))
             ) : logs.length === 0 ? (
               <TableRow>
                 <TableCell
@@ -305,22 +308,29 @@ const AdminAuditLogs = () => {
                     </div>
                   </TableCell>
                   <TableCell className="py-3 text-[10px] font-mono text-neutral-500 group-hover:text-neutral-300 transition-all">
-                    <div className="max-w-xs truncate" title={JSON.stringify(log.details)}>
+                    <div
+                      className="max-w-xs truncate"
+                      title={JSON.stringify(log.details)}
+                    >
                       {renderDetails(log.details)}
                     </div>
                   </TableCell>
                   <TableCell className="text-right py-3 px-6">
                     <div className="flex flex-col items-end">
                       <span className="text-[11px] font-medium text-neutral-300">
-                        {log.timestamp ? formatDistanceToNow(new Date(log.timestamp), {
-                          addSuffix: true,
-                        }) : "Unknown"}
+                        {log.timestamp
+                          ? formatDistanceToNow(new Date(log.timestamp), {
+                              addSuffix: true,
+                            })
+                          : "Unknown"}
                       </span>
                       <span className="text-[9px] text-neutral-600 font-mono uppercase">
-                        {log.timestamp ? new Date(log.timestamp).toLocaleTimeString([], {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        }) : ""}
+                        {log.timestamp
+                          ? new Date(log.timestamp).toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })
+                          : ""}
                       </span>
                     </div>
                   </TableCell>

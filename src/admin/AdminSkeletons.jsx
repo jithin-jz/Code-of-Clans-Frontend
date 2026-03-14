@@ -1,5 +1,10 @@
 import React from "react";
-import { SkeletonBase, SkeletonPage, SkeletonCard, SkeletonText } from "../common/SkeletonPrimitives";
+import {
+  SkeletonBase,
+  SkeletonPage,
+  SkeletonCard,
+  SkeletonText,
+} from "../common/SkeletonPrimitives";
 import { TableCell, TableRow } from "../components/ui/table";
 
 /**
@@ -35,7 +40,9 @@ export const AnalyticsSkeleton = () => (
   <div className="space-y-8">
     {/* Stat Cards */}
     <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-      {[...Array(4)].map((_, i) => <StatCardSkeleton key={i} />)}
+      {[...Array(4)].map((_, i) => (
+        <StatCardSkeleton key={i} />
+      ))}
     </div>
 
     {/* Main Chart */}

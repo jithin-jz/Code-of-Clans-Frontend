@@ -52,7 +52,7 @@ const useUserStore = create((set, get) => ({
 
       // Update Auth Store with new user data
       useAuthStore.getState().setUser(response.data);
-      
+
       // Force Chat reconnection with fresh auth cookies so identity changes reflect immediately.
       const chatState = useChatStore.getState();
       const wasConnected = chatState.isConnected;
@@ -62,7 +62,7 @@ const useUserStore = create((set, get) => ({
           useChatStore.getState().connect();
         }, 150);
       }
-      
+
       set({ loading: false });
       return response.data;
     } catch (error) {

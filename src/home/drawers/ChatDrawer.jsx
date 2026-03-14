@@ -60,10 +60,13 @@ const ChatDrawer = ({ isOpen, setOpen, user }) => {
     // and because users might toggle it frequently.
   }, [isOpen, connect]);
 
-  const handleSendMessage = useCallback((content) => {
-    sendMessage(content);
-    setShowPicker(false);
-  }, [sendMessage]);
+  const handleSendMessage = useCallback(
+    (content) => {
+      sendMessage(content);
+      setShowPicker(false);
+    },
+    [sendMessage],
+  );
 
   // Removed unread/markRead logic as it's not in the store yet
   // If needed, it should be implemented in useChatStore first.
@@ -124,9 +127,12 @@ const ChatDrawer = ({ isOpen, setOpen, user }) => {
 
             {/* Messages Area - Constrained for scrolling */}
             <main className="flex-1 min-h-0 relative flex flex-col bg-[#050505]">
-
               <div className="relative z-10 flex-1 min-h-0 h-full">
-                <MessageList user={user} messages={messages} viewportHeight={viewportHeight} />
+                <MessageList
+                  user={user}
+                  messages={messages}
+                  viewportHeight={viewportHeight}
+                />
               </div>
             </main>
 
@@ -144,7 +150,9 @@ const ChatDrawer = ({ isOpen, setOpen, user }) => {
             </div>
 
             {/* Safety padding for non-keyboard mobile states */}
-            {!isKeyboardVisible && <div className="h-safe sm:h-0 bg-[#050505]" />}
+            {!isKeyboardVisible && (
+              <div className="h-safe sm:h-0 bg-[#050505]" />
+            )}
           </Motion.div>
         </>
       )}

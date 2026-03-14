@@ -36,7 +36,7 @@ const MarketplacePage = lazy(() => import("./marketplace/MarketplacePage"));
 import {
   SkeletonGenericPage,
   SkeletonAdminDashboard,
-  SkeletonCode
+  SkeletonCode,
 } from "./common/SkeletonPrimitives";
 import LoginSkeleton from "./auth/LoginSkeleton";
 import HomeSkeleton from "./pages/HomeSkeleton";

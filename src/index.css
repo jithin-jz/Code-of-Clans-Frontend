@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;1,14..32,400&family=Geist+Mono:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;1,14..32,400&family=Geist+Mono:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap");
 @import "tailwindcss";
 
 /* ─────────────────────────────────────────────
@@ -171,7 +171,9 @@
     padding: 8px 12px;
     font-size: 0.875rem;
     line-height: 1.5;
-    transition: border-color 140ms ease, box-shadow 140ms ease;
+    transition:
+      border-color 140ms ease,
+      box-shadow 140ms ease;
   }
 
   input:focus,
@@ -224,7 +226,6 @@
    UTILITY CLASSES
 ───────────────────────────────────────────── */
 @layer utilities {
-
   /* Surface primitives */
   .bg-glass {
     background: rgba(22, 22, 22, 0.88);
@@ -263,7 +264,11 @@
     background: var(--app-surface);
     border: 1px solid var(--app-border);
     border-radius: var(--radius-lg);
-    transition: border-color 150ms ease, background-color 150ms ease, transform 150ms ease, box-shadow 150ms ease;
+    transition:
+      border-color 150ms ease,
+      background-color 150ms ease,
+      transform 150ms ease,
+      box-shadow 150ms ease;
   }
 
   .ds-card-hover:hover {
@@ -474,7 +479,9 @@
     padding-right: 0.75rem;
     padding-left: 0.75rem;
     /* Base padding, can be overridden by pl-* classes in some environments if specificity allows, but better to be safe */
-    transition: border-color 140ms, box-shadow 140ms;
+    transition:
+      border-color 140ms,
+      box-shadow 140ms;
     width: 100%;
   }
 
@@ -659,7 +666,6 @@
 }
 
 @keyframes ds-pulse-dot {
-
   0%,
   100% {
     opacity: 1;
@@ -700,10 +706,12 @@
 
 /* Skeleton shimmer */
 .ds-shimmer {
-  background: linear-gradient(90deg,
-      var(--app-surface) 25%,
-      var(--app-surface-2) 50%,
-      var(--app-surface) 75%);
+  background: linear-gradient(
+    90deg,
+    var(--app-surface) 25%,
+    var(--app-surface-2) 50%,
+    var(--app-surface) 75%
+  );
   background-size: 200% 100%;
   animation: ds-shimmer 1.4s ease-in-out infinite;
 }
@@ -724,6 +732,10 @@
 
 /* Subtle dot-grid for landing */
 .ds-dot-grid {
-  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-image: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.04) 1px,
+    transparent 1px
+  );
   background-size: 24px 24px;
 }

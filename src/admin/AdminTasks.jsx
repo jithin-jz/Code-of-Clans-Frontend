@@ -1,12 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import {
-  Plus,
-  Edit,
-  Trash2,
-  X,
-  RefreshCw,
-  Layers,
-} from "lucide-react";
+import { Plus, Edit, Trash2, X, RefreshCw, Layers } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
 import {
@@ -133,7 +126,9 @@ const AdminTasks = () => {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-neutral-500">Title</label>
+              <label className="text-xs font-medium text-neutral-500">
+                Title
+              </label>
               <input
                 name="title"
                 value={formData.title}
@@ -144,7 +139,9 @@ const AdminTasks = () => {
               />
             </div>
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-neutral-500">Slug</label>
+              <label className="text-xs font-medium text-neutral-500">
+                Slug
+              </label>
               <input
                 name="slug"
                 value={formData.slug}
@@ -171,7 +168,9 @@ const AdminTasks = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-neutral-500">Order</label>
+              <label className="text-xs font-medium text-neutral-500">
+                Order
+              </label>
               <input
                 type="number"
                 name="order"
@@ -329,7 +328,9 @@ const AdminTasks = () => {
               </TableHeader>
               <TableBody>
                 {isLoading ? (
-                  [...Array(6)].map((_, i) => <AdminTableLoadingRow key={i} colSpan={5} />)
+                  [...Array(6)].map((_, i) => (
+                    <AdminTableLoadingRow key={i} colSpan={5} />
+                  ))
                 ) : tasks.length === 0 ? (
                   <TableRow>
                     <TableCell

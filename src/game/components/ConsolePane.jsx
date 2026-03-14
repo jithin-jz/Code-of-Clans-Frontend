@@ -25,12 +25,13 @@ const ConsolePane = ({ output, loading }) => {
           {output.map((log, i) => (
             <div
               key={i}
-              className={`p-2 rounded border text-xs leading-relaxed ${log.type === "error"
+              className={`p-2 rounded border text-xs leading-relaxed ${
+                log.type === "error"
                   ? "bg-red-500/5 text-red-400 border-red-500/10"
                   : log.type === "success"
                     ? "bg-green-500/5 text-green-400 border-green-500/10"
                     : "bg-white/5 text-gray-200 border-white/10"
-                }`}
+              }`}
             >
               <span className="opacity-50 mr-2 select-none uppercase text-[10px] font-bold">
                 {log.type === "log"

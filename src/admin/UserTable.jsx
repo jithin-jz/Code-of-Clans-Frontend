@@ -75,9 +75,7 @@ const UserTable = ({
           />
           <select
             value={userFilters?.role || ""}
-            onChange={(e) =>
-              onUsersQueryChange?.({ role: e.target.value })
-            }
+            onChange={(e) => onUsersQueryChange?.({ role: e.target.value })}
             className="h-8 w-full sm:w-auto rounded-md bg-white/[0.04] border border-white/10 text-neutral-300 text-xs px-2"
           >
             <option value="">All Roles</option>
@@ -87,9 +85,7 @@ const UserTable = ({
           </select>
           <select
             value={userFilters?.status || ""}
-            onChange={(e) =>
-              onUsersQueryChange?.({ status: e.target.value })
-            }
+            onChange={(e) => onUsersQueryChange?.({ status: e.target.value })}
             className="h-8 w-full sm:w-auto rounded-md bg-white/[0.04] border border-white/10 text-neutral-300 text-xs px-2"
           >
             <option value="">All Status</option>
@@ -147,7 +143,9 @@ const UserTable = ({
           </TableHeader>
           <TableBody>
             {tableLoading ? (
-              [...Array(6)].map((_, i) => <AdminTableLoadingRow key={i} colSpan={5} />)
+              [...Array(6)].map((_, i) => (
+                <AdminTableLoadingRow key={i} colSpan={5} />
+              ))
             ) : userList.length === 0 ? (
               <TableRow>
                 <TableCell
@@ -241,10 +239,11 @@ const UserTable = ({
                         size="sm"
                         onClick={() => handleBlockToggle(usr.username)}
                         disabled={currentUser.username === usr.username}
-                        className={`h-8 px-2 text-[10px] font-semibold uppercase tracking-wider rounded-md transition-colors ${usr.is_active
-                          ? "text-neutral-400 hover:text-red-400 hover:bg-red-500/10"
-                          : "text-[#00af9b] hover:bg-[#00af9b]/5"
-                          }`}
+                        className={`h-8 px-2 text-[10px] font-semibold uppercase tracking-wider rounded-md transition-colors ${
+                          usr.is_active
+                            ? "text-neutral-400 hover:text-red-400 hover:bg-red-500/10"
+                            : "text-[#00af9b] hover:bg-[#00af9b]/5"
+                        }`}
                       >
                         {usr.is_active ? "Block" : "Unblock"}
                       </Button>

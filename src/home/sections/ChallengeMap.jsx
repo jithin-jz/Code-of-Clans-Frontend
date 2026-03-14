@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { ArrowRight, Crown, Lock } from "lucide-react";
+import { ArrowRight, Crown, Lock, TrendingUp } from "lucide-react";
 import LevelButton from "../../game/LevelButton";
 import { getTrackMeta } from "../../utils/challengeMeta";
 
@@ -31,8 +31,13 @@ const ChallengeMap = ({ levels, handleLevelClick }) => {
     trackProgress,
   } = useMemo(() => {
     const sorted = [...levels].sort((a, b) => (a.order || 0) - (b.order || 0));
-    const cert = sorted.find((l) => l.slug === "certificate" || l.type === "CERTIFICATE") || null;
-    const normal = sorted.filter((l) => l.slug !== "certificate" && l.type !== "CERTIFICATE");
+    const cert =
+      sorted.find(
+        (l) => l.slug === "certificate" || l.type === "CERTIFICATE",
+      ) || null;
+    const normal = sorted.filter(
+      (l) => l.slug !== "certificate" && l.type !== "CERTIFICATE",
+    );
 
     const groupsMap = {};
     normal.forEach((level) => {
@@ -47,7 +52,9 @@ const ChallengeMap = ({ levels, handleLevelClick }) => {
       progress[name] = {
         solved,
         total: tLevels.length,
-        percent: tLevels.length ? Math.round((solved / tLevels.length) * 100) : 0,
+        percent: tLevels.length
+          ? Math.round((solved / tLevels.length) * 100)
+          : 0,
       };
     });
 
@@ -57,7 +64,9 @@ const ChallengeMap = ({ levels, handleLevelClick }) => {
       certificateLevel: cert,
       completedChallenges: completed,
       totalChallenges: normal.length,
-      certificateProgressPercent: normal.length ? Math.round((completed / normal.length) * 100) : 0,
+      certificateProgressPercent: normal.length
+        ? Math.round((completed / normal.length) * 100)
+        : 0,
       grouped: groupsMap,
       trackProgress: progress,
     };
@@ -67,25 +76,39 @@ const ChallengeMap = ({ levels, handleLevelClick }) => {
     <div className="w-full relative flex flex-col items-center">
       <div className="w-full px-3 sm:px-5">
         <div className="space-y-0.5 pb-4">
-
-          {/* Overall progress header */}
-          <div className="px-4 pt-4 pb-2 sm:px-4">
-            <div className="ds-card p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-              <div>
-                <p className="ds-eyebrow text-neutral-500 mb-1">Overall Progress</p>
-                <p className="text-lg font-bold text-white font-['Space_Grotesk']">
-                  {completedChallenges}
-                  <span className="text-neutral-500 font-normal text-base"> / {totalChallenges} challenges</span>
-                </p>
-              </div>
-              <div className="sm:w-48 min-w-0">
-                <div className="flex justify-between ds-eyebrow mb-1.5 text-neutral-600">
-                  <span>Completion</span>
-                  <span className="text-neutral-400">{certificateProgressPercent}%</span>
+          {/* Overall progress card — Styled like LevelButton */}
+          <div className="px-4 pt-4 pb-4">
+            <div className="ds-card p-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5 bg-black border-white/60 shadow-sm">
+              <div className="flex items-start gap-3 min-w-0">
+                <div className="w-8 h-8 rounded-lg border border-white/30 bg-white/5 flex items-center justify-center shrink-0 text-white">
+                  <TrendingUp size={16} strokeWidth={2.5} />
                 </div>
-                <div className="ds-progress">
+                <div className="min-w-0 pt-0.5">
+                  <p className="text-[9px] font-mono text-white uppercase tracking-widest mb-0.5 font-bold">
+                    Platform Status
+                  </p>
+                  <p className="text-[12px] font-semibold leading-snug text-white">
+                    Overall Progress
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex-1 flex flex-col gap-2 sm:max-w-[300px]">
+                <div className="flex justify-between items-end">
+                  <p className="text-sm font-bold text-white font-mono">
+                    {completedChallenges}
+                    <span className="text-white/60 font-medium text-xs">
+                      {" "}
+                      / {totalChallenges} challenges
+                    </span>
+                  </p>
+                  <span className="text-[10px] font-mono font-bold text-white tracking-tighter">
+                    {certificateProgressPercent}%
+                  </span>
+                </div>
+                <div className="h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
                   <div
-                    className="ds-progress-fill transition-width"
+                    className="h-full bg-white transition-all duration-500"
                     style={{ width: `${certificateProgressPercent}%` }}
                   />
                 </div>
@@ -110,19 +133,21 @@ const ChallengeMap = ({ levels, handleLevelClick }) => {
                 <div className="mb-4 flex items-start justify-between gap-4">
                   <div className="min-w-0">
                     <div className="flex items-center gap-2 mb-0.5">
-                      <h3 className="text-sm font-semibold text-neutral-200">{track}</h3>
+                      <h3 className="text-sm font-semibold text-white">
+                        {track}
+                      </h3>
                       {isComplete && (
                         <span className="ds-pill ds-pill-success">Done</span>
                       )}
                     </div>
-                    <p className="text-[12px] text-neutral-600">
+                    <p className="text-[12px] text-white/90">
                       {TRACK_DESCRIPTION[track] || ""}
                     </p>
                   </div>
 
                   {/* Mini progress */}
                   <div className="shrink-0 text-right">
-                    <p className="ds-eyebrow text-neutral-700 mb-1">
+                    <p className="ds-eyebrow text-white/80 mb-1">
                       {prog.solved}/{prog.total}
                     </p>
                     <div className="w-20 ds-progress">
@@ -155,9 +180,7 @@ const ChallengeMap = ({ levels, handleLevelClick }) => {
 
           {/* CERTIFICATE */}
           {certificateLevel && (
-            <section
-              className="px-4 pt-2 pb-8 sm:px-4 animate-in fade-in duration-500"
-            >
+            <section className="px-4 pt-2 pb-8 sm:px-4 animate-in fade-in duration-500">
               <div className="flex items-center justify-between mb-3">
                 <p className="ds-eyebrow text-amber-500">Final Achievement</p>
                 <span className="ds-pill ds-pill-warning">Certification</span>
@@ -165,10 +188,11 @@ const ChallengeMap = ({ levels, handleLevelClick }) => {
 
               <button
                 onClick={() => handleLevelClick(certificateLevel)}
-                className={`w-full rounded-xl border p-5 text-left transition-all duration-250 ${certificateLevel.unlocked
-                  ? "border-amber-500/25 bg-[#161610] hover:bg-[#1c1c12] hover:border-amber-400/40"
-                  : "border-[#1e1e1e] bg-[#111] cursor-not-allowed opacity-60"
-                  }`}
+                className={`w-full rounded-xl border p-5 text-left transition-all duration-250 ${
+                  certificateLevel.unlocked
+                    ? "border-amber-500/30 bg-[#0a0a0a] hover:bg-[#111] hover:border-amber-400/50 shadow-md"
+                    : "border-white/5 bg-black cursor-not-allowed opacity-40"
+                }`}
               >
                 <div className="flex justify-between items-start gap-4">
                   <div className="flex gap-4 min-w-0">
@@ -180,10 +204,10 @@ const ChallengeMap = ({ levels, handleLevelClick }) => {
                       )}
                     </div>
                     <div className="min-w-0">
-                      <h4 className="text-sm font-semibold text-neutral-200">
+                      <h4 className="text-sm font-semibold text-white">
                         Python Mastery Certificate
                       </h4>
-                      <p className="mt-1 text-[12px] text-neutral-500">
+                      <p className="mt-1 text-[12px] text-white/80">
                         {certificateLevel.unlocked
                           ? "View and share your verified achievement."
                           : "Complete all levels to unlock your certificate."}
@@ -198,9 +222,13 @@ const ChallengeMap = ({ levels, handleLevelClick }) => {
 
                 {/* Progress */}
                 <div className="mt-5">
-                  <div className="flex justify-between ds-eyebrow mb-2 text-neutral-700">
-                    <span>{completedChallenges} / {totalChallenges} challenges</span>
-                    <span className="text-neutral-500">{certificateProgressPercent}%</span>
+                  <div className="flex justify-between ds-eyebrow mb-2 text-white/80">
+                    <span>
+                      {completedChallenges} / {totalChallenges} challenges
+                    </span>
+                    <span className="text-white">
+                      {certificateProgressPercent}%
+                    </span>
                   </div>
                   <div className="ds-progress">
                     <div

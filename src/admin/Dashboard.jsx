@@ -134,7 +134,11 @@ const AdminDashboard = () => {
 
         if (totalPages > 1) {
           const pageRequests = [];
-          for (let currentPage = 2; currentPage <= totalPages; currentPage += 1) {
+          for (
+            let currentPage = 2;
+            currentPage <= totalPages;
+            currentPage += 1
+          ) {
             pageRequests.push(
               authAPI.getUsers({
                 ...query,
@@ -199,7 +203,7 @@ const AdminDashboard = () => {
       },
       cancel: {
         label: "Cancel",
-        onClick: () => { },
+        onClick: () => {},
       },
     });
   };
@@ -225,7 +229,7 @@ const AdminDashboard = () => {
       },
       cancel: {
         label: "Cancel",
-        onClick: () => { },
+        onClick: () => {},
       },
     });
   };

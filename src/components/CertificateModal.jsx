@@ -4,7 +4,12 @@ import * as htmlToImage from "html-to-image";
 import { toast } from "sonner";
 import CertificateTemplate from "./CertificateTemplate";
 
-const CertificateModal = ({ isOpen, onClose, certificate, isLoading = false }) => {
+const CertificateModal = ({
+  isOpen,
+  onClose,
+  certificate,
+  isLoading = false,
+}) => {
   const [downloading, setDownloading] = useState(false);
   const downloadRef = useRef(null);
 
@@ -80,7 +85,8 @@ const CertificateModal = ({ isOpen, onClose, certificate, isLoading = false }) =
             onClick={(e) => e.stopPropagation()}
           >
             <p className="text-sm text-zinc-300">
-              Certificate is not available yet. Complete all required challenges first.
+              Certificate is not available yet. Complete all required challenges
+              first.
             </p>
             <div className="mt-4 flex justify-end">
               <button

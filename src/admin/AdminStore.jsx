@@ -18,12 +18,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from "../components/ui/dialog";
-import {
-  Plus,
-  Pencil,
-  Trash2,
-  Image as ImageIcon,
-} from "lucide-react";
+import { Plus, Pencil, Trash2, Image as ImageIcon } from "lucide-react";
 import { notify } from "../services/notification";
 import { AdminTableLoadingRow } from "./AdminSkeletons";
 
@@ -202,71 +197,71 @@ const AdminStore = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {loading ? (
-              [...Array(6)].map((_, i) => <AdminTableLoadingRow key={i} colSpan={5} />)
-            ) : (
-              paginatedItems.map((item) => (
-                <TableRow
-                  key={item.id}
-                  className="border-white/10 hover:bg-white/5 transition-colors group"
-                >
-                  <TableCell className="py-3 px-6">
-                    <div className="w-10 h-10 bg-white/[0.04] rounded-lg border border-white/10 flex items-center justify-center overflow-hidden">
-                      {item.image ? (
-                        <img
-                          src={item.image}
-                          alt=""
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <ImageIcon size={18} className="text-neutral-600" />
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell className="py-3">
-                    <div className="flex flex-col">
-                      <span className="text-sm font-medium text-neutral-100 tracking-tight">
-                        {item.name}
-                      </span>
-                      <span className="text-[11px] text-neutral-500 line-clamp-1">
-                        {item.description}
-                      </span>
-                    </div>
-                  </TableCell>
-                  <TableCell className="py-3">
-                    <Badge
-                      variant="outline"
-                      className="bg-white/[0.04]/60 border-white/10 text-[9px] font-medium uppercase tracking-wider px-2 py-0.5 rounded-md text-neutral-300"
-                    >
-                      {item.category}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="py-3 font-mono text-xs text-neutral-300">
-                    {item.cost} XP
-                  </TableCell>
-                  <TableCell className="text-right py-3 px-6">
-                    <div className="flex justify-end gap-1">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleOpenDialog(item)}
-                        className="h-8 w-8 text-neutral-400 hover:text-white hover:bg-white/10 rounded-md"
+            {loading
+              ? [...Array(6)].map((_, i) => (
+                  <AdminTableLoadingRow key={i} colSpan={5} />
+                ))
+              : paginatedItems.map((item) => (
+                  <TableRow
+                    key={item.id}
+                    className="border-white/10 hover:bg-white/5 transition-colors group"
+                  >
+                    <TableCell className="py-3 px-6">
+                      <div className="w-10 h-10 bg-white/[0.04] rounded-lg border border-white/10 flex items-center justify-center overflow-hidden">
+                        {item.image ? (
+                          <img
+                            src={item.image}
+                            alt=""
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <ImageIcon size={18} className="text-neutral-600" />
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell className="py-3">
+                      <div className="flex flex-col">
+                        <span className="text-sm font-medium text-neutral-100 tracking-tight">
+                          {item.name}
+                        </span>
+                        <span className="text-[11px] text-neutral-500 line-clamp-1">
+                          {item.description}
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="py-3">
+                      <Badge
+                        variant="outline"
+                        className="bg-white/[0.04]/60 border-white/10 text-[9px] font-medium uppercase tracking-wider px-2 py-0.5 rounded-md text-neutral-300"
                       >
-                        <Pencil size={16} />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleDelete(item.id)}
-                        className="h-8 w-8 text-neutral-400 hover:text-red-400 hover:bg-red-500/10 rounded-md"
-                      >
-                        <Trash2 size={16} />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
+                        {item.category}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="py-3 font-mono text-xs text-neutral-300">
+                      {item.cost} XP
+                    </TableCell>
+                    <TableCell className="text-right py-3 px-6">
+                      <div className="flex justify-end gap-1">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleOpenDialog(item)}
+                          className="h-8 w-8 text-neutral-400 hover:text-white hover:bg-white/10 rounded-md"
+                        >
+                          <Pencil size={16} />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleDelete(item.id)}
+                          className="h-8 w-8 text-neutral-400 hover:text-red-400 hover:bg-red-500/10 rounded-md"
+                        >
+                          <Trash2 size={16} />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
           </TableBody>
         </Table>
       </div>

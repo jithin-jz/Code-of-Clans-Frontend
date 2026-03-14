@@ -81,7 +81,9 @@ import RadioIcon from "./itshover/radio-icon";
 const adapt = (IconComponent, baseClassName = "") => {
   const WrappedIcon = forwardRef((props, ref) => {
     const { className = "", ...rest } = props || {};
-    const mergedClassName = [baseClassName, className].filter(Boolean).join(" ");
+    const mergedClassName = [baseClassName, className]
+      .filter(Boolean)
+      .join(" ");
     return <IconComponent ref={ref} className={mergedClassName} {...rest} />;
   });
 

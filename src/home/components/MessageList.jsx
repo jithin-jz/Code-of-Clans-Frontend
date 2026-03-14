@@ -19,10 +19,9 @@ const ChatAvatar = ({ isOwn, avatarUrl, username }) => {
       )}
       {showPlaceholder && (
         <div
-          className={`w-full h-full flex items-center justify-center text-[10px] font-black tracking-tighter ${isOwn
-            ? "bg-primary/20 text-primary"
-            : "bg-accent/20 text-accent"
-            }`}
+          className={`w-full h-full flex items-center justify-center text-[10px] font-black tracking-tighter ${
+            isOwn ? "bg-primary/20 text-primary" : "bg-accent/20 text-accent"
+          }`}
         >
           {username?.charAt(0).toUpperCase() || <User size={12} />}
         </div>
@@ -91,7 +90,8 @@ const MessageList = ({ user, messages, viewportHeight }) => {
           Secure Forge
         </h3>
         <p className="text-neutral-500 text-sm mb-8 max-w-[240px] leading-relaxed font-medium">
-          The inner circle is restricted. Authenticate to join the real-time transmission.
+          The inner circle is restricted. Authenticate to join the real-time
+          transmission.
         </p>
 
         <Link
@@ -115,7 +115,9 @@ const MessageList = ({ user, messages, viewportHeight }) => {
           <div className="w-16 h-16 bg-white/[0.03] rounded-3xl flex items-center justify-center mb-5 border border-white/[0.06] shadow-inner">
             <MessageCircle size={28} className="text-neutral-700" />
           </div>
-          <p className="text-neutral-400 text-sm font-bold uppercase tracking-widest">Quiet in the forge</p>
+          <p className="text-neutral-400 text-sm font-bold uppercase tracking-widest">
+            Quiet in the forge
+          </p>
           <p className="text-neutral-600 text-[10px] mt-2 font-mono uppercase tracking-tighter">
             Waiting for transmission...
           </p>
@@ -132,7 +134,9 @@ const MessageList = ({ user, messages, viewportHeight }) => {
         const apiURL = import.meta.env.VITE_API_URL || "http://localhost/api";
         const baseUrl = apiURL.replace("/api", "");
         const formattedAvatar = (() => {
-          const rawUrl = isOwn ? user?.profile?.avatar_url : metadata.avatar_url;
+          const rawUrl = isOwn
+            ? user?.profile?.avatar_url
+            : metadata.avatar_url;
           if (!rawUrl) return null;
           if (rawUrl.startsWith("http")) return rawUrl;
           return `${baseUrl}${rawUrl}`;
@@ -148,20 +152,34 @@ const MessageList = ({ user, messages, viewportHeight }) => {
             {/* Avatar */}
             <Link
               to={`/profile/${metadata.username}`}
-              className={`relative shrink-0 w-7 h-7 rounded-full overflow-hidden border transition-all duration-300 shadow-sm ${isOwn ? "border-emerald-500/20 hover:border-emerald-500" : "border-white/5 hover:border-white/20"
-                }`}
+              className={`relative shrink-0 w-7 h-7 rounded-full overflow-hidden border transition-all duration-300 shadow-sm ${
+                isOwn
+                  ? "border-emerald-500/20 hover:border-emerald-500"
+                  : "border-white/5 hover:border-white/20"
+              }`}
             >
-              <ChatAvatar isOwn={isOwn} avatarUrl={formattedAvatar} username={metadata.username} />
+              <ChatAvatar
+                isOwn={isOwn}
+                avatarUrl={formattedAvatar}
+                username={metadata.username}
+              />
             </Link>
 
             {/* Message Content */}
-            <div className={`flex flex-col gap-1.5 max-w-[80%] ${isOwn ? "items-end" : "items-start"}`}>
+            <div
+              className={`flex flex-col gap-1.5 max-w-[80%] ${isOwn ? "items-end" : "items-start"}`}
+            >
               {/* Username & Time */}
-              <div className={`flex items-center gap-1.5 px-1 ${isOwn ? "flex-row-reverse" : "flex-row"}`}>
+              <div
+                className={`flex items-center gap-1.5 px-1 ${isOwn ? "flex-row-reverse" : "flex-row"}`}
+              >
                 <Link
                   to={`/profile/${metadata.username}`}
-                  className={`text-[9px] font-bold uppercase tracking-wider transition-colors ${isOwn ? "text-emerald-500/70 hover:text-emerald-500" : "text-neutral-500 hover:text-neutral-300"
-                    }`}
+                  className={`text-[9px] font-bold uppercase tracking-wider transition-colors ${
+                    isOwn
+                      ? "text-emerald-500/70 hover:text-emerald-500"
+                      : "text-neutral-500 hover:text-neutral-300"
+                  }`}
                 >
                   {isOwn ? "You" : metadata.username}
                 </Link>
@@ -169,7 +187,7 @@ const MessageList = ({ user, messages, viewportHeight }) => {
                   {new Date(msg.timestamp).toLocaleTimeString("en-US", {
                     hour: "2-digit",
                     minute: "2-digit",
-                    hour12: false
+                    hour12: false,
                   })}
                 </span>
               </div>
@@ -178,24 +196,41 @@ const MessageList = ({ user, messages, viewportHeight }) => {
               <div
                 className={`
                   relative px-2.5 py-1.5 text-[11px] leading-normal transition-all duration-300 rounded-lg
-                  ${isOwn
-                    ? "bg-emerald-500/10 border border-emerald-500/20 text-emerald-100 rounded-tr-sm"
-                    : "bg-[#161616] border border-[#222] text-neutral-300 rounded-tl-sm hover:bg-[#1a1a1a]"
+                  ${
+                    isOwn
+                      ? "bg-emerald-500/10 border border-emerald-500/20 text-emerald-100 rounded-tr-sm"
+                      : "bg-[#161616] border border-[#222] text-neutral-300 rounded-tl-sm hover:bg-[#1a1a1a]"
                   }
                   ${msg.message?.startsWith("IMAGE:") ? "p-1" : ""}
                 `}
               >
                 {msg.message?.startsWith("IMAGE:") ? (
                   (() => {
-                    const [imageUrl, ownerUsername] = msg.message.replace("IMAGE:", "").split("|");
+                    const [imageUrl, ownerUsername] = msg.message
+                      .replace("IMAGE:", "")
+                      .split("|");
                     return (
                       <div className="space-y-2">
-                        <Link to={`/profile/${ownerUsername}`} className="block overflow-hidden rounded-lg border border-white/5 shadow-lg">
-                          <img src={imageUrl} alt="" className="w-full h-auto" />
+                        <Link
+                          to={`/profile/${ownerUsername}`}
+                          className="block overflow-hidden rounded-lg border border-white/5 shadow-lg"
+                        >
+                          <img
+                            src={imageUrl}
+                            alt=""
+                            className="w-full h-auto"
+                          />
                         </Link>
                         <div className="flex items-center justify-between px-1 py-0.5">
-                          <p className="text-[8px] font-bold uppercase tracking-widest text-neutral-600">Transmission</p>
-                          <Link to={`/profile/${ownerUsername}`} className="text-[8px] font-bold uppercase tracking-widest text-emerald-500 hover:underline">Verify</Link>
+                          <p className="text-[8px] font-bold uppercase tracking-widest text-neutral-600">
+                            Transmission
+                          </p>
+                          <Link
+                            to={`/profile/${ownerUsername}`}
+                            className="text-[8px] font-bold uppercase tracking-widest text-emerald-500 hover:underline"
+                          >
+                            Verify
+                          </Link>
                         </div>
                       </div>
                     );

@@ -2,6 +2,7 @@ import React, { memo, useMemo } from "react";
 import ReactMarkdown from "react-markdown";
 import { cn } from "../../lib/utils";
 import { getDifficultyMeta } from "../../utils/challengeMeta";
+import { Gem } from "lucide-react";
 
 const ProblemPane = ({ challenge, loading }) => {
   const derived = useMemo(() => {
@@ -42,11 +43,17 @@ const ProblemPane = ({ challenge, loading }) => {
           <span className="text-[9px] font-bold px-2.5 py-1 rounded-md bg-emerald-500/5 text-emerald-400 border border-emerald-500/10 uppercase tracking-widest font-mono">
             Python
           </span>
-          <span className={cn("text-[9px] font-bold px-2.5 py-1 rounded-md border uppercase tracking-widest font-mono", derived.difficulty.pill)}>
+          <span
+            className={cn(
+              "text-[9px] font-bold px-2.5 py-1 rounded-md border uppercase tracking-widest font-mono",
+              derived.difficulty.pill,
+            )}
+          >
             {derived.difficulty.label}
           </span>
-          <span className="text-[9px] font-bold px-2.5 py-1 rounded-md bg-white/[0.02] border border-white/5 text-neutral-500 uppercase tracking-widest font-mono">
-            {challenge.xp_reward} XP
+          <span className="flex items-center gap-1.5 text-[9px] font-bold px-2.5 py-1 rounded-md bg-white/[0.02] border border-white/5 text-neutral-500 uppercase tracking-widest font-mono">
+            {challenge.xp_reward}
+            <Gem size={10} className="text-red-500 fill-red-500/10" />
           </span>
           <span className="text-[9px] font-bold px-2.5 py-1 rounded-md bg-white/[0.02] border border-white/5 text-neutral-500 uppercase tracking-widest font-mono">
             Target: {derived.targetMinutes}M

@@ -3,7 +3,6 @@ import { notify } from "./notification";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 
-
 // Create axios instance
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -40,7 +39,7 @@ api.interceptors.response.use(
     if (error.response?.status === 429) {
       const now = Date.now();
       if (now - lastRateLimitNoticeAt > 3000) {
-        const retryAfter = error.response.headers['retry-after'];
+        const retryAfter = error.response.headers["retry-after"];
         const message = retryAfter
           ? `Too many requests. Please wait ${retryAfter} seconds.`
           : "Too many requests. Please slow down.";
@@ -68,8 +67,13 @@ api.interceptors.response.use(
     }
 
     const isRefreshRequest = originalRequest?.url?.includes("/auth/refresh/");
-    const isCurrentUserProbe = originalRequest?.url?.includes("/profiles/user/");
-    if (error.response?.status === 401 && !originalRequest._retry && !isRefreshRequest) {
+    const isCurrentUserProbe =
+      originalRequest?.url?.includes("/profiles/user/");
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      !isRefreshRequest
+    ) {
       // /profiles/user/ is often used as a session probe; avoid forcing refresh loops.
       if (isCurrentUserProbe) {
         return Promise.reject(error);
@@ -150,7 +154,8 @@ export const authAPI = {
     api.post("/profiles/user/redeem-referral/", { code }),
   deleteAccount: () => api.delete("/auth/user/delete/"),
   getSuggestedUsers: () => api.get("/profiles/users/suggestions/"),
-  getContributionHistory: (username) => api.get(`/profiles/users/${username}/stats/contributions/`),
+  getContributionHistory: (username) =>
+    api.get(`/profiles/users/${username}/stats/contributions/`),
 
   // Admin endpoints
   getUsers: (params = {}) => api.get("/admin/users/", { params }),
@@ -161,7 +166,8 @@ export const authAPI = {
   getChallengeAnalytics: () => api.get("/admin/analytics/challenges/"),
   getStoreAnalytics: () => api.get("/admin/analytics/store/"),
   getSystemIntegrity: () => api.get("/admin/system/integrity/"),
-  sendBroadcast: (message) => api.post("/admin/notifications/broadcast/", { message }),
+  sendBroadcast: (message) =>
+    api.post("/admin/notifications/broadcast/", { message }),
   getAuditLogs: (params = {}) => api.get("/admin/audit-logs/", { params }),
   getUserEngagementAnalytics: () => api.get("/admin/analytics/engagement/"),
   getUltimateAnalytics: () => api.get("/admin/analytics/ultimate/"),
@@ -181,7 +187,6 @@ export const storeAPI = {
   equipItem: (id) => api.post("/store/equip/", { item_id: id }),
   unequipItem: (category) => api.post("/store/unequip/", { category }),
 };
-
 
 export const postsAPI = {
   getFeed: () => api.get("/posts/"),
@@ -205,8 +210,5 @@ export const notificationsAPI = {
   clearAll: () => api.delete("/notifications/clear_all/"),
   registerFCMToken: (data) => api.post("/notifications/fcm-tokens/", data),
 };
-
-
-
 
 export default api;

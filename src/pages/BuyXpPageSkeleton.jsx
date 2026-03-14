@@ -9,8 +9,6 @@ import {
 const BuyXpPageSkeleton = () => {
   return (
     <SkeletonPage className="bg-black flex flex-col pt-0 mt-0">
-
-
       {/* Main Content Grid Skeleton */}
       <main className="relative z-10 flex-1 w-full px-4 sm:px-6 lg:px-8 py-6 min-w-0">
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">

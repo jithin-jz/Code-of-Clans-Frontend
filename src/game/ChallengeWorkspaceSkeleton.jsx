@@ -1,5 +1,9 @@
 import React from "react";
-import { SkeletonBase, SkeletonPage, SkeletonCode } from "../common/SkeletonPrimitives";
+import {
+  SkeletonBase,
+  SkeletonPage,
+  SkeletonCode,
+} from "../common/SkeletonPrimitives";
 
 const ChallengeWorkspaceSkeleton = () => {
   return (

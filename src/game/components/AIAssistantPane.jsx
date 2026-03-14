@@ -154,7 +154,12 @@ const AIAssistantPane = ({
                                 {children}
                               </pre>
                             ),
-                            code: ({ inline, className, children, ...props }) => {
+                            code: ({
+                              inline,
+                              className,
+                              children,
+                              ...props
+                            }) => {
                               return !inline ? (
                                 <code
                                   className={`${className} block text-[11px] leading-normal font-mono text-gray-400`}
@@ -193,12 +198,12 @@ const AIAssistantPane = ({
                       Generating...
                     </span>
                   </div>
-                  <SkeletonCard variant="solid" className="flex-1 bg-white/[0.05] border border-white/10 rounded-xl p-4 relative">
+                  <SkeletonCard
+                    variant="solid"
+                    className="flex-1 bg-white/[0.05] border border-white/10 rounded-xl p-4 relative"
+                  >
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <Sparkles
-                        size={20}
-                        className="text-[#00af9b]/20"
-                      />
+                      <Sparkles size={20} className="text-[#00af9b]/20" />
                     </div>
                   </SkeletonCard>
                 </div>
@@ -208,20 +213,21 @@ const AIAssistantPane = ({
             {/* Carousel Pagination Dots */}
             {(hintHistory.length > 1 ||
               (hintHistory.length > 0 && isHintLoading)) && (
-                <div className="flex justify-center gap-1.5 pb-3">
-                  {[...Array(hintHistory.length + (isHintLoading ? 1 : 0))].map(
-                    (_, i) => (
-                      <div
-                        key={i}
-                        className={`w-1 h-1 transition-all duration-300 ${i === activeIndex
+              <div className="flex justify-center gap-1.5 pb-3">
+                {[...Array(hintHistory.length + (isHintLoading ? 1 : 0))].map(
+                  (_, i) => (
+                    <div
+                      key={i}
+                      className={`w-1 h-1 transition-all duration-300 ${
+                        i === activeIndex
                           ? "bg-[#00af9b] scale-125 shadow-[0_0_8px_rgba(59,130,246,0.5)]"
                           : "bg-white/10"
-                          }`}
-                      />
-                    ),
-                  )}
-                </div>
-              )}
+                      }`}
+                    />
+                  ),
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -240,10 +246,11 @@ const AIAssistantPane = ({
               disabled={
                 isHintLoading || (userXp !== undefined && userXp < nextCost)
               }
-              className={`w-full text-[10px] font-semibold h-10 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 group relative overflow-hidden uppercase tracking-wider ${userXp !== undefined && userXp < nextCost
-                ? "bg-black border border-white/5 text-neutral-700 cursor-not-allowed"
-                : "bg-white text-[#0a0a0a] hover:bg-neutral-200 border border-transparent"
-                }`}
+              className={`w-full text-[10px] font-semibold h-10 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 group relative overflow-hidden uppercase tracking-wider ${
+                userXp !== undefined && userXp < nextCost
+                  ? "bg-black border border-white/5 text-neutral-700 cursor-not-allowed"
+                  : "bg-white text-[#0a0a0a] hover:bg-neutral-200 border border-transparent"
+              }`}
             >
               {/* Shimmer effect overlay */}
               {userXp >= nextCost && (
@@ -257,7 +264,8 @@ const AIAssistantPane = ({
               )}
               <span className="relative z-10">Get Hint</span>
               <span className="opacity-50 text-[9px] relative z-10 font-normal ml-1 flex items-center gap-0.5">
-                (<Gem size={8} className="inline" />{nextCost})
+                (<Gem size={8} className="inline" />
+                {nextCost})
               </span>
             </button>
             {userXp !== undefined && userXp < nextCost && (

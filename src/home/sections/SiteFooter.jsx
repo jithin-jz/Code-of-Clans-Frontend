@@ -18,49 +18,48 @@ const SiteFooter = () => {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="w-full border-t border-white/5 bg-black relative z-10">
-      <div className="max-w-6xl mx-auto px-5 py-8 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+    <footer className="w-full border-t border-white/20 bg-black relative z-10">
+      <div className="max-w-6xl mx-auto px-7 sm:px-9 py-3 flex items-center justify-between gap-4 overflow-x-auto no-scrollbar">
+        {/* Left: Brand & Socials */}
+        <div className="flex items-center gap-3 shrink-0">
+          <span className="font-['Geist_Mono'] text-[10px] font-bold tracking-widest text-white uppercase whitespace-nowrap">
+            <span className="hidden sm:inline">Clash of Code</span>
+            <span className="sm:hidden">COC</span>
+          </span>
 
-        {/* Brand + socials */}
-        <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
-          <div className="flex items-center gap-2">
-            <span className="font-['Geist_Mono'] text-[10px] font-bold tracking-[0.2em] text-neutral-400 uppercase">
-              Clash of Code
-            </span>
-          </div>
+          <div className="h-3 w-px bg-white/20" />
 
-          <div className="hidden sm:block h-4 w-px bg-white/5" />
-
-          <div className="flex items-center gap-5">
+          <div className="flex items-center gap-3.5">
             {socialLinks.map((s) => (
               <a
                 key={s.label}
                 href={s.href}
                 target="_blank"
                 rel="noreferrer"
-                aria-label={s.label}
-                className="text-neutral-700 hover:text-neutral-300 transition-all duration-200 hover:scale-110"
+                className="text-white/40 hover:text-white transition-colors"
               >
-                {React.createElement(s.Icon, { size: 14, strokeWidth: 1.5 })}
+                {React.createElement(s.Icon, { size: 13, strokeWidth: 1.5 })}
               </a>
             ))}
           </div>
         </div>
 
-        {/* Copyright + Legal */}
-        <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
-          <span className="font-['Geist_Mono'] text-[9px] font-medium tracking-wider text-neutral-800 uppercase">
+        {/* Right: Copyright & Legal */}
+        <div className="flex items-center gap-4 shrink-0">
+          <span className="font-['Geist_Mono'] text-[9px] font-medium text-white/30 uppercase">
             © {year}
           </span>
-          {legalLinks.map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              className="font-['Geist_Mono'] text-[9px] font-bold tracking-widest text-neutral-700 hover:text-neutral-400 transition-colors uppercase"
-            >
-              {link.label}
-            </a>
-          ))}
+          <div className="flex items-center gap-3.5">
+            {legalLinks.map((link) => (
+              <a
+                key={link.label}
+                href={link.href}
+                className="font-['Geist_Mono'] text-[9px] font-bold tracking-tighter text-white/60 hover:text-white transition-colors uppercase whitespace-nowrap"
+              >
+                {link.label}
+              </a>
+            ))}
+          </div>
         </div>
       </div>
     </footer>

@@ -4,12 +4,12 @@ import { useShallow } from "zustand/react/shallow";
 import useAuthStore from "../stores/useAuthStore";
 import useChallengesStore from "../stores/useChallengesStore";
 import {
-    HomeTopNav,
-    ChatDrawer,
-    LeaderboardDrawer,
-    NotificationDrawer,
-    DailyCheckInModal,
-    SiteFooter
+  HomeTopNav,
+  ChatDrawer,
+  LeaderboardDrawer,
+  NotificationDrawer,
+  DailyCheckInModal,
+  SiteFooter,
 } from "../home";
 import { checkInApi } from "../services/checkInApi";
 
@@ -24,202 +24,200 @@ import { checkInApi } from "../services/checkInApi";
  *  4. Memoised hideNav / showFooter flags.
  */
 const MainLayout = memo(({ children }) => {
-    const location = useLocation();
-    const navigate = useNavigate();
+  const location = useLocation();
+  const navigate = useNavigate();
 
-    // ---- Zustand Selectors (shallow) ----
-    const { user, userId, logout } = useAuthStore(
-        useShallow((s) => ({ user: s.user, userId: s.user?.id, logout: s.logout }))
-    );
-    const { apiLevels, fetchChallenges, ensureFreshChallenges } = useChallengesStore(
-        useShallow((s) => ({
-            apiLevels: s.challenges,
-            fetchChallenges: s.fetchChallenges,
-            ensureFreshChallenges: s.ensureFreshChallenges,
-        }))
-    );
-
-    // ---- Local UI State ----
-    const [isChatOpen, setChatOpen] = useState(false);
-    const [isLeaderboardOpen, setLeaderboardOpen] = useState(false);
-    const [isNotificationOpen, setNotificationOpen] = useState(false);
-    const [checkInOpen, setCheckInOpen] = useState(false);
-    const [hasUnclaimedReward, setHasUnclaimedReward] = useState(false);
-
-    // ---- Derived state (memoised) ----
-    const hideNav = useMemo(() =>
-        location.pathname.startsWith("/level/") || location.pathname.startsWith("/admin/"),
-        [location.pathname]);
-    const showFooter = useMemo(() => {
-        const footerPaths = ["/", "/home", "/profile", "/marketplace", "/store", "/buy-xp", "/shop", "/game"];
-        const isProfilePath = location.pathname.startsWith("/profile/");
-        return footerPaths.includes(location.pathname) || isProfilePath;
-    }, [location.pathname]);
-    const isPublicLanding = useMemo(
-        () => location.pathname === "/" && !user,
-        [location.pathname, user],
+  // ---- Zustand Selectors (shallow) ----
+  const { user, userId, logout } = useAuthStore(
+    useShallow((s) => ({ user: s.user, userId: s.user?.id, logout: s.logout })),
+  );
+  const { apiLevels, fetchChallenges, ensureFreshChallenges } =
+    useChallengesStore(
+      useShallow((s) => ({
+        apiLevels: s.challenges,
+        fetchChallenges: s.fetchChallenges,
+        ensureFreshChallenges: s.ensureFreshChallenges,
+      })),
     );
 
-    // ---- Data Fetching ----
-    useEffect(() => {
-        if (userId) fetchChallenges();
-    }, [userId, fetchChallenges]);
+  // ---- Local UI State ----
+  const [isChatOpen, setChatOpen] = useState(false);
+  const [isLeaderboardOpen, setLeaderboardOpen] = useState(false);
+  const [isNotificationOpen, setNotificationOpen] = useState(false);
+  const [checkInOpen, setCheckInOpen] = useState(false);
+  const [hasUnclaimedReward, setHasUnclaimedReward] = useState(false);
 
-    useEffect(() => {
-        if (!userId) return undefined;
+  // ---- Derived state (memoised) ----
+  const hideNav = useMemo(
+    () =>
+      location.pathname.startsWith("/level/") ||
+      location.pathname.startsWith("/admin/"),
+    [location.pathname],
+  );
+  const showFooter = useMemo(() => {
+    const footerPaths = [
+      "/",
+      "/home",
+      "/profile",
+      "/marketplace",
+      "/store",
+      "/buy-xp",
+      "/shop",
+      "/game",
+    ];
+    const isProfilePath = location.pathname.startsWith("/profile/");
+    return footerPaths.includes(location.pathname) || isProfilePath;
+  }, [location.pathname]);
 
-        const refreshIfNeeded = () => {
-            ensureFreshChallenges(20000);
-        };
+  // ---- Data Fetching ----
+  useEffect(() => {
+    if (userId) fetchChallenges();
+  }, [userId, fetchChallenges]);
 
-        const onVisible = () => {
-            if (document.visibilityState === "visible") {
-                refreshIfNeeded();
-            }
-        };
+  useEffect(() => {
+    if (!userId) return undefined;
 
-        window.addEventListener("focus", refreshIfNeeded);
-        document.addEventListener("visibilitychange", onVisible);
+    const refreshIfNeeded = () => {
+      ensureFreshChallenges(20000);
+    };
 
-        const intervalId = setInterval(() => {
-            if (document.visibilityState === "visible") {
-                refreshIfNeeded();
-            }
-        }, 30000);
+    const onVisible = () => {
+      if (document.visibilityState === "visible") {
+        refreshIfNeeded();
+      }
+    };
 
-        return () => {
-            window.removeEventListener("focus", refreshIfNeeded);
-            document.removeEventListener("visibilitychange", onVisible);
-            clearInterval(intervalId);
-        };
-    }, [userId, ensureFreshChallenges]);
+    window.addEventListener("focus", refreshIfNeeded);
+    document.addEventListener("visibilitychange", onVisible);
 
-    useEffect(() => {
-        if (!userId) return;
-        let cancelled = false;
-        (async () => {
-            try {
-                const data = await checkInApi.getCheckInStatus();
-                if (!cancelled) setHasUnclaimedReward(!data.checked_in_today);
-            } catch (error) {
-                console.error("Failed to check reward status:", error);
-            }
-        })();
-        return () => { cancelled = true; };
-    }, [userId]);
+    const intervalId = setInterval(() => {
+      if (document.visibilityState === "visible") {
+        refreshIfNeeded();
+      }
+    }, 30000);
 
-    // ---- Stable Callbacks ----
-    const handleLogout = useCallback(async () => {
-        await logout();
-        navigate("/");
-    }, [logout, navigate]);
+    return () => {
+      window.removeEventListener("focus", refreshIfNeeded);
+      document.removeEventListener("visibilitychange", onVisible);
+      clearInterval(intervalId);
+    };
+  }, [userId, ensureFreshChallenges]);
 
-    const handleCloseNotification = useCallback(() => setNotificationOpen(false), []);
-    const handleCloseCheckIn = useCallback(() => setCheckInOpen(false), []);
-    const handleClaimReward = useCallback(() => setHasUnclaimedReward(false), []);
+  useEffect(() => {
+    if (!userId) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const data = await checkInApi.getCheckInStatus();
+        if (!cancelled) setHasUnclaimedReward(!data.checked_in_today);
+      } catch (error) {
+        console.error("Failed to check reward status:", error);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [userId]);
 
-    // ---- Keyboard Shortcuts ----
-    useEffect(() => {
-        const handleKeyDown = (e) => {
-            const key = typeof e?.key === "string" ? e.key.toLowerCase() : "";
-            if (!key) return;
-            if (!(e.ctrlKey || e.metaKey)) return;
+  // ---- Stable Callbacks ----
+  const handleLogout = useCallback(async () => {
+    await logout();
+    navigate("/");
+  }, [logout, navigate]);
 
-            switch (key) {
-                case "b":
-                    e.preventDefault();
-                    setChatOpen((prev) => !prev);
-                    break;
-                case "l":
-                    e.preventDefault();
-                    setLeaderboardOpen((prev) => !prev);
-                    break;
-                case "p":
-                    e.preventDefault();
-                    if (user) navigate("/profile");
-                    break;
-                case "x":
-                    e.preventDefault();
-                    if (user) navigate("/shop");
-                    break;
-                case "s":
-                    e.preventDefault();
-                    if (user) navigate("/store");
-                    break;
-                default:
-                    break;
-            }
-        };
+  const handleCloseNotification = useCallback(
+    () => setNotificationOpen(false),
+    [],
+  );
+  const handleCloseCheckIn = useCallback(() => setCheckInOpen(false), []);
+  const handleClaimReward = useCallback(() => setHasUnclaimedReward(false), []);
 
-        window.addEventListener("keydown", handleKeyDown);
-        return () => window.removeEventListener("keydown", handleKeyDown);
-    }, [user, navigate]);
+  // ---- Keyboard Shortcuts ----
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      const key = typeof e?.key === "string" ? e.key.toLowerCase() : "";
+      if (!key) return;
+      if (!(e.ctrlKey || e.metaKey)) return;
 
-    // ---- Early exit for gameplay screens ----
-    if (hideNav) return children;
+      switch (key) {
+        case "b":
+          e.preventDefault();
+          setChatOpen((prev) => !prev);
+          break;
+        case "l":
+          e.preventDefault();
+          setLeaderboardOpen((prev) => !prev);
+          break;
+        case "p":
+          e.preventDefault();
+          if (user) navigate("/profile");
+          break;
+        case "x":
+          e.preventDefault();
+          if (user) navigate("/shop");
+          break;
+        case "s":
+          e.preventDefault();
+          if (user) navigate("/store");
+          break;
+        default:
+          break;
+      }
+    };
 
-    return (
-        <div className="relative min-h-screen w-full max-w-[100vw] overflow-x-hidden bg-black text-foreground selection:bg-primary/20">
-            {/* Global pure-black background */}
-            <div className="fixed inset-0 z-0 pointer-events-none bg-black" />
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [user, navigate]);
 
-            {/* Dot grid texture — landing only */}
-            {isPublicLanding && (
-                <div className="ds-dot-grid fixed inset-x-0 bottom-0 top-0 z-0 pointer-events-none opacity-80" />
-            )}
+  // ---- Early exit for gameplay screens ----
+  if (hideNav) return children;
 
-            {/* Subtle purple glow — landing only */}
-            {isPublicLanding && (
-                <div className="fixed inset-x-0 bottom-0 top-0 z-0 pointer-events-none bg-[radial-gradient(ellipse_60%_40%_at_50%_-5%,rgba(108,99,255,0.07),transparent)]" />
-            )}
+  return (
+    <div className="relative min-h-screen w-full max-w-[100vw] overflow-x-hidden bg-black text-foreground selection:bg-primary/20">
+      {/* Global pure-black background */}
+      <div className="fixed inset-0 z-0 pointer-events-none bg-black" />
 
-            <div className="relative z-10 flex min-h-screen flex-col">
-                <HomeTopNav
-                    user={user}
-                    levels={apiLevels}
-                    handleLogout={handleLogout}
-                    setChatOpen={setChatOpen}
-                    isChatOpen={isChatOpen}
-                    setCheckInOpen={setCheckInOpen}
-                    setLeaderboardOpen={setLeaderboardOpen}
-                    setNotificationOpen={setNotificationOpen}
-                    hasUnclaimedReward={hasUnclaimedReward}
-                />
+      <div className="relative z-10 flex min-h-screen flex-col">
+        <HomeTopNav
+          user={user}
+          levels={apiLevels}
+          handleLogout={handleLogout}
+          setChatOpen={setChatOpen}
+          isChatOpen={isChatOpen}
+          setCheckInOpen={setCheckInOpen}
+          setLeaderboardOpen={setLeaderboardOpen}
+          setNotificationOpen={setNotificationOpen}
+          hasUnclaimedReward={hasUnclaimedReward}
+        />
 
-                <ChatDrawer
-                    isOpen={isChatOpen}
-                    setOpen={setChatOpen}
-                    user={user}
-                />
+        <ChatDrawer isOpen={isChatOpen} setOpen={setChatOpen} user={user} />
 
-                <LeaderboardDrawer
-                    isLeaderboardOpen={isLeaderboardOpen}
-                    setLeaderboardOpen={setLeaderboardOpen}
-                />
+        <LeaderboardDrawer
+          isLeaderboardOpen={isLeaderboardOpen}
+          setLeaderboardOpen={setLeaderboardOpen}
+        />
 
-                <NotificationDrawer
-                    isOpen={isNotificationOpen}
-                    onClose={handleCloseNotification}
-                />
+        <NotificationDrawer
+          isOpen={isNotificationOpen}
+          onClose={handleCloseNotification}
+        />
 
-                <DailyCheckInModal
-                    isOpen={checkInOpen}
-                    onClose={handleCloseCheckIn}
-                    onClaim={handleClaimReward}
-                />
+        <DailyCheckInModal
+          isOpen={checkInOpen}
+          onClose={handleCloseCheckIn}
+          onClaim={handleClaimReward}
+        />
 
-                <main className="flex-1 pt-14">
-                    {children}
-                </main>
+        <main className="flex-1 pt-14">{children}</main>
 
-                {showFooter && (
-                    <div className={user ? "pb-16 sm:pb-0" : ""}>
-                        <SiteFooter />
-                    </div>
-                )}
-            </div>
-        </div>
-    );
+        {showFooter && (
+          <div className={user ? "pb-16 sm:pb-0" : ""}>
+            <SiteFooter />
+          </div>
+        )}
+      </div>
+    </div>
+  );
 });
 
 MainLayout.displayName = "MainLayout";

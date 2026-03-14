@@ -22,8 +22,8 @@ const features = [
   },
   {
     icon: Zap,
-    title: "XP & Progression",
-    desc: "Earn experience points, unlock new levels, and track your growth over time.",
+    title: "Rewards & Growth",
+    desc: "Gain rewards, unlock new levels, and track your growth over time.",
   },
 ];
 
@@ -57,10 +57,6 @@ const LandingPage = () => {
 
   return (
     <div className="relative min-h-[calc(100vh-4rem)] overflow-hidden bg-black">
-      {/* Background layers */}
-      <div className="pointer-events-none fixed inset-0 ds-dot-grid opacity-100" />
-      <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_-10%,rgba(108,99,255,0.08),transparent)]" />
-
       {/* HERO */}
       <section className="relative z-10 app-page-width flex min-h-[calc(100vh-9rem)] flex-col items-center justify-center px-5 py-12 sm:px-8">
         <Motion.div
@@ -79,8 +75,9 @@ const LandingPage = () => {
           </h1>
 
           <p className="mx-auto mt-6 max-w-2xl text-center text-base leading-relaxed text-neutral-300 sm:text-lg">
-            Clash of Code is a precision-built coding platform for developers who want
-            structured progression, real feedback, and verifiable skills.
+            Clash of Code is a precision-built coding platform for developers
+            who want structured progression, real feedback, and verifiable
+            skills.
           </p>
 
           {/* CTA */}
@@ -92,7 +89,10 @@ const LandingPage = () => {
             >
               <span className="relative z-10 flex items-center gap-2">
                 Start Learning Free
-                <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                <ArrowRight
+                  size={18}
+                  className="group-hover:translate-x-1 transition-transform"
+                />
               </span>
             </button>
           </div>
@@ -111,7 +111,9 @@ const LandingPage = () => {
                 <p className="text-xl font-bold text-white font-['Space_Grotesk'] tabular-nums">
                   {item.value}
                 </p>
-                <p className="mt-1 text-[11px] text-neutral-700 font-['Geist_Mono'] uppercase tracking-tight">{item.sub}</p>
+                <p className="mt-1 text-[11px] text-neutral-700 font-['Geist_Mono'] uppercase tracking-tight">
+                  {item.sub}
+                </p>
               </Motion.div>
             ))}
           </div>
@@ -128,7 +130,9 @@ const LandingPage = () => {
             transition={{ delay: 0.5, duration: 0.5 }}
             className="space-y-4"
           >
-            <p className="font-['Geist_Mono'] text-[10px] font-bold tracking-[0.2em] text-neutral-500 uppercase mb-6">Why Clash of Code</p>
+            <p className="font-['Geist_Mono'] text-[10px] font-bold tracking-[0.2em] text-neutral-500 uppercase mb-6">
+              Why Clash of Code
+            </p>
             {features.map((f, i) => {
               const Icon = f.icon;
               return (
@@ -143,8 +147,12 @@ const LandingPage = () => {
                     <Icon size={17} className="text-neutral-400" />
                   </div>
                   <div>
-                    <h3 className="text-sm font-semibold text-white mb-1">{f.title}</h3>
-                    <p className="text-[13px] text-neutral-500 leading-relaxed">{f.desc}</p>
+                    <h3 className="text-sm font-semibold text-white mb-1">
+                      {f.title}
+                    </h3>
+                    <p className="text-[13px] text-neutral-500 leading-relaxed">
+                      {f.desc}
+                    </p>
                   </div>
                 </Motion.div>
               );
@@ -173,13 +181,20 @@ const LandingPage = () => {
               {/* Code content */}
               <div className="p-5">
                 <pre className="font-['Geist_Mono',monospace] text-[12.5px] leading-[1.7] text-neutral-300 whitespace-pre-wrap min-h-[180px]">
-                  <code>{typed}<span className="border-r-2 border-neutral-400 animate-pulse ml-0.5" /></code>
+                  <code>
+                    {typed}
+                    <span className="border-r-2 border-neutral-400 animate-pulse ml-0.5" />
+                  </code>
                 </pre>
               </div>
               {/* Status bar */}
               <div className="border-t border-white/5 px-4 py-2 flex items-center justify-between bg-black">
-                <span className="font-['Geist_Mono'] text-[9px] font-bold text-neutral-700 uppercase tracking-widest">Python 3.11</span>
-                <span className="ds-pill ds-pill-success text-[10px] bg-emerald-500/5 text-emerald-500/80 border-emerald-500/10">All tests passed</span>
+                <span className="font-['Geist_Mono'] text-[9px] font-bold text-neutral-700 uppercase tracking-widest">
+                  Python 3.11
+                </span>
+                <span className="ds-pill ds-pill-success text-[10px] bg-emerald-500/5 text-emerald-500/80 border-emerald-500/10">
+                  All tests passed
+                </span>
               </div>
             </div>
           </Motion.div>

@@ -9,9 +9,13 @@ export const loadRazorpay = () => {
     );
 
     if (existingScript) {
-      existingScript.addEventListener("load", () => resolve(!!window.Razorpay), {
-        once: true,
-      });
+      existingScript.addEventListener(
+        "load",
+        () => resolve(!!window.Razorpay),
+        {
+          once: true,
+        },
+      );
       existingScript.addEventListener("error", () => resolve(false), {
         once: true,
       });

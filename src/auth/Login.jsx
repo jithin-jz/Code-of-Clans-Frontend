@@ -35,7 +35,10 @@ const Login = () => {
 
   useEffect(() => {
     const update = () => {
-      const rem = Math.max(0, Math.ceil((otpCooldownUntil - Date.now()) / 1000));
+      const rem = Math.max(
+        0,
+        Math.ceil((otpCooldownUntil - Date.now()) / 1000),
+      );
       setOtpCooldownSeconds(rem);
     };
     update();
@@ -73,7 +76,9 @@ const Login = () => {
     const ok = await verifyOtp(email.trim(), otp.trim());
     if (ok) {
       toast.success("Welcome back!");
-      navigate(getRedirectPath(useAuthStore.getState().user), { replace: true });
+      navigate(getRedirectPath(useAuthStore.getState().user), {
+        replace: true,
+      });
     } else {
       const err = useAuthStore.getState().error;
       toast.error(err || "Invalid code — try again");
@@ -87,7 +92,6 @@ const Login = () => {
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_50%_0%,rgba(108,99,255,0.07),transparent)]" />
 
       <div className="relative z-10 w-full max-w-[400px]">
-
         {/* Brand */}
         <Motion.div
           initial={{ opacity: 0, y: -10 }}
@@ -95,9 +99,13 @@ const Login = () => {
           className="mb-8 text-center"
         >
           <div className="inline-flex items-center gap-2.5 mb-4">
-            <span className="app-title text-[11px] text-neutral-300">Clash of Code</span>
+            <span className="app-title text-[11px] text-neutral-300">
+              Clash of Code
+            </span>
           </div>
-          <h1 className="ds-heading text-2xl text-white mb-1.5">Sign in to your workspace</h1>
+          <h1 className="ds-heading text-2xl text-white mb-1.5">
+            Sign in to your workspace
+          </h1>
         </Motion.div>
 
         {/* Auth Card */}
@@ -156,7 +164,10 @@ const Login = () => {
               >
                 <button
                   type="button"
-                  onClick={() => { setOtp(""); setShowOtpInput(false); }}
+                  onClick={() => {
+                    setOtp("");
+                    setShowOtpInput(false);
+                  }}
                   className="inline-flex items-center gap-1.5 text-[12px] text-neutral-600 hover:text-neutral-300 transition-colors mb-1"
                 >
                   <ArrowLeft size={12} />
@@ -164,9 +175,14 @@ const Login = () => {
                 </button>
 
                 <div>
-                  <label className="ds-eyebrow block mb-1">Verification code</label>
+                  <label className="ds-eyebrow block mb-1">
+                    Verification code
+                  </label>
                   <p className="text-[11px] text-neutral-600 mb-3">
-                    Code sent to <span className="text-neutral-300 font-medium">{email}</span>
+                    Code sent to{" "}
+                    <span className="text-neutral-300 font-medium">
+                      {email}
+                    </span>
                   </p>
                   <input
                     type="text"

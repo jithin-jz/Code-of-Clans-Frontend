@@ -239,10 +239,10 @@ const Profile = () => {
     setProfileUser((prev) =>
       prev
         ? {
-          ...prev,
-          is_following: nextIsFollowing,
-          followers_count: nextFollowerCount,
-        }
+            ...prev,
+            is_following: nextIsFollowing,
+            followers_count: nextFollowerCount,
+          }
         : prev,
     );
 
@@ -251,10 +251,10 @@ const Profile = () => {
       setProfileUser((prev) =>
         prev
           ? {
-            ...prev,
-            is_following: data.is_following,
-            followers_count: data.follower_count,
-          }
+              ...prev,
+              is_following: data.is_following,
+              followers_count: data.follower_count,
+            }
           : prev,
       );
     } catch (error) {
@@ -269,9 +269,7 @@ const Profile = () => {
     const previousList = userList;
     const previousProfile = profileUser;
     const targetUser = previousList.find((u) => u.username === targetUsername);
-    const optimisticFollowState = targetUser
-      ? !targetUser.is_following
-      : null;
+    const optimisticFollowState = targetUser ? !targetUser.is_following : null;
 
     if (optimisticFollowState !== null) {
       setUserList((prev) =>
@@ -287,14 +285,14 @@ const Profile = () => {
       setProfileUser((prev) =>
         prev
           ? {
-            ...prev,
-            is_following: !previousProfile?.is_following,
-            followers_count: Math.max(
-              0,
-              (previousProfile?.followers_count || 0) +
-              (previousProfile?.is_following ? -1 : 1),
-            ),
-          }
+              ...prev,
+              is_following: !previousProfile?.is_following,
+              followers_count: Math.max(
+                0,
+                (previousProfile?.followers_count || 0) +
+                  (previousProfile?.is_following ? -1 : 1),
+              ),
+            }
           : prev,
       );
     }
@@ -315,10 +313,10 @@ const Profile = () => {
         setProfileUser((prev) =>
           prev
             ? {
-              ...prev,
-              is_following: data.is_following,
-              followers_count: data.follower_count,
-            }
+                ...prev,
+                is_following: data.is_following,
+                followers_count: data.follower_count,
+              }
             : prev,
         );
       }
@@ -366,7 +364,7 @@ const Profile = () => {
       const redeemerXp = result.redeemer_xp_awarded ?? result.xp_awarded;
       const referrerXp = result.referrer_xp_awarded ?? 100;
       notify.success(
-        `Referral redeemed! You got +${redeemerXp} XP and your referrer got +${referrerXp} XP.`,
+        `Referral redeemed! You got +${redeemerXp} and your referrer got +${referrerXp}.`,
       );
       setReferralCodeInput("");
       // Update local user state immediately to reflect new XP and redeemed status
@@ -564,10 +562,11 @@ const Profile = () => {
                   {!isOwnProfile && (
                     <Button
                       onClick={handleFollowToggle}
-                      className={`w-full h-10 font-bold ${profileUser?.is_following
-                        ? "bg-zinc-800 text-white hover:bg-zinc-700"
-                        : "bg-white text-black hover:bg-zinc-200"
-                        }`}
+                      className={`w-full h-10 font-bold ${
+                        profileUser?.is_following
+                          ? "bg-zinc-800 text-white hover:bg-zinc-700"
+                          : "bg-white text-black hover:bg-zinc-200"
+                      }`}
                     >
                       {profileUser?.is_following ? "Following" : "Follow"}
                     </Button>
@@ -649,7 +648,9 @@ const Profile = () => {
                   <CardContent className="p-4 space-y-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div className="space-y-2">
-                        <label className="text-xs text-neutral-400">First Name</label>
+                        <label className="text-xs text-neutral-400">
+                          First Name
+                        </label>
                         <input
                           type="text"
                           value={editForm.first_name}
@@ -663,7 +664,9 @@ const Profile = () => {
                         />
                       </div>
                       <div className="space-y-2">
-                        <label className="text-xs text-neutral-400">Last Name</label>
+                        <label className="text-xs text-neutral-400">
+                          Last Name
+                        </label>
                         <input
                           type="text"
                           value={editForm.last_name}
@@ -678,7 +681,9 @@ const Profile = () => {
                       </div>
                     </div>
                     <div className="space-y-2">
-                      <label className="text-xs text-neutral-400">Username</label>
+                      <label className="text-xs text-neutral-400">
+                        Username
+                      </label>
                       <input
                         type="text"
                         value={editForm.username}
@@ -801,15 +806,22 @@ const Profile = () => {
               <div className="sticky top-[88px] space-y-4">
                 <Card className="bg-[#141414]/70 border-[#404040]/20">
                   <CardHeader className="p-4 border-b border-white/5">
-                    <CardTitle className="text-sm font-medium">Suggested for you</CardTitle>
+                    <CardTitle className="text-sm font-medium">
+                      Suggested for you
+                    </CardTitle>
                   </CardHeader>
                   <CardContent className="p-4 space-y-4">
                     {suggestedUsers.length > 0 ? (
                       <div className="space-y-4">
                         {suggestedUsers.map((user) => (
-                          <div key={user.id} className="flex items-center justify-between gap-3">
+                          <div
+                            key={user.id}
+                            className="flex items-center justify-between gap-3"
+                          >
                             <button
-                              onClick={() => navigate(`/profile/${user.username}`)}
+                              onClick={() =>
+                                navigate(`/profile/${user.username}`)
+                              }
                               className="flex items-center gap-3 min-w-0 hover:opacity-80 transition-opacity"
                             >
                               <Avatar className="w-8 h-8 shrink-0">
@@ -831,7 +843,9 @@ const Profile = () => {
                               size="sm"
                               variant="ghost"
                               className="h-7 text-[10px] font-bold text-blue-400 hover:text-blue-300 hover:bg-blue-500/10 px-2"
-                              onClick={() => handleFollowSuggested(user.username)}
+                              onClick={() =>
+                                handleFollowSuggested(user.username)
+                              }
                             >
                               Follow
                             </Button>
@@ -839,7 +853,9 @@ const Profile = () => {
                         ))}
                       </div>
                     ) : (
-                      <p className="text-[11px] text-zinc-500 text-center py-2">No suggestions available</p>
+                      <p className="text-[11px] text-zinc-500 text-center py-2">
+                        No suggestions available
+                      </p>
                     )}
                   </CardContent>
                 </Card>
@@ -861,8 +877,8 @@ const Profile = () => {
           <DialogHeader>
             <DialogTitle>Delete Account</DialogTitle>
             <DialogDescription className="text-neutral-400">
-              Are you absolutely sure? This action cannot be undone. All your
-              progress, XP, and items will be permanently deleted.
+              Are you sure? This action is irreversible. All your codes,
+              progress, balance, and items will be permanently deleted.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="gap-2">
@@ -945,10 +961,11 @@ const Profile = () => {
                           variant={
                             userItem.is_following ? "secondary" : "default"
                           }
-                          className={`h-8 px-4 text-xs font-bold ${userItem.is_following
-                            ? "bg-zinc-800 text-white hover:bg-zinc-700"
-                            : "bg-white text-black hover:bg-zinc-200"
-                            }`}
+                          className={`h-8 px-4 text-xs font-bold ${
+                            userItem.is_following
+                              ? "bg-zinc-800 text-white hover:bg-zinc-700"
+                              : "bg-white text-black hover:bg-zinc-200"
+                          }`}
                           onClick={() =>
                             handleListFollowToggle(userItem.username)
                           }

@@ -28,7 +28,6 @@ const ChatInput = ({
 
   return (
     <div className="relative px-4 py-3 bg-[#0a0a0a] border-t border-[#1a1a1a]">
-
       {/* Emoji Picker */}
       {showPicker && (
         <div
@@ -57,10 +56,11 @@ const ChatInput = ({
           type="button"
           onClick={() => setShowPicker(!showPicker)}
           disabled={!user}
-          className={`flex items-center justify-center h-8 w-8 min-w-8 rounded-lg transition-all ${showPicker
-            ? "bg-[#1a1a1a] text-white"
-            : "bg-transparent text-neutral-500 hover:text-neutral-300"
-            } disabled:opacity-20`}
+          className={`flex items-center justify-center h-8 w-8 min-w-8 rounded-lg transition-all ${
+            showPicker
+              ? "bg-[#1a1a1a] text-white"
+              : "bg-transparent text-neutral-500 hover:text-neutral-300"
+          } disabled:opacity-20`}
         >
           {showPicker ? <X size={16} /> : <Smile size={16} />}
         </button>
@@ -83,12 +83,16 @@ const ChatInput = ({
         <button
           disabled={!user || !inputMessage.trim()}
           onClick={handleSend}
-          className={`flex items-center justify-center h-8 w-8 min-w-8 rounded-lg transition-all ${inputMessage.trim()
-            ? "bg-white text-black hover:bg-neutral-200"
-            : "bg-[#111] text-neutral-700"
-            } disabled:opacity-10`}
+          className={`flex items-center justify-center h-8 w-8 min-w-8 rounded-lg transition-all ${
+            inputMessage.trim()
+              ? "bg-white text-black hover:bg-neutral-200"
+              : "bg-[#111] text-neutral-700"
+          } disabled:opacity-10`}
         >
-          <Send size={14} className={inputMessage.trim() ? "translate-x-0.5" : ""} />
+          <Send
+            size={14}
+            className={inputMessage.trim() ? "translate-x-0.5" : ""}
+          />
         </button>
       </div>
 

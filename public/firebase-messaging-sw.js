@@ -1,8 +1,12 @@
 /* global importScripts, firebase */
 
 // Scripts for firebase and firebase-messaging
-importScripts('https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js');
-importScripts('https://www.gstatic.com/firebasejs/9.0.0/firebase-messaging-compat.js');
+importScripts(
+  "https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js",
+);
+importScripts(
+  "https://www.gstatic.com/firebasejs/9.0.0/firebase-messaging-compat.js",
+);
 
 const params = new URLSearchParams(self.location.search);
 const firebaseConfig = {
@@ -15,7 +19,9 @@ const firebaseConfig = {
 };
 
 if (!firebaseConfig.apiKey) {
-  console.warn("[firebase-sw] Missing Firebase config; background messaging disabled.");
+  console.warn(
+    "[firebase-sw] Missing Firebase config; background messaging disabled.",
+  );
 } else {
   firebase.initializeApp(firebaseConfig);
 }
@@ -24,10 +30,26 @@ const messaging = firebase.apps.length ? firebase.messaging() : null;
 
 if (messaging) {
   messaging.onBackgroundMessage((payload) => {
-    const notificationTitle = payload.notification.title;
+    console.log(
+      "[firebase-messaging-sw.js] Received background message ",
+      payload,
+    );
+
+    // If the message has a notification property, the browser will likely
+    // display it automatically (FCM default behavior).
+    // Manually calling showNotification here can cause double notifications.
+    if (payload.notification) {
+      console.log(
+        "[firebase-messaging-sw.js] Notification already present in payload, bypassing manual show.",
+      );
+      return;
+    }
+
+    const notificationTitle = payload.data?.title || "New Notification";
     const notificationOptions = {
-      body: payload.notification.body,
-      icon: payload.notification.image || '/logo192.png',
+      body: payload.data?.body || "",
+      icon: payload.data?.image || "/favicon.png",
+      data: payload.data,
     };
 
     self.registration.showNotification(notificationTitle, notificationOptions);

@@ -1,7 +1,17 @@
 import React from "react";
 import {
-  ArrowRight, CheckCircle2, Lock, Star, Trophy, Gem,
-  Terminal, Layers, Zap, FunctionSquare, Library, Box
+  ArrowRight,
+  CheckCircle2,
+  Lock,
+  Star,
+  Trophy,
+  Terminal,
+  Layers,
+  Zap,
+  FunctionSquare,
+  Library,
+  Box,
+  Gem,
 } from "lucide-react";
 import { getDifficultyMeta, getTrackMeta } from "../utils/challengeMeta";
 
@@ -12,21 +22,35 @@ const DIFF_STYLES = {
 };
 
 const LevelButton = ({ level, isCurrentLevel, onClick }) => {
-  const isCertificate = level.type === "CERTIFICATE" || level.slug === "certificate";
+  const isCertificate =
+    level.type === "CERTIFICATE" || level.slug === "certificate";
   const difficulty = getDifficultyMeta(level.order);
   const track = getTrackMeta(level.order);
 
   const getLevelIcon = () => {
-    if (isCertificate) return <Trophy size={15} className={level.unlocked ? "text-amber-400" : "text-neutral-700"} />;
+    if (isCertificate)
+      return (
+        <Trophy
+          size={15}
+          className={level.unlocked ? "text-amber-400" : "text-neutral-700"}
+        />
+      );
     if (level.icon && React.isValidElement(level.icon)) return level.icon;
     switch (track.key) {
-      case "basics": return <Terminal size={15} />;
-      case "ds": return <Layers size={15} />;
-      case "flow": return <Zap size={15} />;
-      case "functions": return <FunctionSquare size={15} />;
-      case "stdlib": return <Library size={15} />;
-      case "oop": return <Box size={15} />;
-      default: return <Terminal size={15} />;
+      case "basics":
+        return <Terminal size={15} />;
+      case "ds":
+        return <Layers size={15} />;
+      case "flow":
+        return <Zap size={15} />;
+      case "functions":
+        return <FunctionSquare size={15} />;
+      case "stdlib":
+        return <Library size={15} />;
+      case "oop":
+        return <Box size={15} />;
+      default:
+        return <Terminal size={15} />;
     }
   };
 
@@ -36,16 +60,20 @@ const LevelButton = ({ level, isCurrentLevel, onClick }) => {
   const isLocked = !isUnlocked;
 
   const cardBase = isCompleted
-    ? "bg-[#141414] border-l-2 border-l-emerald-500 border-t-[#242424] border-r-[#242424] border-b-[#242424]"
+    ? "bg-[#0a0a0a] border-l-2 border-l-emerald-500 border-white/20 shadow-sm"
     : isUnlocked
-      ? "bg-[#141414] border-[#242424] hover:border-[#323232] hover:bg-[#1a1a1a]"
-      : "bg-[#0f0f0f] border-[#1a1a1a]";
+      ? "bg-black border-[#333] hover:border-[#666] hover:bg-[#0a0a0a] transition-all duration-200"
+      : "bg-black border-white/60 shadow-inner";
 
   const iconBg = isCertificate
-    ? isUnlocked ? "bg-amber-400/10 border-amber-500/20 text-amber-400" : "bg-[#1a1a1a] border-[#242424] text-neutral-700"
-    : isCompleted ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400"
-      : isUnlocked ? "bg-[#222] border-[#333] text-neutral-300"
-        : "bg-[#1a1a1a] border-[#1e1e1e] text-neutral-700";
+    ? isUnlocked
+      ? "bg-amber-400/10 border-amber-500/30 text-amber-400"
+      : "bg-black border-white/30 text-white"
+    : isCompleted
+      ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400"
+      : isUnlocked
+        ? "bg-[#111] border-[#333] text-white"
+        : "bg-black border-white/20 text-white";
 
   return (
     <button
@@ -61,18 +89,28 @@ const LevelButton = ({ level, isCurrentLevel, onClick }) => {
       {/* Top: icon + title + status */}
       <div className="flex items-start justify-between gap-2 relative z-10">
         <div className="flex items-start gap-2.5 min-w-0">
-          <div className={`w-8 h-8 rounded-lg border flex items-center justify-center shrink-0 ${iconBg}`}>
-            {isUnlocked
-              ? React.cloneElement(getLevelIcon(), { size: 14, strokeWidth: 2 })
-              : <Lock size={12} className="text-neutral-700" />
-            }
+          <div
+            className={`w-8 h-8 rounded-lg border flex items-center justify-center shrink-0 ${iconBg}`}
+          >
+            {isUnlocked ? (
+              React.cloneElement(getLevelIcon(), { size: 14, strokeWidth: 2 })
+            ) : (
+              <Lock size={12} className="text-white" />
+            )}
           </div>
           <div className="min-w-0 pt-0.5">
-            <p className="text-[9px] font-mono text-neutral-500 uppercase tracking-widest mb-0.5">
+            <p className="text-[9px] font-mono text-white uppercase tracking-widest mb-0.5 font-bold">
               {isCertificate ? "Certification" : `Level ${level.order}`}
             </p>
-            <p className={`text-[12px] font-semibold leading-snug break-words ${isCompleted ? "text-neutral-300" : isUnlocked ? "text-neutral-200" : "text-neutral-400"
-              }`}>
+            <p
+              className={`text-[12px] font-semibold leading-snug break-words ${
+                isCompleted
+                  ? "text-white"
+                  : isUnlocked
+                    ? "text-white"
+                    : "text-white"
+              }`}
+            >
               {isCertificate ? "Professional Badge" : level.title || level.name}
             </p>
           </div>
@@ -85,7 +123,7 @@ const LevelButton = ({ level, isCurrentLevel, onClick }) => {
           ) : isUnlocked ? (
             <ArrowRight
               size={14}
-              className="text-neutral-700 group-hover:text-neutral-400 group-hover:translate-x-0.5 transition-all"
+              className="text-neutral-400 group-hover:text-white group-hover:translate-x-0.5 transition-all"
             />
           ) : (
             <Lock size={13} className="text-neutral-800" />
@@ -98,13 +136,15 @@ const LevelButton = ({ level, isCurrentLevel, onClick }) => {
         <div className="mt-3 flex items-center justify-between relative z-10">
           <div className="flex items-center gap-1.5">
             {/* Difficulty pill */}
-            <span className={`ds-pill border text-[9px] ${DIFF_STYLES[difficulty.label] || "bg-[#1a1a1a] text-neutral-600 border-[#242424]"}`}>
+            <span
+              className={`ds-pill border text-[9px] ${DIFF_STYLES[difficulty.label] || "bg-[#1a1a1a] text-neutral-600 border-[#242424]"}`}
+            >
               {difficulty.label}
             </span>
             {/* XP */}
             {isUnlocked && (
-              <span className="flex items-center gap-0.5 text-[9px] text-neutral-700 font-mono">
-                <Gem size={8} />
+              <span className="flex items-center gap-1.5 text-[9px] text-white/40 font-mono">
+                <Gem size={10} className="text-red-500 fill-red-500/10" />
                 {(level.xp_reward || 0).toLocaleString()}
               </span>
             )}
@@ -131,15 +171,15 @@ const LevelButton = ({ level, isCurrentLevel, onClick }) => {
       {/* Current level badge */}
       {isCurrentLevel && isUnlocked && (
         <div className="mt-2 relative z-10">
-          <span className="ds-pill ds-pill-purple text-[9px]">
-            In Progress
-          </span>
+          <span className="ds-pill ds-pill-purple text-[9px]">In Progress</span>
         </div>
       )}
 
       {/* Locked hint */}
       {!isCertificate && isLocked && (
-        <p className="mt-2 text-[10px] text-neutral-600">Complete prior level to unlock</p>
+        <p className="mt-2 text-[10px] text-white font-medium">
+          Complete prior level to unlock
+        </p>
       )}
 
       {isCertificate && (

@@ -35,10 +35,11 @@ const HeaderBar = ({
         {/* Status Indicator */}
         <div className="flex items-center p-1">
           <div
-            className={`w-1.5 h-1.5 rounded-full ${isPyodideReady
+            className={`w-1.5 h-1.5 rounded-full ${
+              isPyodideReady
                 ? "bg-emerald-500/80"
                 : "bg-amber-400 animate-pulse"
-              }`}
+            }`}
           />
         </div>
 
@@ -60,10 +61,11 @@ const HeaderBar = ({
             disabled={!isPyodideReady}
             className={`
                 h-8 px-4 relative overflow-hidden group rounded-md
-                ${isPyodideReady
-                ? "bg-white text-[#0a0a0a] hover:bg-neutral-200 border border-transparent"
-                : "bg-[#1a1a1a] text-neutral-700 cursor-not-allowed border border-[#242424]"
-              }
+                ${
+                  isPyodideReady
+                    ? "bg-white text-[#0a0a0a] hover:bg-neutral-200 border border-transparent"
+                    : "bg-[#1a1a1a] text-neutral-700 cursor-not-allowed border border-[#242424]"
+                }
                 text-[11px] font-semibold uppercase tracking-wide transition-all flex items-center
               `}
           >

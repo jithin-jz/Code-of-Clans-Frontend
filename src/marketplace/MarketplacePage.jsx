@@ -44,31 +44,34 @@ const MarketplacePage = memo(() => {
     setActiveCategory,
     handleBuy,
     handleEquip,
-    handleStickyUnequip
+    handleStickyUnequip,
   } = useMarketplace();
 
   const filteredItems = useMemo(() => {
     return items.filter((item) => item.category === activeCategory);
   }, [items, activeCategory]);
 
-  const isItemActive = useCallback((item) => {
-    if (!user?.profile) return false;
-    if (item.category === "THEME")
-      return user.profile.active_theme === item.item_data?.theme_key;
-    if (item.category === "FONT")
-      return user.profile.active_font === item.item_data?.font_family;
-    if (item.category === "EFFECT")
-      return (
-        user.profile.active_effect === item.item_data?.effect_key ||
-        user.profile.active_effect === item.item_data?.effect_type
-      );
-    if (item.category === "VICTORY")
-      return (
-        user.profile.active_victory === item.item_data?.victory_key ||
-        user.profile.active_victory === item.item_data?.animation_type
-      );
-    return false;
-  }, [user]);
+  const isItemActive = useCallback(
+    (item) => {
+      if (!user?.profile) return false;
+      if (item.category === "THEME")
+        return user.profile.active_theme === item.item_data?.theme_key;
+      if (item.category === "FONT")
+        return user.profile.active_font === item.item_data?.font_family;
+      if (item.category === "EFFECT")
+        return (
+          user.profile.active_effect === item.item_data?.effect_key ||
+          user.profile.active_effect === item.item_data?.effect_type
+        );
+      if (item.category === "VICTORY")
+        return (
+          user.profile.active_victory === item.item_data?.victory_key ||
+          user.profile.active_victory === item.item_data?.animation_type
+        );
+      return false;
+    },
+    [user],
+  );
 
   const renderIcon = useCallback((iconName) => {
     const Icon = LucideIcons[iconName] || LucideIcons.Package;
@@ -98,7 +101,6 @@ const MarketplacePage = memo(() => {
           transition={{ duration: 0.3 }}
           className="relative w-full pb-20 sm:pb-0 text-white flex flex-col pt-0 mt-0"
         >
-
           {/* Controls & Category Tabs (Unified Row) */}
           <div className="sticky top-14 z-20 border-b border-[#1e1e1e] bg-[#0a0a0a]/92 backdrop-blur-xl">
             <div className="w-full px-4 sm:px-6 lg:px-8 min-w-0">
@@ -127,10 +129,11 @@ const MarketplacePage = memo(() => {
                         title={cat.label}
                         className={`
                         flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md text-[10px] font-bold uppercase tracking-wider transition-all border font-mono flex-1 sm:flex-none sm:whitespace-nowrap
-                        ${isActive
+                        ${
+                          isActive
                             ? "bg-[#161616] text-white border-[#333] shadow-sm"
                             : "text-neutral-500 border-transparent hover:text-neutral-300 hover:bg-[#111] hover:border-[#1a1a1a]"
-                          }
+                        }
                       `}
                       >
                         <Icon size={12} />
@@ -140,16 +143,15 @@ const MarketplacePage = memo(() => {
                   })}
                 </div>
 
-                {/* Get XP Button */}
+                {/* Get Credits Button */}
                 <div className="shrink-0 ml-1">
                   <button
                     onClick={() => navigate("/buy-xp")}
-                    className="flex items-center gap-1.5 px-3 py-1.5 bg-[#0d0d0d] rounded-md border border-[#1a1a1a] hover:bg-[#141414] hover:border-[#222] transition-colors"
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-[#0d0d0d] rounded-md border border-white/10 hover:bg-[#141414] hover:border-white/20 transition-colors"
                   >
-                    <span className="text-[9px] font-bold uppercase tracking-widest text-neutral-500 font-mono">Get XP</span>
+                    <Gem size={13} className="text-red-500 fill-red-500/20" />
                   </button>
                 </div>
-
               </div>
             </div>
           </div>
@@ -181,14 +183,17 @@ const MarketplacePage = memo(() => {
                         <Card
                           className={`
                             rounded-lg overflow-hidden transition-all duration-300 group flex flex-col h-full bg-[#0d0d0d] border border-[#1a1a1a]
-                            ${isActive
-                              ? "border-emerald-500/30 shadow-[0_0_20px_rgba(16,185,129,0.05)]"
-                              : "hover:border-[#333] hover:bg-[#111]"
+                            ${
+                              isActive
+                                ? "border-emerald-500/30 shadow-[0_0_20px_rgba(16,185,129,0.05)]"
+                                : "hover:border-[#333] hover:bg-[#111]"
                             }
                           `}
                         >
                           {/* Icon/Preview */}
-                          <div className={`h-28 flex items-center justify-center border-b transition-colors relative shrink-0 ${isActive ? "bg-emerald-500/[0.03] border-emerald-500/10" : "bg-black border-[#1a1a1a] group-hover:bg-[#080808]"}`}>
+                          <div
+                            className={`h-28 flex items-center justify-center border-b transition-colors relative shrink-0 ${isActive ? "bg-emerald-500/[0.03] border-emerald-500/10" : "bg-black border-[#1a1a1a] group-hover:bg-[#080808]"}`}
+                          >
                             {item.image ? (
                               <img
                                 src={item.image}
@@ -196,7 +201,9 @@ const MarketplacePage = memo(() => {
                                 className="w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity"
                               />
                             ) : (
-                              <div className={`${isActive ? "text-emerald-500" : "text-neutral-600 group-hover:text-neutral-400"}`}>
+                              <div
+                                className={`${isActive ? "text-emerald-500" : "text-neutral-600 group-hover:text-neutral-400"}`}
+                              >
                                 {renderIcon(item.icon_name)}
                               </div>
                             )}
@@ -222,7 +229,9 @@ const MarketplacePage = memo(() => {
 
                           {/* Content */}
                           <div className="flex flex-col flex-1 p-3">
-                            <h3 className={`text-[11px] uppercase tracking-wider font-bold truncate font-mono ${isActive ? "text-emerald-400" : "text-neutral-300"}`}>
+                            <h3
+                              className={`text-[11px] uppercase tracking-wider font-bold truncate font-mono ${isActive ? "text-emerald-400" : "text-neutral-300"}`}
+                            >
                               {item.name}
                             </h3>
                             <p className="text-[9px] mt-1 line-clamp-2 leading-snug text-neutral-600 font-bold uppercase tracking-tight">
@@ -235,9 +244,10 @@ const MarketplacePage = memo(() => {
                               <Button
                                 className={`
                                   w-full h-8 text-[9px] font-bold uppercase tracking-widest transition-all rounded-md font-mono
-                                  ${isActive
-                                    ? "bg-transparent border border-emerald-500/20 text-emerald-500 hover:bg-emerald-500/5 shadow-none"
-                                    : "bg-[#111] border border-[#222] text-neutral-500 hover:bg-[#161616] hover:text-neutral-200"
+                                  ${
+                                    isActive
+                                      ? "bg-transparent border border-emerald-500/20 text-emerald-500 hover:bg-emerald-500/5 shadow-none"
+                                      : "bg-[#111] border border-[#222] text-neutral-500 hover:bg-[#161616] hover:text-neutral-200"
                                   }
                                 `}
                                 onClick={() =>
@@ -252,10 +262,11 @@ const MarketplacePage = memo(() => {
                               <Button
                                 className={`
                                     w-full h-8 text-[10px] font-bold tracking-widest transition-all border rounded-md font-mono
-                                    ${canAfford
-                                    ? "bg-white text-black border-[#1a1a1a] hover:bg-neutral-200"
-                                    : "bg-black text-[#222] border-[#111] cursor-not-allowed shadow-none"
-                                  }
+                                    ${
+                                      canAfford
+                                        ? "bg-white text-black border-[#1a1a1a] hover:bg-neutral-200"
+                                        : "bg-black text-[#222] border-[#111] cursor-not-allowed shadow-none"
+                                    }
                                   `}
                                 disabled={
                                   !canAfford ||
@@ -265,14 +276,17 @@ const MarketplacePage = memo(() => {
                                 onClick={() => handleBuy(item)}
                               >
                                 {isMutating &&
-                                  activeMutationItemId === item.id ? (
+                                activeMutationItemId === item.id ? (
                                   <span className="text-[8px] uppercase">
                                     Processing
                                   </span>
                                 ) : (
                                   <span className="flex items-center gap-1.5">
                                     {canAfford ? (
-                                      <Gem size={10} className="text-black/60" />
+                                      <Gem
+                                        size={12}
+                                        className="text-red-500 fill-red-500/20"
+                                      />
                                     ) : (
                                       <Lock size={10} className="opacity-20" />
                                     )}
