@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { ArrowRight, Crown, Lock, TrendingUp } from "lucide-react";
+import { ArrowRight, Crown, Lock, TrendingUp, CheckCircle2 } from "lucide-react";
 import LevelButton from "../../game/LevelButton";
 import { getTrackMeta } from "../../utils/challengeMeta";
 
@@ -178,61 +178,101 @@ const ChallengeMap = ({ levels, handleLevelClick }) => {
             );
           })}
 
-          {/* CERTIFICATE */}
+          {/* CERTIFICATE SECTION */}
           {certificateLevel && (
-            <section className="px-4 pt-2 pb-8 sm:px-4 animate-in fade-in duration-500">
-              <div className="flex items-center justify-between mb-3">
-                <p className="ds-eyebrow text-amber-500">Final Achievement</p>
-                <span className="ds-pill ds-pill-warning">Certification</span>
+            <section className="px-4 pt-4 pb-12 sm:px-4 animate-in fade-in slide-in-from-bottom-3 duration-500">
+              <div className="mb-4 flex items-start justify-between gap-4">
+                <div className="min-w-0">
+                  <h3 className="text-sm font-semibold text-white">
+                    Final Achievement
+                  </h3>
+                  <p className="text-[12px] text-white/90">
+                    Your path to mastery ends here.
+                  </p>
+                </div>
+                <span className="ds-pill ds-pill-warning bg-amber-500/10 text-amber-500 border-amber-500/20">
+                  Certification
+                </span>
               </div>
 
               <button
                 onClick={() => handleLevelClick(certificateLevel)}
-                className={`w-full rounded-xl border p-5 text-left transition-all duration-250 ${
-                  certificateLevel.unlocked
-                    ? "border-amber-500/30 bg-[#0a0a0a] hover:bg-[#111] hover:border-amber-400/50 shadow-md"
-                    : "border-white/5 bg-black cursor-not-allowed opacity-40"
-                }`}
+                className={`
+                  w-full text-left rounded-xl border p-4
+                  transition-all duration-150 group relative overflow-hidden
+                  ${
+                    certificateLevel.completed
+                      ? "bg-[#0a0a0a] border-l-2 border-l-amber-500 border-white/20 shadow-sm"
+                      : certificateLevel.unlocked
+                        ? "bg-black border-[#333] hover:border-[#666] hover:bg-[#0a0a0a] shadow-md"
+                        : "bg-black border-white/60 shadow-inner opacity-60"
+                  }
+                  ${certificateLevel.unlocked ? "cursor-pointer hover:-translate-y-px active:scale-[0.995]" : "cursor-not-allowed"}
+                `}
               >
-                <div className="flex justify-between items-start gap-4">
-                  <div className="flex gap-4 min-w-0">
-                    <div className="h-11 w-11 rounded-xl bg-amber-400/10 border border-amber-500/20 flex items-center justify-center shrink-0">
+                {/* Top content: Icon + Title + Status */}
+                <div className="flex items-start justify-between gap-3 relative z-10">
+                  <div className="flex items-start gap-4 min-w-0">
+                    <div
+                      className={`w-10 h-10 rounded-lg border flex items-center justify-center shrink-0 ${
+                        certificateLevel.unlocked
+                          ? "bg-amber-400/10 border-amber-500/30 text-amber-400"
+                          : "bg-[#050505] border-white/20 text-neutral-600"
+                      }`}
+                    >
                       {certificateLevel.unlocked ? (
-                        <Crown size={18} className="text-amber-400" />
+                        <Crown size={18} strokeWidth={2} />
                       ) : (
-                        <Lock size={15} className="text-neutral-600" />
+                        <Lock size={15} strokeWidth={2.5} />
                       )}
                     </div>
-                    <div className="min-w-0">
-                      <h4 className="text-sm font-semibold text-white">
+                    <div className="min-w-0 pt-0.5">
+                      <p className="text-[10px] font-mono text-white uppercase tracking-widest mb-1 font-bold">
+                        Certification
+                      </p>
+                      <h4 className="text-[14px] font-bold leading-snug text-white">
                         Python Mastery Certificate
                       </h4>
-                      <p className="mt-1 text-[12px] text-white/80">
+                      <p className="mt-1 text-[11.5px] text-white/50 leading-tight">
                         {certificateLevel.unlocked
                           ? "View and share your verified achievement."
-                          : "Complete all levels to unlock your certificate."}
+                          : "Complete all challenges to unlock."}
                       </p>
                     </div>
                   </div>
-                  <ArrowRight
-                    size={15}
-                    className={`shrink-0 mt-1 ${certificateLevel.unlocked ? "text-amber-400" : "text-neutral-700"}`}
-                  />
+
+                  {/* Status Indicator */}
+                  <div className="shrink-0 mt-0.5">
+                    {certificateLevel.completed ? (
+                      <div className="w-6 h-6 rounded-full bg-amber-500/10 flex items-center justify-center border border-amber-500/20">
+                        <ArrowRight size={14} className="text-amber-500" />
+                      </div>
+                    ) : certificateLevel.unlocked ? (
+                      <ArrowRight
+                        size={16}
+                        className="text-neutral-400 group-hover:text-white transition-all transform group-hover:translate-x-1"
+                      />
+                    ) : (
+                      <Lock size={14} className="text-neutral-700" />
+                    )}
+                  </div>
                 </div>
 
-                {/* Progress */}
-                <div className="mt-5">
-                  <div className="flex justify-between ds-eyebrow mb-2 text-white/80">
-                    <span>
-                      {completedChallenges} / {totalChallenges} challenges
-                    </span>
-                    <span className="text-white">
+                {/* Bottom: Progress Bar Integration */}
+                <div className="mt-6 relative z-10">
+                  <div className="flex justify-between items-end mb-2.5">
+                    <div className="flex items-center gap-2">
+                       <p className="text-[11px] font-bold text-white/40 uppercase tracking-wider font-mono">
+                        Progress: {completedChallenges} / {totalChallenges}
+                      </p>
+                    </div>
+                    <span className="text-xs font-mono font-bold text-white bg-white/10 px-1.5 py-0.5 rounded">
                       {certificateProgressPercent}%
                     </span>
                   </div>
-                  <div className="ds-progress">
+                  <div className="h-1.5 w-full bg-white/5 border border-white/5 rounded-full overflow-hidden">
                     <div
-                      className="h-full rounded-full bg-gradient-to-r from-amber-500 to-amber-300 transition-width"
+                      className="h-full bg-gradient-to-r from-amber-600 via-amber-400 to-amber-500 transition-width duration-700 ease-out"
                       style={{ width: `${certificateProgressPercent}%` }}
                     />
                   </div>
