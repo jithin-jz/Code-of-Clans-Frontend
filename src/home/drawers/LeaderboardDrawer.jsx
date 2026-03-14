@@ -74,7 +74,7 @@ const LeaderboardDrawer = ({ isLeaderboardOpen, setLeaderboardOpen }) => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setLeaderboardOpen(false)}
-            className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm sm:hidden"
+            className="fixed inset-0 z-50 bg-black/20 sm:hidden"
           />
           <Motion.div
             initial={{ x: "100%" }}

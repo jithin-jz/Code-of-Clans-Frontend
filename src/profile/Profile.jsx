@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useShallow } from "zustand/react/shallow";
 import useAuthStore from "../stores/useAuthStore";
 import useUserStore from "../stores/useUserStore";
 import useChatStore from "../stores/useChatStore";
@@ -47,9 +48,15 @@ import {
 const Profile = () => {
   const navigate = useNavigate();
   const { username } = useParams();
-  const { user: currentUser, logout, deleteAccount } = useAuthStore();
+  const { currentUser, logout, deleteAccount } = useAuthStore(
+    useShallow((s) => ({
+      currentUser: s.user,
+      logout: s.logout,
+      deleteAccount: s.deleteAccount,
+    })),
+  );
   const { updateProfile, followUser, redeemReferral } = useUserStore();
-  const { connect, isConnected } = useChatStore(); // Added
+  const { connect, isConnected } = useChatStore();
 
   const isOwnProfile =
     !username || (currentUser && username === currentUser.username);
@@ -60,10 +67,17 @@ const Profile = () => {
       connect();
     }
   }, [isConnected, connect]);
-  const [profileUser, setProfileUser] = useState(
-    isOwnProfile ? currentUser : null,
-  );
-  const [loading, setLoading] = useState(true);
+  // Initialize state based on available data to prevent flashing
+  const [profileUser, setProfileUser] = useState(() => {
+    if (isOwnProfile && currentUser) return currentUser;
+    return null;
+  });
+  const [loading, setLoading] = useState(() => {
+    // If it's our own profile and we have the user, we don't need to show a skeleton
+    if (isOwnProfile && currentUser) return false;
+    // Otherwise, we need to fetch
+    return true;
+  });
   const [userNotFound, setUserNotFound] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [suggestedUsers, setSuggestedUsers] = useState([]);
@@ -101,34 +115,47 @@ const Profile = () => {
 
   const fetchProfile = useCallback(
     async (targetUsername) => {
-      setLoading(true);
-      setUserNotFound(false);
-      setContributionData([]); // Reset stale data
+      if (!targetUsername) return;
+      // Only show top-level loading if we don't have this user yet 
+      // AND it's not our own profile (for which we already have currentUser data)
+      if (profileUser?.username !== targetUsername && !isOwnProfile) {
+        setLoading(true);
+        setUserNotFound(false);
+      }
       try {
         const response = await getUserProfile(targetUsername);
         setProfileUser(response.data);
       } catch (error) {
         console.error("Failed to fetch profile", error);
-        setUserNotFound(true);
+        if (profileUser?.username !== targetUsername) {
+          setUserNotFound(true);
+        }
       } finally {
         setLoading(false);
       }
     },
-    [getUserProfile],
+    [getUserProfile, profileUser?.username, isOwnProfile],
   );
 
-  const fetchContributions = useCallback(async (targetUsername) => {
-    setLoadingContributions(true);
-    try {
-      const { authAPI: api } = await import("../services/api");
-      const response = await api.getContributionHistory(targetUsername);
-      setContributionData(response.data);
-    } catch (error) {
-      console.error("Failed to fetch contributions", error);
-    } finally {
-      setLoadingContributions(false);
-    }
-  }, []);
+  const fetchContributions = useCallback(
+    async (targetUsername) => {
+      if (!targetUsername) return;
+      // If we already have data for this user, just refresh in background without full skeleton
+      const hasData = contributionData.length > 0;
+      if (!hasData) setLoadingContributions(true);
+
+      try {
+        const { authAPI: api } = await import("../services/api");
+        const response = await api.getContributionHistory(targetUsername);
+        setContributionData(response.data);
+      } catch (error) {
+        console.error("Failed to fetch contributions", error);
+      } finally {
+        setLoadingContributions(false);
+      }
+    },
+    [contributionData.length],
+  );
 
   const fetchSuggestions = useCallback(async () => {
     try {
@@ -156,32 +183,55 @@ const Profile = () => {
     }
   };
 
+  // 1. Effect to handle fetching a DIFFERENT user's profile when path changes
   useEffect(() => {
-    if (isOwnProfile) {
-      setProfileUser(currentUser);
-      setEditForm({
-        username: currentUser?.username || "",
-        first_name: currentUser?.first_name || "",
-        last_name: currentUser?.last_name || "",
-        bio: currentUser?.profile?.bio || "",
-      });
-      setLoading(false);
-      fetchSuggestions();
-      if (currentUser?.username) {
-        fetchContributions(currentUser.username);
-      }
-    } else if (username) {
+    if (!isOwnProfile && username) {
       fetchProfile(username);
       fetchContributions(username);
     }
-  }, [
-    username,
-    currentUser,
-    isOwnProfile,
-    fetchProfile,
-    fetchSuggestions,
-    fetchContributions,
-  ]);
+  }, [username, isOwnProfile, fetchProfile, fetchContributions]);
+
+  // Sync profileUser and loading status immediately when navigating to our own profile
+  useEffect(() => {
+    if (isOwnProfile && currentUser) {
+      if (profileUser?.username !== currentUser.username) {
+        setProfileUser(currentUser);
+      }
+      if (loading) setLoading(false);
+    }
+  }, [isOwnProfile, currentUser, profileUser?.username, loading]);
+
+  useEffect(() => {
+    if (isOwnProfile && currentUser) {
+      // Sync basic user info without re-triggering full profile load
+      setProfileUser((prev) => {
+        // Prevent unnecessary state updates if objects are identical
+        if (prev === currentUser) return prev;
+        return currentUser;
+      });
+
+      setEditForm((prev) => {
+        const next = {
+          username: currentUser?.username || "",
+          first_name: currentUser?.first_name || "",
+          last_name: currentUser?.last_name || "",
+          bio: currentUser?.profile?.bio || "",
+        };
+        if (JSON.stringify(prev) === JSON.stringify(next)) return prev;
+        return next;
+      });
+
+      if (loading) setLoading(false);
+    }
+  }, [isOwnProfile, currentUser, loading]);
+
+  // Handle suggestions and contributions for own profile separately to avoid loops
+  useEffect(() => {
+    if (isOwnProfile && currentUser?.username) {
+      fetchSuggestions();
+      fetchContributions(currentUser.username);
+    }
+  }, [isOwnProfile, currentUser?.username, fetchSuggestions, fetchContributions]);
 
   const handleImageUpload = async (event, type) => {
     const file = event.target.files[0];

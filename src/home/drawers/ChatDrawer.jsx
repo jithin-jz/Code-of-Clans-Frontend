@@ -84,7 +84,7 @@ const ChatDrawer = ({ isOpen, setOpen, user }) => {
               setOpen(false);
               setShowPicker(false);
             }}
-            className="fixed inset-0 z-50 bg-black/60 backdrop-blur-md"
+            className="fixed inset-0 z-50 bg-black/20"
           />
 
           {/* Drawer Wrapper (Flexible Height Control) */}

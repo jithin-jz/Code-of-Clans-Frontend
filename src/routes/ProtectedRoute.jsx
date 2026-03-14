@@ -1,4 +1,5 @@
 import { Navigate } from "react-router-dom";
+import { useShallow } from "zustand/react/shallow";
 import useAuthStore from "../stores/useAuthStore";
 import { SkeletonGenericPage } from "../common/SkeletonPrimitives";
 
@@ -7,7 +8,13 @@ import { SkeletonGenericPage } from "../common/SkeletonPrimitives";
  * Redirects unauthenticated users to landing page
  */
 const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated, isInitialized, loading } = useAuthStore();
+  const { isAuthenticated, isInitialized, loading } = useAuthStore(
+    useShallow((s) => ({
+      isAuthenticated: s.isAuthenticated,
+      isInitialized: s.isInitialized,
+      loading: s.loading,
+    })),
+  );
 
   if (!isInitialized || loading) {
     return <SkeletonGenericPage />;
